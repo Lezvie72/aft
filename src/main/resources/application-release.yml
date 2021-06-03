@@ -1,0 +1,44 @@
+stand: release
+orgForRegistration: 21Autotest
+front:
+  sdex:
+    url: webfront-release.dev.n-t.io
+    login: nt
+    password: nt-develop-2019
+  admin:
+    url: webadminpanel-front-release.dev.n-t.io
+    login: nt
+    password: nt-develop-2019
+  atm:
+    url: atm-front-release.atm-dev.n-t.io
+    login: atomyze
+    password: 13AtomyzE37
+  atm_admin:
+    url: admin-front-release.atm-dev.n-t.io
+    login: atomyze
+    password: 13AtomyzE37
+services:
+  kyx:
+    front:
+      url: ky-front-release.dev.n-t.io
+      login: nt
+      password: nt-develop-2019
+    grpc:
+      host: kyx-release.dev.n-t.io
+      port: 443
+  webback:
+    grpc:
+      host: webback-release.dev.n-t.io
+      port: 443
+    namespace: test
+  ledger:
+    grpc:
+      host: 34.90.105.32
+      port: 50051
+    tool:
+      base: ETH
+      quote: ETC
+  sum-sub:
+    url: https://test-api.sumsub.com
+    login: n-t.io_vladimir_tarusov_test
+    password: KycKybntio

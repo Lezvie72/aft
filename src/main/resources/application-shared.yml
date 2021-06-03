@@ -1,0 +1,37 @@
+stand: shared
+orgForRegistration: autotesst
+front:
+  sdex:
+    url: webfront-preprod.prod.n-t.io
+    login: nt-develop-2019
+    password: T5U8edTfuVE6aa6m
+  admin:
+    url: webadminpanel-front-preprod.prod.n-t.io
+    login: nt-develop-2019
+    password: T5U8edTfuVE6aa6m
+  atm:
+    url: atm-front-shared.atm-dev.n-t.io
+    login: atomyze
+    password: 13AtomyzE37
+  atm_admin:
+    url: admin-front-shared.atm-dev.n-t.io
+    login: atomyze
+    password: 13AtomyzE37
+services:
+  kyx:
+    front:
+      url: ky-front-preprod.prod.n-t.io
+      login: nt-develop-2019
+      password: T5U8edTfuVE6aa6m
+    grpc:
+      host: kyx-preprod.prod.n-t.io
+      port: 443
+  webback:
+    grpc:
+      host: webback-preprod.prod.n-t.io
+      port: 443
+    namespace: test
+  sum-sub:
+    url: https://test-api.sumsub.com
+    login: n-t.io_vladimir_tarusov_test
+    password: KycKybntio
