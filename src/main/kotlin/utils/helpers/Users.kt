@@ -242,8 +242,14 @@ class Users {
         // Atm user: OAuth, Manual signature, autotestMain
         val ATM_USER_2FA_MANUAL_SIG_MAIN_WALLET = when (Environment.stand) {
             DEVELOP -> UserWithMainWallet2FA(
-                mainWallet = MainWallet(),
-                oAuthSecret = ""
+                "aft.uat.sdex+atm_oauth_main_1@gmail.com",
+                "NS3VLQMHH4BYCOJM",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "b8cce0fe925edfdb715664f4791437107f74e1d580e11cfebc7eb925fa4c8b71",
+                    secretKey = "3e79dfe2016cd08036c172ed8d2a254042a1c02121fcec182ee60bd57e44e87eb8cce0fe925edfdb715664f4791437107f74e1d580e11cfebc7eb925fa4c8b71"
+
+                )
             )
             RELEASE -> UserWithMainWallet2FA(
                 "aft.uat.sdex+atm_oauth_main_1@gmail.com",
@@ -2750,9 +2756,9 @@ class Users {
 
                 ),
                 mainWallet = MainWallet(
-                    name = "Main 2",
-                    publicKey = "0e913400b9464cfd6f450f2f99d785a68e1f668d99b58a6db229060020cf3a05",
-                    secretKey = "e68e51cf6e0b94391d874c40b00db6d01c2166b575f70c8461ca07717ad7f91e0e913400b9464cfd6f450f2f99d785a68e1f668d99b58a6db229060020cf3a05"
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
                 )
             )
 //            RELEASE -> UserWithMainWalletAndOtf(

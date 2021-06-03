@@ -1,6 +1,10 @@
 package models
 
 enum class CoinType(val tokenSymbol: String) {
+    IDT("IDT") {
+//        override var tokenName: String = "GF46ILN046B"
+        override var tokenName: String = "IDT - GF29ILN037D"
+    },
     CC("CC") {
         override var tokenName: String = "CUSDNN-01-2020"
     },

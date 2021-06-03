@@ -37,6 +37,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//div[contains(text(),'Invalid key')] | //div[contains(text(),'Wrong code')]")
     lateinit var invalidOrWrongCode: TextBlock
 
+    @Name("Expires in")
+    @FindBy(xpath = "//atm-expires-control//nz-input-number//input")
+    lateinit var expiresIn: TextInput
+
     @Name("New offer label")
     @FindBy(xpath = "//h2[contains(text(),'New offer')]")
     lateinit var newOfferLabel: TextBlock
@@ -64,10 +68,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Unit price label")
     @FindBy(xpath = "//span[contains(text(),' UNIT PRICE ')]")
     lateinit var unitPriceLabel: TextBlock
-
-    @Name("Unit price input")
-    @FindBy(xpath = "//atm-amount-input//input")
-    lateinit var unitPriceInput: TextInput
 
     @Name("Maturity date label")
     @FindBy(xpath = "//span[contains(text(),' Maturity date ')]")
@@ -149,6 +149,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Select asset pair")
     @FindBy(xpath = "//atm-custom-select[@formcontrolname='pair']")
     lateinit var selectAssetPair: AtmSelectLazy
+
+    @Name("CC/IT asset pair")
+    @FindBy(xpath = "//nz-select-item[@title='CC/IT']")
+    lateinit var cCITAssetPair: AtmSelectLazy
 
     @Name("Select amount")
     @FindBy(xpath = "//nz-select[@formcontrolname='baseAmount']")
@@ -269,10 +273,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Accept offer")
     @FindBy(xpath = "//button//span[contains(text(), 'ACCEPT OFFER')]")
     lateinit var acceptOffer: Button
-
-    @Name("Industrial token")
-    @FindBy(xpath = "//*[.//*[contains(text(), 'INDUSTRIAL TOKEN')]]//*[contains(@class, 'current-item__token-name')]")
-    lateinit var industrialToken: Button
 
     @Name("Reset filters")
     @FindBy(xpath = "//button[contains(text(),'RESET')]")
@@ -467,21 +467,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             ) select(baseMaturityDate, maturityDate)
             click(dateFrom)
             click(today)
-        }
-    }
-
-    @Step("Check field Unit price")
-    fun setSumUnitPriceField(sum: String) {
-        e {
-            click(createOffer)
-            sendKeys(unitPriceInput, sum)
-        }
-    }
-
-    @Step("Choose Industrial token")
-    fun choseIndustrialToken() {
-        e {
-            click(industrialToken)
         }
     }
 }

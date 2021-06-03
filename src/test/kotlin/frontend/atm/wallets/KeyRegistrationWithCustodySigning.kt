@@ -27,7 +27,7 @@ class KeyRegistrationWithCustodySigning : BaseTest() {
     private val user2 = Users.ATM_USER_2FA_WITHOUT_WALLET_MTEST02
 
 
-    @ResourceLock(Constants.ATM_USER_2FA_WITHOUT_WALLET_MTEST02)
+    @ResourceLock(Constants.USER_BALANCE_LOCK)
     @TmsLink("ATMCH-4007")
     @Test
     @DisplayName("Wallet/key registration.First wallet with custody signing. ")
@@ -40,7 +40,7 @@ class KeyRegistrationWithCustodySigning : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ATM_USER_2FA_WITH_WALLET_MTEST01)
+    @ResourceLock(Constants.USER_BALANCE_LOCK)
     @TmsLink("ATMCH-4023")
     @Test
     @DisplayName("Wallet /key registration. Custody signing. Creating one more wallet")
