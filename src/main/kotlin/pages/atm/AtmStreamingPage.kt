@@ -150,9 +150,9 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-custom-select[@formcontrolname='pair']")
     lateinit var selectAssetPair: AtmSelectLazy
 
-    @Name("CC/IT asset pair")
-    @FindBy(xpath = "//nz-select-item[@title='CC/IT']")
-    lateinit var cCITAssetPair: AtmSelectLazy
+    @Name("Asset pair")
+    @FindBy(xpath = "(//nz-select-item[contains(@class,'ant-select-selection-item')])[1]")
+    lateinit var assetPairSelector: AtmSelectLazy
 
     @Name("Select amount")
     @FindBy(xpath = "//nz-select[@formcontrolname='baseAmount']")

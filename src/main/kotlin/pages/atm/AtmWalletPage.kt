@@ -614,6 +614,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-wallet-address-select-control//nz-select")
     lateinit var selectWallet: AtmSelect
 
+
     @Name("Limit redemption amount IT")
     @FindBy(xpath = "//div[contains(@class, 'ant-form-item-extra')]//span")
     lateinit var amountRedemptionLimitIt: AtmAmount
