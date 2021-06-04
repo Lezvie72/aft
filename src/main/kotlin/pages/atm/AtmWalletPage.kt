@@ -878,6 +878,20 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
         }
     }
 
+    @Step("Sending funds to another wallet")
+    @Action("Sending funds to another wallet")
+    fun sendingFundsToAnotherWallet(amount: String, secretKey: String, oAuthSecret: String) {
+        e {
+            click(move)
+            sendKeys(amountTransfer, amount)
+            click(submitButton)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+            click(doneButton)
+        }
+    }
+
     @Step("Wait token list and click zero balance")
     @Action("Wait token list and click zero balance")
     fun setDisplayZeroBalance(state: Boolean) {

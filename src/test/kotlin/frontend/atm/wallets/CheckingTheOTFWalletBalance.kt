@@ -18,6 +18,7 @@ import pages.atm.AtmWalletPage
 import utils.Constants
 import utils.helpers.Users
 import utils.helpers.step
+import kotlin.math.roundToLong
 
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
@@ -75,6 +76,7 @@ class CheckingTheOTFWalletBalance : BaseTest() {
 
         with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user1) }) {
             step("The OTF wallet balance remembering") {
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 expectedIDTBalanceFromOTFWallet = balanceTokenUser.amount.toString()
@@ -85,20 +87,22 @@ class CheckingTheOTFWalletBalance : BaseTest() {
                 waitWalletsAreDisplayed()
                 chooseWallet("Main 1")
                 chooseToken(CoinType.CC)
-                e {
-                    step("Sending funds to another wallet") {
-                        click(move)
-                        sendKeys(amountTransfer, amount)
-                        click(submitButton)
-                        sendKeys(privateKey, mainWallet.secretKey)
-                        click(confirmPrivateKeyButton)
-                        submitConfirmationCode(user1.oAuthSecret)
-                        click(doneButton)
-                    }
-                }
+                sendingFundsToAnotherWallet(amount, mainWallet.secretKey, user1.oAuthSecret)
+//                e {
+//                    step("Sending funds to another wallet") {
+//                        click(move)
+//                        sendKeys(amountTransfer, amount)
+//                        click(submitButton)
+//                        sendKeys(privateKey, mainWallet.secretKey)
+//                        click(confirmPrivateKeyButton)
+//                        submitConfirmationCode(user1.oAuthSecret)
+//                        click(doneButton)
+//                    }
+//                }
             }
             step("Check balance in OTF wallet") {
                 openPage<AtmWalletPage> {}
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 expectedIDTBalanceFromOTFWalletAfterSending = balanceTokenUser.amount.toString()
@@ -106,6 +110,7 @@ class CheckingTheOTFWalletBalance : BaseTest() {
             }
             step("Check transfers success") {
                 openPage<AtmWalletPage> {}
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 expectedIDTBalanceFromOTFWalletAfterSendingDouble =
@@ -115,7 +120,7 @@ class CheckingTheOTFWalletBalance : BaseTest() {
                 expectedIDTBalanceFromOTFWalletAfterSendingResult =
                     expectedIDTBalanceFromOTFWalletAfterSendingDouble - expectedIDTBalanceFromOTFWalletDouble
                 val expectedIDTBalanceFromOTFWalletAfterSendingResultDouble: Double =
-                    Math.round(expectedIDTBalanceFromOTFWalletAfterSendingResult * 100.0) / 100.0
+                    (expectedIDTBalanceFromOTFWalletAfterSendingResult * 100.0).roundToLong() / 100.0
                 val amountDouble = amount.toDouble()
                 MatcherAssert.assertThat(
                     expectedIDTBalanceFromOTFWalletAfterSendingResultDouble,
@@ -126,9 +131,11 @@ class CheckingTheOTFWalletBalance : BaseTest() {
                     Matchers.equalTo(heldInOffers)
                 )
             }
-        }
-        with(utils.helpers.openPage<AtmWalletPage>(driver)) {
+//        }
+//        with(utils.helpers.openPage<AtmWalletPage>(driver)) {
             step("The OTF wallet balance checking before offer selling") {
+                openPage<AtmWalletPage> {}
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 oTFWalletCCTokenBalanceBeforeSell = balanceTokenUser.amount.toString()
@@ -137,19 +144,20 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         }
         with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
             step("Check 'Sell' offer is successfully created (start)") {
-                e {
-                    click(createOffer)
-                    click(iWantToSellAsset)
-                    wait {
-                        until("Active element loaded", 15) {
-                            check {
-                                isElementPresented(assetPairSelector)
-                            }
-                        }
-                    }
-                    sendKeys(unitPrice, amount)
-                    sendKeys(expiresIn, "1")
-                }
+                checkSellOfferIsSuccessfullyCreatedStart(amount)
+//                e {
+//                    click(createOffer)
+//                    click(iWantToSellAsset)
+//                    wait {
+//                        until("Active element loaded", 15) {
+//                            check {
+//                                isElementPresented(assetPairSelector)
+//                            }
+//                        }
+//                    }
+//                    sendKeys(unitPrice, amount)
+//                    sendKeys(expiresIn, "1")
+//                }
             }
         }
         with(AtmWalletPage(driver)) {
@@ -162,16 +170,18 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         }
         with(AtmStreamingPage(driver)) {
             step("Check 'Sell' offer is successfully created (end)") {
-                e {
-                    click(placeOffer)
-                    sendKeys(privateKey, user1.otfWallet.secretKey)
-                    click(confirmPrivateKeyButton)
-                    submitConfirmationCode(user1.oAuthSecret)
-                }
+                checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+//                e {
+//                    click(placeOffer)
+//                    sendKeys(privateKey, user1.otfWallet.secretKey)
+//                    click(confirmPrivateKeyButton)
+//                    submitConfirmationCode(user1.oAuthSecret)
+//                }
             }
         }
         with(utils.helpers.openPage<AtmWalletPage>(driver)) {
             step("The OTF wallet balance checking after offer selling") {
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 oTFWalletCCTokenBalanceAfterSell = balanceTokenUser.amount.toString()
@@ -183,22 +193,24 @@ class CheckingTheOTFWalletBalance : BaseTest() {
                 oTFWalletCCTokenBalanceOfferBeforeSellDouble = oTFWalletCCTokenBalanceOfferBeforeSell.toDouble()
                 oTFWalletCCTokenBalanceAfterSellResult = oTFWalletCCTokenBalanceBeforeSellDouble - oTFWalletCCTokenBalanceAfterSellDouble
                 val oTFWalletCCTokenBalanceAfterSellResultDouble: Double =
-                    Math.round(oTFWalletCCTokenBalanceAfterSellResult * 100.0) / 100.0
+                    (oTFWalletCCTokenBalanceAfterSellResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
                     oTFWalletCCTokenBalanceAfterSellResultDouble,
                     Matchers.equalTo(amountToSendValueBeforeSellDouble)
                 )
                 oTFWalletCCTokenBalanceOfferAfterSellResult = oTFWalletCCTokenBalanceOfferAfterSellDouble - oTFWalletCCTokenBalanceOfferBeforeSellDouble
                 val oTFWalletCCTokenBalanceOfferAfterSellResultDouble: Double =
-                    Math.round(oTFWalletCCTokenBalanceOfferAfterSellResult * 100.0) / 100.0
+                    (oTFWalletCCTokenBalanceOfferAfterSellResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
                     oTFWalletCCTokenBalanceOfferAfterSellResultDouble,
                     Matchers.equalTo(amountToSendValueBeforeSellDouble)
                 )
             }
-        }
-        with(utils.helpers.openPage<AtmWalletPage>(driver)) {
+//        }
+//        with(utils.helpers.openPage<AtmWalletPage>(driver)) {
             step("The OTF wallet balance checking before offer buying") {
+                openPage<AtmWalletPage> {}
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 oTFWalletCCTokenBalanceBeforeBuy = balanceTokenUser.amount.toString()
@@ -207,19 +219,20 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         }
         with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
             step("Check 'Buy' offer is successfully created (start)") {
-                e {
-                    click(createOffer)
-                    click(iWantToBuyAsset)
-                    wait {
-                        until("Active element loaded", 15) {
-                            check {
-                                isElementPresented(assetPairSelector)
-                            }
-                        }
-                    }
-                    sendKeys(unitPrice, amount)
-                    sendKeys(expiresIn, "1")
-                }
+                checkBuyOfferIsSuccessfullyCreatedStart(amount)
+//                e {
+//                    click(createOffer)
+//                    click(iWantToBuyAsset)
+//                    wait {
+//                        until("Active element loaded", 15) {
+//                            check {
+//                                isElementPresented(assetPairSelector)
+//                            }
+//                        }
+//                    }
+//                    sendKeys(unitPrice, amount)
+//                    sendKeys(expiresIn, "1")
+//                }
             }
         }
         with(AtmWalletPage(driver)) {
@@ -232,16 +245,18 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         }
         with(AtmStreamingPage(driver)) {
             step("Check 'Buy' offer is successfully created (end)") {
-                e {
-                    click(placeOffer)
-                    sendKeys(privateKey, user1.otfWallet.secretKey)
-                    click(confirmPrivateKeyButton)
-                    submitConfirmationCode(user1.oAuthSecret)
-                }
+                checkBuyOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+//                e {
+//                    click(placeOffer)
+//                    sendKeys(privateKey, user1.otfWallet.secretKey)
+//                    click(confirmPrivateKeyButton)
+//                    submitConfirmationCode(user1.oAuthSecret)
+//                }
             }
         }
         with(utils.helpers.openPage<AtmWalletPage>(driver)) {
             step("The OTF wallet balance checking after offer selling") {
+                waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
                 oTFWalletCCTokenBalanceAfterBuy = balanceTokenUser.amount.toString()
@@ -253,14 +268,14 @@ class CheckingTheOTFWalletBalance : BaseTest() {
                 oTFWalletCCTokenBalanceOfferBeforeBuyDouble = oTFWalletCCTokenBalanceOfferBeforeBuy.toDouble()
                 oTFWalletCCTokenBalanceAfterBuyResult = oTFWalletCCTokenBalanceBeforeBuyDouble - oTFWalletCCTokenBalanceAfterBuyDouble
                 val oTFWalletCCTokenBalanceAfterBuyResultDouble: Double =
-                    Math.round(oTFWalletCCTokenBalanceAfterBuyResult * 100.0) / 100.0
+                    (oTFWalletCCTokenBalanceAfterBuyResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
                     oTFWalletCCTokenBalanceAfterBuyResultDouble,
                     Matchers.equalTo(amountToSendValueBeforeBuyDouble)
                 )
                 oTFWalletCCTokenBalanceOfferAfterBuyResult = oTFWalletCCTokenBalanceOfferAfterBuyDouble - oTFWalletCCTokenBalanceOfferBeforeBuyDouble
                 val oTFWalletCCTokenBalanceOfferAfterBuyResultDouble: Double =
-                    Math.round(oTFWalletCCTokenBalanceOfferAfterBuyResult * 100.0) / 100.0
+                    (oTFWalletCCTokenBalanceOfferAfterBuyResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
                     oTFWalletCCTokenBalanceOfferAfterBuyResultDouble,
                     Matchers.equalTo(amountToSendValueBeforeBuyDouble)

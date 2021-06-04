@@ -469,4 +469,59 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             click(today)
         }
     }
+
+    @Step("Check 'Sell' offer is successfully created (start)")
+    fun checkSellOfferIsSuccessfullyCreatedStart(amount: String) {
+        e {
+            click(createOffer)
+            click(iWantToSellAsset)
+//            wait {
+//                until("Active element loaded", 15) {
+            check {
+                isElementPresented(assetPairSelector)
+            }
+//                }
+//            }
+            sendKeys(unitPrice, amount)
+            sendKeys(expiresIn, "1")
+        }
+    }
+
+    @Step("Check 'Sell' offer is successfully created (end)")
+    fun checkSellOfferIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
+        e {
+            click(placeOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
+
+    @Step("Check 'Buy' offer is successfully created (start)")
+    fun checkBuyOfferIsSuccessfullyCreatedStart(amount: String) {
+        e {
+            click(createOffer)
+            click(iWantToBuyAsset)
+//            wait {
+//                until("Active element loaded", 15) {
+            check {
+                isElementPresented(assetPairSelector)
+            }
+//                }
+//            }
+            sendKeys(unitPrice, amount)
+            sendKeys(expiresIn, "1")
+        }
+    }
+
+    @Step("Check 'Buy' offer is successfully created (end)")
+    fun checkBuyOfferIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
+        e {
+            click(placeOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
+
 }
