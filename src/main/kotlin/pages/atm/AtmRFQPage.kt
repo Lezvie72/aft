@@ -440,12 +440,4 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
         assert { elementPresented(textMessage) }
         assertThat("Order", textMessage.text, Matchers.`is`(message))
     }
-
-    @Step("Fill field Select amount")
-    fun setSumSelectAmountField(sum: String) {
-        e {
-            click(createRequest)
-            sendKeys(amountToSend, sum)
-        }
-    }
 }

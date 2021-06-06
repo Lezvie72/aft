@@ -57,7 +57,7 @@ open class BaseTest {
 
         fun newDriver(): ChromeDriver {
             val options = ChromeOptions().apply {
-                //addArguments("--headless")
+//                addArguments("--headless")
                 addArguments("--window-size=1920,1080")
                 addArguments("--disable-dev-shm-usage")
                 addArguments("--no-sandbox")

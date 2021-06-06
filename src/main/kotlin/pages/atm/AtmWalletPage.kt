@@ -196,6 +196,18 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-property-value//span[contains(text(), 'Available')]//ancestor::div[3]//atm-amount[1]")
     lateinit var balanceTokenUser: AtmAmount
 
+    @Name("Held in offers")
+    @FindBy(xpath = "//div//span[contains(text(), 'Held in offers')]//ancestor::div[3]//atm-amount[1]")
+    lateinit var heldInOffersUser: AtmAmount
+
+    @Name("Amount to send")
+    @FindBy(xpath = "//div//span[contains(text(), 'AMOUNT TO SEND')]//ancestor::div[3]//atm-amount[1]")
+    lateinit var amountToSendValue: AtmAmount
+
+    @Name("Transaction fee")
+    @FindBy(xpath = "//div//span[contains(text(), ' Transaction fee ')]//ancestor::div[3]//atm-amount[1]")
+    lateinit var transactionFeeValue: AtmAmount
+
     @Name("Held in Orders/Offers")
     @FindBy(xpath = "//atm-property-value//span[contains(text(), 'Held in orders')]//ancestor::div[3]//atm-amount | //atm-property-value//span[contains(text(), 'Held in offers')]//ancestor::atm-property-value//atm-amount ")
     lateinit var heldInOrders: AtmAmount
@@ -215,14 +227,14 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
 //    @FindBy(xpath = "//a[contains(text(), 'Fractional Token')]")
     lateinit var fractionalizedTokenButton: Button
 
+    @Name("Available balance")
+    @FindBy(xpath = "//div//span[contains(text(), 'AVAILABLE BALANCE')]//ancestor::div[3]//atm-amount[1]")
+    lateinit var availableBalanceValue: AtmAmount
+
     @Name("Industrial token")
     @FindBy(xpath = "//a[contains(@href, 'IT')]")
 //    @FindBy(xpath = "//a[contains(text(), 'Industrial Token')]")
     lateinit var industrialTokenButton: Button
-
-    @Name("Industrial token")
-    @FindBy(xpath = "//a[contains(text(), 'IDT')]")
-    lateinit var industrialTokenButtonAlt: Button
 
     @Name("Fiat token")
     @FindBy(xpath = "//a[contains(@href, 'FIAT')]")
@@ -345,10 +357,6 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Amount")
     @FindBy(xpath = "//atm-amount-input[@formcontrolname='amount']//input")
     lateinit var amountTransfer: TextInput
-
-    @Name("AmountRedeem")
-    @FindBy(xpath = "//atm-amount-input//input")
-    lateinit var amountRedeem: TextInput
 
     @Name("Add bank details")
     @FindBy(xpath = "//a[@href='/profile/bank-accounts']")
@@ -478,14 +486,6 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Limit amount")
     @FindBy(xpath = "//span[contains(@class, 'text-grey')]")
     lateinit var amountLimit: AtmAmount
-
-    @Name("Token quantity to buy")
-    @FindBy(xpath = "//atm-amount-input//input")
-    lateinit var tokenQuantityToBuy: AtmAmount
-
-    @Name("Token quantity to receive")
-    @FindBy(xpath = "//atm-amount-input//input")
-    lateinit var tokenQuantityToReceive: AtmAmount
 
     @Name("Token quantity requested to redeem")
     @FindBy(xpath = ".//atm-etc-redemption//span[contains(text(),'Token quantity requested to redeem')]/ancestor::atm-property-value//atm-amount")
@@ -850,38 +850,17 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
         }
     }
 
-    @Step("Go to transfer field of selected token and set required sum")
-    @Action("Go to transfer field of selected token and set required sum")
-    fun setSumTransferFieldIT(sum: String) {
+    @Step("Sending funds to another wallet")
+    @Action("Sending funds to another wallet")
+    fun sendingFundsToAnotherWallet(amount: String, secretKey: String, oAuthSecret: String) {
         e {
-            click(industrialTokenButtonAlt)
-            click(transfer)
-            sendKeys(amountTransfer, sum)
-        }
-    }
-
-    @Step("Go to Redeem field of selected token and set required sum")
-    @Action("Go to Redeem field of selected token and set required sum")
-    fun setSumRedeemFieldIT(sum: String) {
-        e {
-            click(industrialTokenButtonAlt)
-            click(redemption)
-            sendKeys(amountRedeem, sum)
-        }
-    }
-
-    @Step("Checking field for decimal count")
-    fun checkTransferFieldEightDigitsDecimal() {
-        check {
-            assertTrue(
-                "Entered amount is not displayed!",
-                isElementPresented(By.xpath("//atm-amount-input//span[contains(@class, 'decimal')]"))
-            )
-        }
-        val numberOfDigitsAfterDecimalPoint: Int =
-            findElement(By.xpath("//atm-amount-input//span[contains(@class, 'decimal')]")).text.removePrefix(".").length
-        check {
-            assertTrue("Number of digits after decimal point is not equal 8!", numberOfDigitsAfterDecimalPoint == 8)
+            click(move)
+            sendKeys(amountTransfer, amount)
+            click(submitButton)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+            click(doneButton)
         }
     }
 
@@ -1308,21 +1287,5 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
 
     fun generateLocatorForMaturityButton(maturityDateButtonFirst: String, maturityDateButtonSecond: String): String {
         return "//nz-radio-group[@formcontrolname='subIssues']//label//span[contains(text(),'${maturityDateButtonFirst}')] | //nz-radio-group[@formcontrolname='subIssues']//label//span[contains(text(),'${maturityDateButtonSecond}')]"
-    }
-
-    @Step("Fill field Token quantity to buy")
-    fun setSumTokenQuantityToBuyField(sum: String) {
-        e {
-            click(newOrderButton)
-            sendKeys(tokenQuantityToBuy, sum)
-        }
-    }
-
-    @Step("Fill field Token quantity to receive")
-    fun setSumTokenQuantityToReceiveField(sum: String) {
-        e {
-            click(newOrderButton)
-            sendKeys(tokenQuantityToReceive, sum)
-        }
     }
 }

@@ -59,10 +59,6 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-collapse-panel")
     lateinit var detailsButton: Button
 
-    @Name("Currency token")
-    @FindBy(xpath = "//*[.//*[contains(text(), 'CURRENCY TOKEN')]]//*[contains(@class, 'current-item__token-name')]")
-    lateinit var currencyToken: Button
-
     @Name("Details Text")
     @FindBy(xpath = "//atm-ind-info-detail")
     lateinit var detailsText: TextBlock
@@ -258,14 +254,6 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
             }
         } catch (e: TimeoutException) {
             error("Couldn't find token with name ${coinType.tokenName}. Expected token name to be equal to name in Admin Token Panel")
-        }
-    }
-
-
-    @Step("Choose CURRENCY COIN")
-    fun choseCurrencyToken() {
-        e {
-            click(currencyToken)
         }
     }
 }

@@ -242,8 +242,14 @@ class Users {
         // Atm user: OAuth, Manual signature, autotestMain
         val ATM_USER_2FA_MANUAL_SIG_MAIN_WALLET = when (Environment.stand) {
             DEVELOP -> UserWithMainWallet2FA(
-                mainWallet = MainWallet(),
-                oAuthSecret = ""
+                "aft.uat.sdex+atm_oauth_main_1@gmail.com",
+                "NS3VLQMHH4BYCOJM",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "b8cce0fe925edfdb715664f4791437107f74e1d580e11cfebc7eb925fa4c8b71",
+                    secretKey = "3e79dfe2016cd08036c172ed8d2a254042a1c02121fcec182ee60bd57e44e87eb8cce0fe925edfdb715664f4791437107f74e1d580e11cfebc7eb925fa4c8b71"
+
+                )
             )
             RELEASE -> UserWithMainWallet2FA(
                 "aft.uat.sdex+atm_oauth_main_1@gmail.com",
@@ -2750,9 +2756,9 @@ class Users {
 
                 ),
                 mainWallet = MainWallet(
-                    name = "Main 2",
-                    publicKey = "0e913400b9464cfd6f450f2f99d785a68e1f668d99b58a6db229060020cf3a05",
-                    secretKey = "e68e51cf6e0b94391d874c40b00db6d01c2166b575f70c8461ca07717ad7f91e0e913400b9464cfd6f450f2f99d785a68e1f668d99b58a6db229060020cf3a05"
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
                 )
             )
 //            RELEASE -> UserWithMainWalletAndOtf(
@@ -2793,6 +2799,65 @@ class Users {
             )
         }
 
+        val ATM_USER_2FA_WITH_WALLET_MTEST03 = when (Environment.stand) {
+            DEVELOP -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+testrel888@gmail.com",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+//            RELEASE -> UserWithMainWalletAndOtf(
+            RELEASE -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+testrel888@gmail.com",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "502962b57f850f7b8960d1bacc62ee4e7e7d41be848aa4e2ee16a3254b7150a8",
+                    secretKey = "e1152a3175a8233ec2d38a2e735966a9453353054a7e662e0bec98ec85c3e8e0502962b57f850f7b8960d1bacc62ee4e7e7d41be848aa4e2ee16a3254b7150a8"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "e216e7b635dc0002e276083d24c7f388ac83266120e21d04ace2ff7d9afd64ba",
+                    secretKey = "f7e71b0164d3468c1175eed57bf1f3bca8b1ae898a9e356a153d1c0a939c9061e216e7b635dc0002e276083d24c7f388ac83266120e21d04ace2ff7d9afd64ba"
+                ),
+                castodian = ""
+            )
+            PREPROD -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+testrel888@gmail.com",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+            PROD -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            SHARED -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+        }
 
         val ATM_ADMIN = when (Environment.stand) {
             DEVELOP -> DefaultUserWithCustomPassword(

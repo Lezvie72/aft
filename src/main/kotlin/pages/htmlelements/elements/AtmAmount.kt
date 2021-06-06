@@ -15,6 +15,9 @@ class AtmAmount(wrappedElement: WebElement) : TypifiedElement(wrappedElement) {
     val amount: BigDecimal
         get() = getAmountMethod()
 
+    val heldInOffers: BigDecimal
+        get() = getAmountMethod()
+
     val textBody: String
         get() = getAmountMethodAsString()
 
