@@ -83,6 +83,7 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestStreamingAndBlocktradeOffersCanc
         var oTFWalletCCTokenBalanceOfferAfterBuyResult: Double = 0.0
         var oTFWalletCCTokenBalanceAfterBuy: String = ""
         var oTFWalletCCTokenBalanceOfferAfterBuy: String = ""
+        val amount = "0.01"
         with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user1) }) {
             step("The OTF wallet balance remembering") {
                 waitWalletsAreDisplayed()
@@ -93,15 +94,13 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestStreamingAndBlocktradeOffersCanc
             }
             with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
                 step("Check 'Sell' offer is successfully created (start)") {
-//                    checkSellOfferIsSuccessfullyCreatedStart(amount)
+                    checkSellOfferIsSuccessfullyCreatedStart(amount)
                 }
             }
             with(AtmWalletPage(driver)) {
                 step("Values remembering amount and fee") {
                     Thread.sleep(5000)
-//                amountToReceiveValueBeforeSell = amountToReceiveValue.amount.toString()
                     amountToSendValueBeforeSellDouble = amountToSendValue.amount.toDouble()
-//                transactionFeeValueBeforeSell = transactionFeeValue.amount.toString()
                 }
             }
             with(AtmStreamingPage(driver)) {
