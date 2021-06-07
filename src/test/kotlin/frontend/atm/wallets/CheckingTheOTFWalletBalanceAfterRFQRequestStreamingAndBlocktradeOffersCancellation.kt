@@ -84,7 +84,25 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestStreamingAndBlocktradeOffersCanc
         var oTFWalletCCTokenBalanceAfterBuy: String = ""
         var oTFWalletCCTokenBalanceOfferAfterBuy: String = ""
         val amount = "0.01"
-        with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user1) }) {
+        with(utils.helpers.openPage<AtmStreamingPage>(driver) { submit(user1) } ) {
+            step("Check 'Sell' RFQ is successfully created (start)") {
+                checkSellRFQIsSuccessfullyCreatedStart(amountVal)
+            }
+        }
+        with(AtmWalletPage(driver)) {
+            step("Values remembering available balance") {
+                Thread.sleep(5000)
+                availableBalanceValueBeforeSellDouble = availableBalanceValue.amount.toDouble()
+            }
+        }
+        with(AtmStreamingPage(driver)) {
+            step("Check 'Sell' RFQ is successfully created (end)") {
+                checkSellRFQIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+            }
+        }
+        utils.helpers.openPage<AtmWalletPage>(driver).logout()
+
+        with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user3) }) {
             step("The OTF wallet balance remembering") {
                 waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
@@ -92,22 +110,28 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestStreamingAndBlocktradeOffersCanc
                 expectedCCBalanceFromOTFWalletDouble = balanceTokenUser.amount.toDouble()
                 expectedCCBalanceFromOTFWalletOffer = heldInOffersUser.heldInOffers.toDouble()
             }
-            with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
-                step("Check 'Sell' offer is successfully created (start)") {
-                    checkSellOfferIsSuccessfullyCreatedStart(amount)
-                }
-            }
-            with(AtmWalletPage(driver)) {
-                step("Values remembering amount and fee") {
-                    Thread.sleep(5000)
-                    amountToSendValueBeforeSellDouble = amountToSendValue.amount.toDouble()
-                }
-            }
-            with(AtmStreamingPage(driver)) {
-                step("Check 'Sell' offer is successfully created (end)") {
-                    checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
-                }
+        }
+        with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
+            step("Check 'Sell' offer is successfully created (start)") {
+                checkSellOfferIsSuccessfullyCreatedStart(amount)
             }
         }
+        with(AtmWalletPage(driver)) {
+            step("Values remembering amount and fee") {
+                Thread.sleep(5000)
+                amountToSendValueBeforeSellDouble = amountToSendValue.amount.toDouble()
+            }
+        }
+        with(AtmStreamingPage(driver)) {
+            step("Check 'Sell' offer is successfully created (end)") {
+                checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+            }
+        }
+        with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
+            step("Confirm RFQ") {
+                confirmRFQ(amountVal, user3.otfWallet.secretKey, user3.oAuthSecret)
+            }
+        }
+
     }
 }
