@@ -8,7 +8,6 @@ import models.user.interfaces.SimpleWallet
 import models.user.interfaces.User
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.Assert
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -482,51 +481,5 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
     fun isOfferExist(amountReceive: BigDecimal, table: AtmTable<P2PItem>): Boolean {
         table.find { it.amountToSend == amountReceive } ?: return false
         return true
-    }
-
-    @Step("Check fields Amount to send and Amount to receive")
-    fun setSumSelectAmountFields(sum: String) {
-        e {
-            click(createBlockTrade)
-            sendKeys(amountToSend, sum)
-            sendKeys(amountToReceive, sum)
-        }
-    }
-
-    @Step("Checking field for decimal count")
-    fun checkTransferFieldEightDigitsDecimal() {
-        check {
-            Assert.assertTrue(
-                "Entered amount is not displayed!",
-                isElementPresented(By.xpath("//atm-amount-input[@formcontrolname=\"baseAmount\"]//span[contains(@class, 'decimal')]"))
-            )
-        }
-        val numberOfDigitsAfterDecimalPoint: Int =
-            findElement(By.xpath("//atm-amount-input[@formcontrolname=\"baseAmount\"]//span[contains(@class, 'decimal')]")).text.removePrefix(
-                "."
-            ).length
-        check {
-            Assert.assertTrue(
-                "Number of digits after decimal point is not equal 8!",
-                numberOfDigitsAfterDecimalPoint == 8
-            )
-        }
-
-        check {
-            Assert.assertTrue(
-                "Entered amount is not displayed!",
-                isElementPresented(By.xpath("//atm-amount-input[@formcontrolname=\"quoteAmount\"]//span[contains(@class, 'decimal')]"))
-            )
-        }
-        val numberOfDigitsAfterDecimalPoint1: Int =
-            findElement(By.xpath("//atm-amount-input[@formcontrolname=\"quoteAmount\"]//span[contains(@class, 'decimal')]")).text.removePrefix(
-                "."
-            ).length
-        check {
-            Assert.assertTrue(
-                "Number of digits after decimal point is not equal 8!",
-                numberOfDigitsAfterDecimalPoint1 == 8
-            )
-        }
     }
 }

@@ -37,6 +37,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//div[contains(text(),'Invalid key')] | //div[contains(text(),'Wrong code')]")
     lateinit var invalidOrWrongCode: TextBlock
 
+    @Name("Expires in")
+    @FindBy(xpath = "//atm-expires-control//nz-input-number//input")
+    lateinit var expiresIn: TextInput
+
     @Name("New offer label")
     @FindBy(xpath = "//h2[contains(text(),'New offer')]")
     lateinit var newOfferLabel: TextBlock
@@ -64,10 +68,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Unit price label")
     @FindBy(xpath = "//span[contains(text(),' UNIT PRICE ')]")
     lateinit var unitPriceLabel: TextBlock
-
-    @Name("Unit price input")
-    @FindBy(xpath = "//atm-amount-input//input")
-    lateinit var unitPriceInput: TextInput
 
     @Name("Maturity date label")
     @FindBy(xpath = "//span[contains(text(),' Maturity date ')]")
@@ -126,6 +126,42 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//a[@href='/trading/streaming/outgoing/create']")
     lateinit var createOffer: Button
 
+    @Name("Create RFQ")
+    @FindBy(xpath = "//a[@href='/trading/rfq/requests/create']")
+    lateinit var createRFQ: Button
+
+    @Name("View RFQ")
+    @FindBy(xpath = "//a[@href='/trading/rfq/incoming']")
+    lateinit var viewRFQ: Button
+
+    @Name("View offers")
+    @FindBy(xpath = "//span[contains(text(), 'VIEW OFFERS')]")
+    lateinit var viewOffers: Button
+
+    @Name("Open chat")
+    @FindBy(xpath = "//span[contains(text(), 'OPEN CHAT')]")
+    lateinit var openChat: Button
+
+    @Name("Requests with offers")
+    @FindBy(xpath = "//div[./span[contains(text(), 'Show only requests with offers')]]//button/span[1]")
+    lateinit var requestsWithOffers: AtmRadio
+
+    @Name("Create an offer")
+    @FindBy(xpath = "//a[contains(text(), 'CREATE AN OFFER')]")
+    lateinit var createAnOffer: Button
+
+    @Name("Make offer")
+    @FindBy(xpath = "//span[contains(text(), 'MAKE OFFER')]")
+    lateinit var makeOffer: Button
+
+    @Name("My requests")
+    @FindBy(xpath = "//a[@href='/trading/rfq/requests']")
+    lateinit var myRequests: Button
+
+    @Name("RFQ tab")
+    @FindBy(xpath = "//a[@href='/trading/rfq']")
+    lateinit var rFQTab: Button
+
     @Name("I want to buy asset")
     @FindBy(xpath = "//nz-radio-group[@formcontrolname='direction']//span[contains(text(), ' I want to buy asset ')]")
     lateinit var iWantToBuyAsset: AtmRadio
@@ -154,6 +190,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//nz-select[@formcontrolname='baseAmount']")
     lateinit var selectAmount: AtmSelect
 
+    @Name("Asset pair")
+    @FindBy(xpath = "(//nz-select-item[contains(@class,'ant-select-selection-item')])[1]")
+    lateinit var assetPairSelector: AtmSelectLazy
+
     @Name("Select fee")
     @FindBy(xpath = "//label[contains(text(),'Select fee option')]//ancestor::nz-form-item//nz-select")
     lateinit var selectFee: AtmSelect
@@ -161,6 +201,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Unit price")
     @FindBy(xpath = "//atm-amount-input[@formcontrolname='price']//input")
     lateinit var unitPrice: TextInput
+
+    @Name("Select amount")
+    @FindBy(xpath = "(//div[contains(@class,'ant-input-number-input-wrap')]/input)[1]")
+    lateinit var selectAmountInput: TextInput
 
     @Name("Select time")
     @FindBy(css = "atm-expires-control nz-select")
@@ -173,6 +217,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Place offer")
     @FindBy(xpath = "//span[contains(text(),' PLACE OFFER ')]")
     lateinit var placeOffer: Button
+
+    @Name("Create request")
+    @FindBy(xpath = "//span[contains(text(),' CREATE REQUEST ')]")
+    lateinit var createRequest: Button
 
     @Name("My offer")
     @FindBy(xpath = "//a[contains(text(),' MY OFFERS ')]")
@@ -269,10 +317,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Accept offer")
     @FindBy(xpath = "//button//span[contains(text(), 'ACCEPT OFFER')]")
     lateinit var acceptOffer: Button
-
-    @Name("Industrial token")
-    @FindBy(xpath = "//*[.//*[contains(text(), 'INDUSTRIAL TOKEN')]]//*[contains(@class, 'current-item__token-name')]")
-    lateinit var industrialToken: Button
 
     @Name("Reset filters")
     @FindBy(xpath = "//button[contains(text(),'RESET')]")
@@ -470,18 +514,110 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
         }
     }
 
-    @Step("Check field Unit price")
-    fun setSumUnitPriceField(sum: String) {
+    @Step("Check 'Sell' offer is successfully created (start)")
+    fun checkSellOfferIsSuccessfullyCreatedStart(amount: String) {
         e {
             click(createOffer)
-            sendKeys(unitPriceInput, sum)
+            click(iWantToSellAsset)
+//            wait {
+//                until("Active element loaded", 15) {
+            check {
+                isElementPresented(assetPairSelector)
+            }
+//                }
+//            }
+            sendKeys(unitPrice, amount)
+            sendKeys(expiresIn, "1")
         }
     }
 
-    @Step("Choose Industrial token")
-    fun choseIndustrialToken() {
+    @Step("Check 'Sell' offer is successfully created (end)")
+    fun checkSellOfferIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
         e {
-            click(industrialToken)
+            click(placeOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
+
+    @Step("Check 'Buy' offer is successfully created (start)")
+    fun checkBuyOfferIsSuccessfullyCreatedStart(amount: String) {
+        e {
+            click(createOffer)
+            click(iWantToBuyAsset)
+//            wait {
+//                until("Active element loaded", 15) {
+            check {
+                isElementPresented(assetPairSelector)
+            }
+//                }
+//            }
+            sendKeys(unitPrice, amount)
+            sendKeys(expiresIn, "1")
+        }
+    }
+
+    @Step("Check 'Buy' offer is successfully created (end)")
+    fun checkBuyOfferIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
+        e {
+            click(placeOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
+
+    @Step("Check 'Sell' RFQ is successfully created (start)")
+    fun checkSellRFQIsSuccessfullyCreatedStart(amount: String) {
+        e {
+            click(rFQTab)
+            click(createRFQ)
+            click(iWantToSellAsset)
+            check {
+                isElementPresented(assetPairSelector)
+            }
+            sendKeys(selectAmountInput, amount)
+            sendKeys(expiresIn, "1")
+            click(createRequest)
+        }
+    }
+    @Step("Check 'Sell' RFQ is successfully created (end)")
+    fun checkSellRFQIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
+        e {
+            click(createRequest)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
+    @Step("Confirm RFQ")
+    fun confirmRFQ(amount: String, secretKey: String, oAuthSecret: String) {
+        e {
+            click(rFQTab)
+            click(viewRFQ)
+            click(createAnOffer)
+            sendKeys(unitPrice, amount)
+            sendKeys(expiresIn, "1")
+            click(makeOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
+    @Step("Check 'Sell' RFQ is successfully accepted (start)")
+    fun checkSellRFQIsSuccessfullyAcceptedStart(secretKey: String, oAuthSecret: String) {
+        e {
+            click(rFQTab)
+            click(viewRFQ)
+            click(myRequests)
+            click(requestsWithOffers)
+            click(viewOffers)
+            click(openChat)
+            click(acceptOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
         }
     }
 }
