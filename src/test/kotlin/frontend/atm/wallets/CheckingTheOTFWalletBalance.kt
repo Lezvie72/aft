@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
@@ -26,7 +27,10 @@ import kotlin.math.roundToLong
 @Story("Wallet/Checking the OTF wallet balance")
 class CheckingTheOTFWalletBalance : BaseTest() {
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_2FA_WITH_WALLET_MTEST01),
+        ResourceLock(Constants.ATM_USER_2FA_WITHOUT_WALLET_MTEST02)
+    )
     @TmsLink("ATMCH-2501")
     @Test
     @DisplayName("Checking the OTF wallet balance (held by Streaming offers)")
