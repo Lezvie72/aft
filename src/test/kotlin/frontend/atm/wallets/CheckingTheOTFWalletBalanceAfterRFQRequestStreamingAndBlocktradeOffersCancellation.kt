@@ -12,6 +12,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
+import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
 import utils.helpers.Users
@@ -58,7 +59,24 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestStreamingAndBlocktradeOffersCanc
                 expectedCCBalanceFromOTFWalletDouble = balanceTokenUser.amount.toDouble()
                 expectedCCBalanceFromOTFWalletOffer = heldInOffersUser.heldInOffers.toDouble()
             }
-
+            with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
+                step("Check 'Sell' offer is successfully created (start)") {
+                    checkSellOfferIsSuccessfullyCreatedStart(amount)
+                }
+            }
+            with(AtmWalletPage(driver)) {
+                step("Values remembering amount and fee") {
+                    Thread.sleep(5000)
+//                amountToReceiveValueBeforeSell = amountToReceiveValue.amount.toString()
+                    amountToSendValueBeforeSellDouble = amountToSendValue.amount.toDouble()
+//                transactionFeeValueBeforeSell = transactionFeeValue.amount.toString()
+                }
+            }
+            with(AtmStreamingPage(driver)) {
+                step("Check 'Sell' offer is successfully created (end)") {
+                    checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+                }
+            }
         }
     }
 }
