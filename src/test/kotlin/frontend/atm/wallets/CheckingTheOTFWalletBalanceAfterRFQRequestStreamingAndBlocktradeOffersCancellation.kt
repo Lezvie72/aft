@@ -124,7 +124,7 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestStreamingAndBlocktradeOffersCanc
         }
         with(AtmStreamingPage(driver)) {
             step("Check 'Sell' offer is successfully created (end)") {
-                checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+                checkSellOfferIsSuccessfullyCreatedEnd(user3.otfWallet.secretKey, user3.oAuthSecret)
             }
         }
         with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
