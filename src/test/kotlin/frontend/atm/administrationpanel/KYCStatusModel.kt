@@ -9,16 +9,20 @@ import models.user.classes.DefaultUser
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.*
 import pages.atm.AtmEmployeesPage.Roles.MANAGER
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")

@@ -15,24 +15,29 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmP2PPage
 import pages.atm.AtmP2PPage.ExpireType
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Blocktrade"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("P2P Blocktrade")
 @Story("View of received offers")
 class ViewOfReceivedOffers : BaseTest() {
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLocks(
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
+    )
     @TmsLink("ATMCH-930")
     @Test
     @DisplayName("P2P. Check incoming offers. Good till cancel offer")

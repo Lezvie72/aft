@@ -8,6 +8,8 @@ import io.qameta.allure.TmsLink
 import models.CoinType.IT
 import org.apache.commons.lang.RandomStringUtils.randomNumeric
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmIssuancesPage.StatusType.DECLINE
@@ -15,18 +17,19 @@ import pages.atm.AtmMarketplacePage
 import pages.atm.AtmOrdersPage
 import pages.atm.AtmProfilePage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Display user orders for industrial tokens in orders section")
 class DisplayUserOrdersForIndustrialTokensInOrdersSection : BaseTest() {
 
-    @ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+    @ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     @TmsLink("ATMCH-3291")
     @Test
     @DisplayName("Industrial tokens. Receive order in orders section in status Submitted")

@@ -5,13 +5,12 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.AtmLoginPage
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.OAuth
 import utils.helpers.Users
@@ -20,6 +19,7 @@ import utils.helpers.step
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+@Tags(Tag(TagNames.Epic.ONBOARDING.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Onboarding")

@@ -8,17 +8,17 @@ import io.qameta.allure.TmsLink
 import models.CompanyDetails.Companion.generate
 import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmAdminCompaniesPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
@@ -349,6 +349,59 @@ class CompanyInformation : BaseTest()  {
                 elementPresented(saveInEditForm)
                 elementPresented(cancelButton)
             }
+        }
+    }
+
+    @ResourceLock(Constants.USER_FOR_BANK_ACC_TWO)
+    @TmsLink("ATMCH-5960")
+    @Test
+    @DisplayName("Admin panel. Company name. Special characters")
+    fun companyNameSpecialCharacters() {
+        val specialCharacters = "&."
+        val errorText = "This field can only use latin letters"
+        with(openPage<AtmAdminCompaniesPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            assert {
+                elementContainingTextPresented("Id")
+                elementContainingTextPresented("Short name")
+                elementContainingTextPresented("Registration country")
+                elementContainingTextPresented("Address")
+                elementContainingTextPresented("Legal entity")
+                elementContainingTextPresented("Issuer")
+                elementContainingTextPresented("Validator")
+                elementContainingTextPresented("Industrial")
+                elementContainingTextPresented("Show on otf")
+                elementContainingTextPresented("ETC company")
+                elementContainingTextPresented("Created")
+                elementContainingTextPresented("Updated")
+                elementContainingTextPresented("delete")
+                elementPresented(addButton)
+                elementPresented(editButton)
+                elementPresented(viewButton)
+            }
+            e {
+                click(addButton)
+            }
+            assert {
+                elementPresented(shortNameInput)
+                elementPresented(fullNameInput)
+                elementPresented(addressInput)
+                elementPresented(emailInput)
+                elementPresented(registrationCountry)
+                elementPresented(onboardingDate)
+                elementPresented(registrationDocNum)
+                elementPresented(regDocDate)
+                elementPresented(legalEntityCheckbox)
+                elementPresented(issuerCheckbox)
+                elementPresented(validatorCheckbox)
+                elementPresented(industrialCheckbox)
+                elementPresented(showOnOtfCheckbox)
+                elementPresented(etcCompanyCheckbox)
+            }
+            e{
+                sendKeys(shortNameInput, specialCharacters)
+                sendKeys(fullNameInput, specialCharacters)
+            }
+            assert { elementWithTextNotPresented(errorText) }
         }
     }
 }

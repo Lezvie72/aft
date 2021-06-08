@@ -9,44 +9,41 @@ import models.CoinType
 import models.OtfAmounts
 import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.closeTo
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Tags
-import org.junit.jupiter.api.Test
+import org.hamcrest.Matchers
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
-import org.openqa.selenium.JavascriptExecutor
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
 @Story("Offer Acceptance Streaming")
 class OfferAcceptanceStreaming : BaseTest() {
+    private val baseAsset = CoinType.CC
+    private val quoteAsset = CoinType.VT
+    private val amountCount = OtfAmounts.AMOUNT_10.amount
+    private val userOne = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
+    private val userTwo = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
+    private val firstWallet = this.userOne.otfWallet
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-623")
     @Test
     @DisplayName("Steaming. Аccepting sell offer")
     fun streamingAcceptingSellOffer() {
-        val unitPrice = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}") //1.97179569
-        val baseAsset = CoinType.CC
-        val quoteAsset = CoinType.VT
-        val amount = OtfAmounts.AMOUNT_10.amount
-
-        val user = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
-        val user1 = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
+        val unitPrice = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
 
         prerequisite {
             prerequisitesStreaming(
@@ -57,7 +54,7 @@ class OfferAcceptanceStreaming : BaseTest() {
             )
         }
 
-        with(openPage<AtmStreamingPage>(driver) { submit(user1) }) {
+        with(openPage<AtmStreamingPage>(driver) { submit(this@OfferAcceptanceStreaming.userTwo) }) {
             e {
                 click(overview)
             }
@@ -66,17 +63,17 @@ class OfferAcceptanceStreaming : BaseTest() {
                 elementPresented(tradeHistory)
                 elementPresented(myOffers)
             }
-            openPage<AtmStreamingPage>(driver) { submit(user1) }.createStreaming(
+            openPage<AtmStreamingPage>(driver) { submit(this@OfferAcceptanceStreaming.userTwo) }.createStreaming(
                 AtmStreamingPage.OperationType.SELL,
                 "$quoteAsset/$baseAsset",
-                "$amount $quoteAsset",
+                "$amountCount $quoteAsset",
                 unitPrice.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
-                user1
+                this@OfferAcceptanceStreaming.userTwo
             )
         }
         openPage<AtmProfilePage>(driver).logout()
-        with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
+        with(openPage<AtmStreamingPage>(driver) { submit(this@OfferAcceptanceStreaming.userOne) }) {
             e {
                 click(overview)
             }
@@ -90,99 +87,113 @@ class OfferAcceptanceStreaming : BaseTest() {
                 elementWithTextPresentedIgnoreCase("Total Amount")
                 elementWithTextPresentedIgnoreCase("Fee option")
                 elementWithTextPresentedIgnoreCase("Transaction fee")
-                elementWithTextPresentedIgnoreCase("AMOUNT TO RECEIVE")
-                elementWithTextPresentedIgnoreCase("AMOUNT TO SEND")
+                elementWithTextPresentedIgnoreCase("amountCount TO RECEIVE")
+                elementWithTextPresentedIgnoreCase("amountCount TO SEND")
                 elementPresented(confirmTradeButton)
                 elementPresented(cancelAcceptOffer)
             }
             e {
                 click(confirmTradeButton)
-                signAndSubmitMessage(user, user.otfWallet.secretKey)
+                signAndSubmitMessage(
+                    this@OfferAcceptanceStreaming.userOne,
+                    this@OfferAcceptanceStreaming.userOne.otfWallet.secretKey
+                )
             }
         }
     }
 
 //    @Disabled("ATMCH-4009")
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-614")
     @Test
     @DisplayName("Streaming. Accepting buy offer")
     fun streamingAcceptingBuyOffer() {
-        val unitPrice = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}") //1.97179569
-        val baseAsset = CoinType.CC
-        val quoteAsset = CoinType.VT
-        val amount = OtfAmounts.AMOUNT_10.amount
+        // preconditions
+        val unitPrice = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
+        var initBalanceBase = ""
+        var afterBalanceBase = ""
+        var initBalanceQuote = ""
+        var afterBalanceQuote = ""
+        var feeSizeAccept = ""
 
-        val taker = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
-        val maker = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
 
-    prerequisite {
-        prerequisitesStreaming(
-            baseAsset.toString(), quoteAsset.toString(), "1",
-            "1", "1",
-            "FIXED", "FIXED",
-            true
-        )
-    }
+        with(openPage<AtmStreamingPage>(driver) { submit(userTwo) }) {
+            e {
+                createStreaming(
+                    AtmStreamingPage.OperationType.BUY,
+                    "$quoteAsset/$baseAsset",
+                    "$amountCount $quoteAsset",
+                    unitPrice.toString(),
+                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    userTwo
+                )
+            }
+        }
+        openPage<AtmProfilePage>(driver).logout()
 
-        with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
-            createStreaming(
-                AtmStreamingPage.OperationType.BUY,
-                "$quoteAsset/$baseAsset",
-                "$amount $quoteAsset",
-                unitPrice.toString(),
-                AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
-                maker
-            )
-            openPage<AtmProfilePage>(driver).logout()
+        with(openPage<AtmWalletPage>(driver) { submit(userOne) }) {
+            e {
+                Assertions.assertTrue(
+                    isWalletWithLabelPresented(firstWallet.name),
+                    "Wallet with label $firstWallet not found"
+                )
+                initBalanceBase = getBalanceFromWalletForToken(baseAsset, firstWallet.name)
+                click(walletsHeader)
+                initBalanceQuote = getBalanceFromWalletForToken(quoteAsset, firstWallet.name)
+            }
         }
 
-        val firstWallet = taker.otfWallet
-
-        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(taker) }) {
-            val base = getBalance(baseAsset, firstWallet.name)
-            openPage<AtmWalletPage>(driver)
-            val quote = getBalance(quoteAsset, firstWallet.name)
-            base to quote
-        }
-
-        val fee = with(openPage<AtmStreamingPage>(driver) { submit(taker) }) {
+        with(openPage<AtmStreamingPage>(driver)) {
             e {
                 click(overview)
-            }
-            findAndOpenOfferInOverview(unitPrice)
-            e {
-                val fee = wait(15L) {
-                    until("Couldn't load fee") {
-                        offerFee.text.isNotEmpty()
-                    }
-                    offerFee.amount
+                setFilterToday(quoteAsset, baseAsset)
+                findAndOpenOfferInOverview(unitPrice)
+                wait {
+                    untilPresented(offerDetailsLabel)
                 }
-                click(confirmTradeButton)
-                (this@OfferAcceptanceStreaming.driver as JavascriptExecutor).executeScript("document.body.style.zoom = '100%';")
-                signAndSubmitMessage(taker, taker.otfWallet.secretKey)
-                fee
+
+                softAssert { elementContainingTextPresented("COUNTERPARTY") }
+                softAssert { elementContainingTextPresented("EXPIRATION DATE") }
+                softAssert { elementContainingTextPresented("ASSET PAIR") }
+                softAssert { elementContainingTextPresented("BASE ASSET AMOUNT") }
+                softAssert { elementContainingTextPresented("PRICE PER UNIT") }
+                softAssert { elementContainingTextPresented("TOTAL AMOUNT") }
+                softAssert { elementContainingTextPresented("FEE OPTION") }
+                softAssert { elementContainingTextPresented("TRANSACTION FEE") }
+                softAssert { elementContainingTextPresented("DIRECTION") }
+                softAssert { elementContainingTextPresented("AMOUNT TO RECEIVE") }
+                softAssert { elementContainingTextPresented("AMOUNT TO SEND") }
+                softAssert { elementContainingTextPresented("CANCEL") }
+                softAssert { elementContainingTextPresented("ACCEPT OFFER") }
+
+                feeSizeAccept = offerFee.amount.toString()
+                acceptOffer(userOne)
+                assertThat(
+                    "Offer with unit price $unitPrice should not be exist",
+                    !isOfferExist(unitPrice, overviewOffersList)
+                )
             }
         }
-        val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver) { submit(taker) }) {
-            val base = getBalance(baseAsset, firstWallet.name)
-            openPage<AtmWalletPage>(driver)
-            val quote = getBalance(quoteAsset, firstWallet.name)
-            base to quote
+        with(openPage<AtmWalletPage>(driver)) {
+            e {
+                Assertions.assertTrue(
+                    isWalletWithLabelPresented(firstWallet.name),
+                    "Wallet with label ${firstWallet.name} not found"
+                )
+                afterBalanceBase = getBalanceFromWalletForToken(baseAsset, firstWallet.name)
+                click(walletsHeader)
+                afterBalanceQuote = getBalanceFromWalletForToken(quoteAsset, firstWallet.name)
+            }
         }
-
-        val baseExpected = baseBefore + BigDecimal.TEN * unitPrice - fee
-        val quoteExpected = quoteBefore - BigDecimal.TEN
 
         assertThat(
-            "Expected base balance: $baseExpected, was: $baseAfter",
-            baseAfter,
-            closeTo(baseExpected, BigDecimal("0.01"))
+            "Init balance $baseAsset = $initBalanceBase should be increased by $amountCount",
+            afterBalanceBase.toFloat(),
+            Matchers.equalTo(initBalanceBase.toFloat() + amountCount.toFloat() * unitPrice.toFloat() - feeSizeAccept.toFloat())
         )
         assertThat(
-            "Expected quote balance: $quoteExpected, was: $quoteAfter",
-            quoteAfter,
-            closeTo(quoteExpected, BigDecimal("0.01"))
+            "Init balance $quoteAsset = $initBalanceQuote should be decreased by $amountCount",
+            afterBalanceQuote.toFloat(), Matchers.equalTo(initBalanceQuote.toFloat() - amountCount.toFloat())
         )
     }
 

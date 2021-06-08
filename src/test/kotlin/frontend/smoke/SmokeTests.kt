@@ -16,13 +16,14 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.*
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-@Tag("Smoke")
+@Tag(TagNames.Flow.SMOKE)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Execution(ExecutionMode.SAME_THREAD)
 @Epic("Frontend")

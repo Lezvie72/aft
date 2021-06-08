@@ -6,17 +6,21 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.OAuth
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Wallets")
@@ -60,7 +64,7 @@ class EmployeesAssigning : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ATM_USER_EMPLOYEE_ADMIN_ROLE)
+    @ResourceLock(Constants.ROLE_USER_EMPLOYEE_ADMIN_ROLE)
     @TmsLink("ATMCH-1382")
     @Test
     @DisplayName("Removing to the Admin the of Controller role in a MAIN wallet-key with single authorization.")
@@ -237,7 +241,7 @@ class EmployeesAssigning : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ATM_USER_EMPLOYEE_ADMIN_ROLE)
+    @ResourceLock(Constants.ROLE_USER_EMPLOYEE_ADMIN_ROLE)
     @TmsLink("ATMCH-1403")
     @Test
     @DisplayName("Changing the role of employees of a legal entity for Main Wallet single authorization with 2FA enabled.")
@@ -276,7 +280,7 @@ class EmployeesAssigning : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_EMPLOYEE_ADMIN_ROLE)
     @TmsLink("ATMCH-1405")
     @Test
     @DisplayName("Changing the wallet role of employees of a legal entity with 2FA enabled. Validation.")

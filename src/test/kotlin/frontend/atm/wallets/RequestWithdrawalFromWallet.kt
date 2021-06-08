@@ -5,9 +5,10 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.CoinType
 import models.CoinType.FIAT
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -16,19 +17,21 @@ import pages.atm.AtmAdminPaymentsPage
 import pages.atm.AtmBankAccountsPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.Users.Companion.ATM_ADMIN
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Withdrawal")
 class RequestWithdrawalFromWallet : BaseTest() {
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-1279")
     @Test
     @DisplayName("Withdraw fiat. Interface. User have bank information")
@@ -94,7 +97,7 @@ class RequestWithdrawalFromWallet : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1278")
     @Test
     @DisplayName("Withdraw fiat. Main active wallet. User is controller and have 2FA")

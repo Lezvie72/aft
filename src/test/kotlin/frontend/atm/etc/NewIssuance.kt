@@ -9,6 +9,8 @@ import models.CoinType.ETC
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.openqa.selenium.By
@@ -17,10 +19,11 @@ import org.openqa.selenium.WebElement
 import pages.atm.AtmIssuancesPage
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.Constants
+import utils.TagNames
 import utils.helpers.*
 import java.math.BigDecimal
 
-
+@Tags(Tag(TagNames.Epic.ETC.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("ETC")
 @Story("New issuance")

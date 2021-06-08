@@ -23,12 +23,13 @@ import pages.atm.AtmP2PPage.ExpireType.TEMPORARY
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Blocktrade"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("P2P Blocktrade")
@@ -48,20 +49,24 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
             }
             assert {
                 elementWithTextPresentedIgnoreCase("New Blocktrade")
-                elementWithTextPresentedIgnoreCase("Deal source")
+                elementWithTextPresentedIgnoreCase("To Counterparty")
+                elementWithTextPresentedIgnoreCase("AMOUNT TO SEND")
                 elementWithTextPresentedIgnoreCase("AVAILABLE BALANCE")
+                elementWithTextPresentedIgnoreCase("AMOUNT TO RECEIVE")
+                elementWithTextPresentedIgnoreCase("Price agreement base")
+                elementWithTextPresentedIgnoreCase("Deal source")
                 elementWithTextPresentedIgnoreCase("Fee option")
                 elementWithTextPresentedIgnoreCase("Transaction fee")
-                elementWithTextPresentedIgnoreCase("AMOUNT TO RECEIVE")
-                elementWithTextPresentedIgnoreCase("AMOUNT TO SEND")
-                elementPresented(toWallet)
-                elementPresented(assetToSend)
+
                 elementPresented(amountToReceive)
-                elementPresented(expiresIn)
-                elementPresented(createDeal)
-                elementPresented(cancel)
+                elementPresented(assetToSend)
                 elementPresented(goodTillCancelled)
                 elementPresented(limitedTimeOffer)
+                elementPresented(cancel)
+                elementPresented(createDeal)
+
+                elementPresented(toWallet)
+                elementPresented(expiresIn)
             }
         }
     }
@@ -208,7 +213,7 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
         }
     }
 
-    //    @Disabled("ATMCH-4009")
+
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA)
@@ -297,7 +302,7 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+    @ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     @TmsLink("ATMCH-828")
     @Test
     @DisplayName("Place P2P offer. Wrong 2FA Code")
@@ -377,7 +382,6 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
     }
 
     @Disabled("не ясен функционал")
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
     @TmsLink("ATMCH-827")
     @Test
     @DisplayName("Place P2P offer. Insufficient funds")

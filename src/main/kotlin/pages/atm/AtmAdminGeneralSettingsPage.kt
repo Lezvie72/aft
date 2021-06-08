@@ -1,9 +1,7 @@
 package pages.atm
 
-import io.qameta.allure.Step
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.FindBy
-import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
@@ -39,10 +37,5 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("blocktrade link")
     @FindBy(xpath = "//a[@href='/p2p-settings']")
     lateinit var blocktradeLink: Button
-
-    @Step("Add new token")
-    @Action("Admin add new token")
-    fun addNewToken() {
-    }
 
 }

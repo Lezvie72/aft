@@ -17,6 +17,7 @@ import org.openqa.selenium.support.FindAll
 import org.openqa.selenium.support.FindBy
 import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
+import pages.htmlelements.blocks.atm.marketplace.AtmMarketplaceIndustrialCard
 import pages.htmlelements.blocks.atm.marketplace.AtmMarketplaceTokens
 import pages.htmlelements.elements.AtmAmount
 import pages.htmlelements.elements.AtmRadio
@@ -30,6 +31,10 @@ import utils.helpers.containsIgnoreCaseXpath
 
 @PageUrl("/trading/market")
 class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
+
+    @Name("Invalid or wrong code")
+    @FindBy(xpath = "//div[contains(text(),'Invalid key')] | //div[contains(text(),'Wrong code')]")
+    lateinit var invalidOrWrongCode: TextBlock
 
     @Name("Currency coin")
     @FindBy(xpath = "//div[contains(text(), 'CURRENCY COIN')]")
@@ -132,6 +137,10 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
     @Name("Tokens List")
     @FindBy(xpath = "//atm-separated-card")
     lateinit var tokensList: AtmTable<AtmMarketplaceTokens>
+
+    @Name("Tokens List")
+    @FindBy(xpath = "//div[@class='market__list']")
+    lateinit var tokensCards: AtmTable<AtmMarketplaceIndustrialCard>
 
     @Step("Add currency coin")
     fun buyCurrencyCoin(user: User, amount: String, wallet: SimpleWallet) {

@@ -19,11 +19,12 @@ import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -41,7 +42,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
     private val invalidPrivateKey = "12345678bb4992acf09c9cba9e266c696aff77fca923db2a472b813e37f9e96f"
     private val wallet = "OTF 1"
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3764")
     @Test
     @DisplayName("Accept sell offer. Wrong 2FA")
@@ -123,7 +124,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3765")
     @Test
     @DisplayName("Accept buy offer. Invalid secret key")
@@ -201,7 +202,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3766")
     @Test
     @DisplayName("Accept buy offer. Wrong 2FA")
@@ -285,7 +286,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3704")
     @Test
     @DisplayName("View offers in Overview. User is IT client")
@@ -359,7 +360,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3705")
     @Test
     @DisplayName("Accept buy offer. User without 2FA")
@@ -419,7 +420,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3709")
     @Test
     @DisplayName("View offers in Overview. User isn't IT client")
@@ -438,7 +439,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3711")
     @Test
     @DisplayName("Accept buy offer. User with 2FA")
@@ -659,7 +660,7 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3716")
     @Test
     @DisplayName("Streaming IT. Accept sell offer. Invalid secret key")

@@ -13,21 +13,25 @@ import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmP2PPage
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
+import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Blocktrade"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("P2P Blocktrade")
 @Story("Display legal entity name instead of wallet address")
 class DisplayLegalEntityNameInsteadOfWalletAddress : BaseTest() {
 
-
+    @ResourceLocks(ResourceLock(Constants.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-2953")
     @Test
     @DisplayName("Blocktrade. Checking field Counterparty")

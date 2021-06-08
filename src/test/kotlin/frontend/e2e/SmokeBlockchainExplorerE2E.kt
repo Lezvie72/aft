@@ -49,11 +49,12 @@ import pages.htmlelements.blocks.atm.blockchain.BlockchainBlockItem.Companion.TE
 import pages.htmlelements.blocks.atm.blockchain.BlockchainChannelItem.Companion.TEXT_CHANNEL_NAME
 import pages.htmlelements.blocks.atm.blockchain.BlockchainChannelItem.Companion.TEXT_LAST_BLOCK_HASH
 import pages.htmlelements.blocks.atm.blockchain.BlockchainChannelItem.Companion.TEXT_LEDGER_HEIGHT
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Blockchain Explorer")

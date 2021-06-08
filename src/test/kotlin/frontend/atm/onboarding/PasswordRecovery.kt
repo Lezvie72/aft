@@ -9,6 +9,8 @@ import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -16,16 +18,14 @@ import pages.atm.AtmForgotPassPage
 import pages.atm.AtmHomePage
 import pages.atm.AtmLoginPage
 import pages.core.actions.AssertActions
-import utils.Constants
-import utils.Environment
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
-import utils.helpers.generateEmail
 import utils.helpers.openPage
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.*
 
+@Tags(Tag(TagNames.Epic.ONBOARDING.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Onboarding")

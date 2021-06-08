@@ -10,6 +10,8 @@ import org.apache.commons.lang.RandomStringUtils.randomNumeric
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmIssuancesPage
@@ -20,13 +22,14 @@ import pages.atm.AtmIssuancesPage.StatusType.APPROVE
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.OAuth
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Redemption industrial token")

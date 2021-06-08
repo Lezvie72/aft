@@ -5,15 +5,14 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.AtmEmployeesPage
 import pages.atm.AtmLoginPage
 import pages.atm.AtmProfilePage
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.generateEmail
@@ -21,6 +20,7 @@ import utils.helpers.openPage
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+@Tags(Tag(TagNames.Epic.ACCOUNTSETTINGS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Account settings")

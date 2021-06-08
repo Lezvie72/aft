@@ -21,13 +21,14 @@ import pages.atm.AtmRFQPage
 import pages.atm.AtmWalletPage
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import utils.helpers.to
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("RFQ")

@@ -19,10 +19,11 @@ import pages.atm.AtmStreamingPage
 import pages.core.actions.ElementActions
 import pages.core.actions.isVisibilitySafety
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -34,7 +35,7 @@ class CancellationOfTheOffer : BaseTest() {
     private val amountBuy = OtfAmounts.AMOUNT_10.amount
     private val userOne2FA = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-5958")
     @Test
     @DisplayName("Steaming. Validation during offer cancellation")

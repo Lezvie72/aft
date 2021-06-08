@@ -8,6 +8,8 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
@@ -21,12 +23,14 @@ import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import pages.htmlelements.elements.AtmRadio
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import utils.helpers.to
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Issue("ATMCH-5912")
 @Epic("Frontend")
 @Feature("Wallets")

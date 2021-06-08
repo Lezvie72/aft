@@ -5,39 +5,22 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.user.classes.DefaultUser
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import pages.atm.AtmAdminInvitesPage
-import pages.atm.AtmAdminUserManagementPage
-import pages.atm.AtmHomePage
-import pages.atm.AtmLoginPage
+import pages.atm.*
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
 @Story("Atomyze Users management")
 class AtomyzeUsersManagement : BaseTest() {
 
-    private fun createAndRegisterUser(kycPassed: Boolean = false): DefaultUser {
-        val user = newUser()
-        with(openPage<AtmAdminInvitesPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            sendInvitation(user.email, kycPassed)
-        }
-        openPage<AtmHomePage>(driver)
-        val href = GmailApi.getHrefForNewUserATM(user.email)
-        driver.navigate().to(href)
-        with(AtmLoginPage(driver)) {
-            fillRegForm()
-        }
-        return user
-    }
 
     @TmsLink("ATMCH-448")
     @Test
@@ -167,6 +150,22 @@ class AtomyzeUsersManagement : BaseTest() {
                 sendKeys(lastNameInput, "test")
                 click(saveButton)
                 checkName(user.email, "test", "test")
+            }
+        }
+    }
+
+    @TmsLink("ATMCH-1578")
+    @Test
+    @DisplayName("Adm.platform. KYС applications dashboard. Interface")
+    fun kycDashboard() {
+        with(openPage<AtmAdminKycManagementPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            assert {
+                elementWithTextPresented("First name")
+                elementWithTextPresented("Email")
+                elementWithTextPresented("Last name")
+                elementWithTextPresented("KYC status")
+                elementWithTextPresented("Request Date")
+                elementWithTextPresented("Modified Date")
             }
         }
     }

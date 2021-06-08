@@ -19,11 +19,12 @@ import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -42,7 +43,7 @@ ViewMyOffersDetailsForOfferWithIndustrialToken : BaseTest() {
     private val wallet = "OTF 1"
 
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3706")
     @Test
     @DisplayName("Check My offers and offer details")

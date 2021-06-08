@@ -8,6 +8,8 @@ import io.qameta.allure.TmsLink
 import models.user.classes.DefaultUser
 import org.apache.commons.lang3.RandomStringUtils.random
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -17,17 +19,20 @@ import org.openqa.selenium.WebElement
 import pages.atm.*
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import utils.helpers.to
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
 @Story("Adding bank accounts details by user")
 class AddingBankAccountsDetailsByUser : BaseTest() {
+
 
     private fun createAndRegisterUser(kycPassed: Boolean = false): DefaultUser {
         val user = newUser()

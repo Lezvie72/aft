@@ -15,11 +15,12 @@ import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -40,7 +41,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
     private val invalid2FaKey = "123456"
     private val invalidPrivateKey = "12345678bb4992acf09c9cba9e266c696aff77fca923db2a472b813e37f9e96f"
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3695")
     @Test
     @DisplayName("IT client create offer for buy.")
@@ -90,8 +91,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         )
     }
 
-    @Issue("IT токен отключен для ОТС")
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3683")
     @Test
     @DisplayName("IT client create offer for sell.")
@@ -140,7 +141,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3770")
     @Test
     @DisplayName("IT client create offer for buy. Wrong 2FA")
@@ -181,7 +182,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3771")
     @Test
     @DisplayName("IT client create offer for sell. Wrong 2FA")
@@ -223,7 +224,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3776")
     @Test
     @DisplayName("IT client create offer for sell. Wrong key")
@@ -283,7 +284,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3777")
     @Test
     @DisplayName("IT client create offer for buy. Wrong key")
@@ -343,7 +344,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3767")
     @Test
     @DisplayName("IT client create offer for buy. User has 2FA")
@@ -393,7 +394,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3768")
     @Test
     @DisplayName("IT client create offer for sell. User has 2FA")
@@ -444,11 +445,11 @@ class PlacingOfferForIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3691")
     @Test
     @DisplayName("Check create IT offer if user isn't IT client")
-    fun сheckСreateItOfferIfUserIsntItClient() {
+    fun checkCreateItOfferIfUserIsntItClient() {
         with(openPage<AtmStreamingPage>(driver) { submit(nonIndustrialUser) }) {
             e {
                 click(createOffer)

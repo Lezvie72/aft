@@ -8,14 +8,14 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import io.qameta.allure.Story
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
-import pages.atm.AtmAdminTokensPage
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import pages.atm.AtmIssuancesPage
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 
+@Tags(Tag(TagNames.Epic.ISSUANCE.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Issuances")

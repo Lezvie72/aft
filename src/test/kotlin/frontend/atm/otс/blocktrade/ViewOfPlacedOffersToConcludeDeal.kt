@@ -23,12 +23,13 @@ import pages.atm.AtmP2PPage.ExpireType
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Blocktrade"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("P2P Blocktrade")
@@ -37,7 +38,7 @@ class ViewOfPlacedOffersToConcludeDeal : BaseTest() {
 
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF)
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     )
     @TmsLink("ATMCH-928")
     @Test
@@ -127,12 +128,11 @@ class ViewOfPlacedOffersToConcludeDeal : BaseTest() {
 
         }
 
-
     }
 
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF)
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     )
     @TmsLink("ATMCH-929")
     @Test

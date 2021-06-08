@@ -135,6 +135,14 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='quote']//input")
     lateinit var quoteInputSelect: AtmAdminSelect
 
+    @Name("Maturity date base")
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='base']//mat-select//div)[3]")
+    lateinit var maturityDateBaseValue: Button
+
+    @Name("Maturity date quote")
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='quote']//mat-select//div)[3]")
+    lateinit var maturityDateQuoteValue: Button
+
     @Name("Pair available checkbox")
     @FindBy(xpath = "//mat-checkbox[@formcontrolname='available']//label")
     lateinit var pairAvailable: CheckBox
@@ -200,12 +208,13 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var cancelDialog: Button
 
 //endregion
-
+//TODO переписать метод под различный выбор токенов
     @Action("add trading pair")
     @Step("add trading pair")
     fun addTradingPair(
         baseInputValue: String,
         quoteValue: String,
+        maturityDate: String = "",
         availableAmountValue: String,
         feePlaceAmountValue: String,
         feeAcceptAmountValue: String,
@@ -215,6 +224,22 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     ) {
         e {
             click(add)
+
+            if (baseInputValue.startsWith("IT")) {
+                chooseToken(baseInput, baseInputValue
+                    .replaceAfter("_","")
+                    .replace("_", ""))
+
+                chooseMaturityDate(maturityDateBaseValue,maturityDate)
+            }
+
+            if (baseInputValue.startsWith("IT") and maturityDate.isNotBlank()) {
+                chooseToken(quoteInput, quoteValue
+                    .replaceAfter("_","")
+                    .replace("_", ""))
+                chooseMaturityDate(maturityDateQuoteValue, maturityDate)
+            }
+
             chooseToken(baseInput, baseInputValue)
             chooseToken(quoteInput, quoteValue)
 
@@ -259,6 +284,7 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     fun addTradingPairIfNotPresented(
         baseInputValue: String,
         quoteValue: String,
+        maturityDate: String = "",
         availableAmountValue: String,
         feePlaceAmountValue: String,
         feeAcceptAmountValue: String,
@@ -272,7 +298,7 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
         if (row == null) {
             addTradingPair(
-                baseInputValue, quoteValue, availableAmountValue, feePlaceAmountValue,
+                baseInputValue, quoteValue, maturityDate, availableAmountValue, feePlaceAmountValue,
                 feeAcceptAmountValue, feePlaceModeValue, feeAcceptModeValue, available
             )
         }
@@ -303,6 +329,17 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             sendKeys(input, tokenName)
             wait {
                 untilPresented<Button>(By.xpath("//mat-option//span[contains(text(),'$tokenName')]"))
+            }.click()
+        }
+    }
+
+    @Step("Admin choose maturityDate in popup window")
+    @Action("choose maturityDate in popup window")
+    fun chooseMaturityDate(input: WebElement,maturityDate: String) {
+        e {
+            click(input)
+            wait {
+                untilPresented<Button>(By.xpath("//mat-option//span[contains(text(),'$maturityDate')]"))
             }.click()
         }
     }
@@ -369,7 +406,12 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("Admin change fee for token in streaming")
     @Action("change fee for token in streaming")
-    fun changeFeeSettingsForTokenStreaming(baseToken: String, quoteToken: String, feePlaceAmountValue: String, feeAcceptAmountValue: String) {
+    fun changeFeeSettingsForTokenStreaming(
+        baseToken: String,
+        quoteToken: String,
+        feePlaceAmountValue: String,
+        feeAcceptAmountValue: String
+    ) {
         chooseTradingPair(baseToken, quoteToken)
         e {
             click(edit)
@@ -398,5 +440,28 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             click(confirmDialog)
         }
 
+    }
+
+    @Action("change available for trading pair")
+    @Step("change available for trading pair")
+    fun changeAvailableStatus(
+        baseValue: String,
+        quoteValue: String,
+        available: Boolean
+    ) {
+        chooseTradingPair(baseValue, quoteValue)
+        e {
+            click(edit)
+            setCheckbox(pairAvailable, available)
+            click(confirmDialog)
+
+            wait {
+                until("dialog add trading pair is gone", 15) {
+                    check {
+                        isElementGone(confirmDialog)
+                    }
+                }
+            }
+        }
     }
 }

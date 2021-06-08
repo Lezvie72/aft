@@ -26,13 +26,14 @@ import pages.htmlelements.blocks.atm.streaming.StreamingOfferItem
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextBlock
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.to
 import utils.isChecked
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -56,7 +57,7 @@ class ImplementationOfAnonymousMode : BaseTest() {
     private val counterparty =
         By.xpath("//span[contains(text(), 'Counterparty')]/ancestor::atm-property-value//atm-counterparty//atm-span")
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3992")
     @Test
     @DisplayName("Anonymous mode ON")
@@ -127,7 +128,7 @@ class ImplementationOfAnonymousMode : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3993")
     @Test
     @DisplayName("Anonymous mode OFF")
@@ -181,7 +182,7 @@ class ImplementationOfAnonymousMode : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-3990")
     @Test
     @DisplayName("Anonymous mode: UI and usability")

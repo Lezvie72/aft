@@ -41,7 +41,7 @@ object Environment {
             val standProp =
                 getProperty("stand").takeUnless { it.isEmpty() } ?: error("Undefined config property: stand")
             stand = when (standProp) {
-                "develop" -> Stand.DEVELOP
+                "dev" -> Stand.DEVELOP
                 "release" -> Stand.RELEASE
                 "preprod" -> Stand.PREPROD
                 "prod" -> Stand.PROD

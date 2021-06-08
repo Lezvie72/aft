@@ -16,12 +16,13 @@ import org.openqa.selenium.JavascriptExecutor
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Streaming")

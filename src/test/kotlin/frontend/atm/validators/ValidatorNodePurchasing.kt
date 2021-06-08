@@ -5,6 +5,8 @@ import io.qameta.allure.*
 import models.CoinType
 import org.apache.commons.lang.RandomStringUtils
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
@@ -12,6 +14,7 @@ import pages.atm.AtmAdminNodesManagementPage.NodeType
 import pages.atm.AtmValidatorPage.NodeType.ENDORSER
 import pages.atm.AtmValidatorPage.NodeType.ORDERER
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.OAuth
 import utils.helpers.Users
@@ -20,6 +23,7 @@ import utils.helpers.step
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+@Tags(Tag(TagNames.Epic.VALIDATORS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Story("Validator node purchasing")
 @Feature("Validator")
@@ -39,7 +43,7 @@ class ValidatorNodePurchasing : BaseTest() {
                     click(addNode)
                     select(nodeType, ENDORSER.toString())
                     click(submit)
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                 }
 
@@ -53,7 +57,7 @@ class ValidatorNodePurchasing : BaseTest() {
                     click(addNode)
                     select(nodeType, ORDERER.toString())
                     click(submit)
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                 }
 
@@ -115,7 +119,7 @@ class ValidatorNodePurchasing : BaseTest() {
                     click(addNode)
                     select(nodeType, ENDORSER.toString())
                     click(submit)
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                     click(privateKey)
                     sendKeys(privateKey, userBuyer.mainWallet.secretKey)
@@ -155,7 +159,7 @@ class ValidatorNodePurchasing : BaseTest() {
                         click(addNode)
                         select(nodeType, ORDERER.toString())
                         click(submit)
-                        select(fromWallet, mainWallet.name)
+                        select(stakingWallet, mainWallet.name)
                         click(submit)
                         click(privateKey)
                         sendKeys(privateKey, userBuyer.mainWallet.secretKey)
@@ -241,7 +245,7 @@ class ValidatorNodePurchasing : BaseTest() {
                     click(addNode)
                     select(nodeType, ENDORSER.toString())
                     click(submit)
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                     sendKeys(privateKey, RandomStringUtils.randomNumeric(18).toString())
                     click(confirmPrivateKeyButton)
@@ -271,7 +275,7 @@ class ValidatorNodePurchasing : BaseTest() {
                         click(addNode)
                         select(nodeType, ORDERER.toString())
                         click(submit)
-                        select(fromWallet, mainWallet.name)
+                        select(stakingWallet, mainWallet.name)
                         click(submit)
                         sendKeys(privateKey, RandomStringUtils.randomNumeric(18).toString())
                         click(confirmPrivateKeyButton)
@@ -490,12 +494,12 @@ class ValidatorNodePurchasing : BaseTest() {
                 assert {
                     elementPresented(submit)
                     elementPresented(cancel)
-                    elementPresented(fromWallet)
+                    elementPresented(stakingWallet)
                     elementContainingTextPresented("AMOUNT TO STAKE")
                     elementContainingTextPresented("Available balance")
                 }
                 e {
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                     signAndSubmitMessage(userBuyer, mainWallet.secretKey)
                     click(ok)

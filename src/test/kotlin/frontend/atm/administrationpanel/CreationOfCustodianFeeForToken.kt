@@ -5,32 +5,30 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.CoinType
 import models.CoinType.ETC
-import models.CoinType.IT
 import org.apache.commons.lang.RandomStringUtils
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmAdminCustodianFeePage
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants.ROLE_ADMIN
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import utils.helpers.to
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
 @Story("Administrator panel. Creation of a custodian fee for a token")
 class CreationOfCustodianFeeForToken : BaseTest() {
 
-    private val token = CoinType.ETC
+    private val token = ETC
 
     @ResourceLock(ROLE_ADMIN)
     @TmsLink("ATMCH-5659")

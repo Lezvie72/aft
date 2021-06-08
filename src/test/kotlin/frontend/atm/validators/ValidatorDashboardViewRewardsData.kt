@@ -6,19 +6,19 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType.VT
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
 import pages.atm.AtmAdminNodesManagementPage.NodeType.*
 import pages.atm.AtmValidatorPage.NodeType
 import utils.Constants
+import utils.TagNames
 import utils.helpers.OAuth
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
+@Tags(Tag(TagNames.Epic.VALIDATORS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("Validator")
 @Story("Validator dashboard. View rewards data")

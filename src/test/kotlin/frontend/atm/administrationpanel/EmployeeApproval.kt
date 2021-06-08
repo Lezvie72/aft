@@ -5,16 +5,14 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.user.classes.DefaultUser
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.*
 import pages.atm.AtmEmployeesPage.Roles.MANAGER
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.generateEmail
@@ -24,25 +22,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
 @Story("Employee approval")
 class EmployeeApproval : BaseTest() {
 
-    private fun createAndRegisterUser(kycPassed: Boolean = false): DefaultUser {
-        val user = newUser()
-        with(openPage<AtmAdminInvitesPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            sendInvitation(user.email, kycPassed)
-        }
-        openPage<AtmHomePage>(driver)
-        val href = GmailApi.getHrefForNewUserATM(user.email)
-        driver.navigate().to(href)
-        with(AtmLoginPage(driver)) {
-            fillRegForm()
-        }
-        return user
-    }
 
     @TmsLink("ATMCH-2820")
     @Test

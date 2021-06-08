@@ -10,20 +10,21 @@ import models.OtfAmounts
 import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
-import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -40,15 +41,21 @@ class OfferPlacementStreaming : BaseTest() {
     private val baseAsset = CoinType.CC
     private val quoteAsset = CoinType.VT
     private val invalid2FaKey = "123456"
-    private val invalidPrivateKey = "12345678bb4992acf09c9cba9e266c696aff77fca923db2a472b813e37f9e96f"
 
 
-    @ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+    @ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     @TmsLink("ATMCH-721")
     @Test
     @DisplayName("Streaming. Place offer. Cancel placing transfer")
     fun streamingPlaceOfferCancelPlacingTransfer() {
-        val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}") //1.97179569
+        val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
+
+        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(userOne) }) {
+            val base = getBalance(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getBalance(quoteAsset, firstWallet.name)
+            base to quote
+        }
 
         with(openPage<AtmStreamingPage>(driver) { submit(userOne) }) {
             e {
@@ -61,72 +68,106 @@ class OfferPlacementStreaming : BaseTest() {
                 click(cancelPlaceOffer)
                 click(myOffer)
             }
-            val cancelledOffer = myOffersList.find {
-                it.unitPriceAmount == unitPriceAmount
-            }
+
             assertThat(
-                "Offer with amount $unitPriceAmount should have been be cancelled",
-                cancelledOffer,
-                nullValue()
+                "Offer with unit price $unitPriceAmount should be not exist",
+                !isOfferExist(unitPriceAmount, myOffersList)
             )
         }
-    }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION)
-    @TmsLink("ATMCH-713")
-    @Test
-    @DisplayName("Streaming. Place offer. Buy, temporary offer")
-    fun streamingPlaceOfferBuyTemporaryOffer() {
-        val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
-        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(userTwo) }) {
+        val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver)) {
             val base = getBalance(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getBalance(quoteAsset, firstWallet.name)
             base to quote
         }
 
-        with(openPage<AtmStreamingPage>(driver) { submit(userTwo) }) {
+        assertThat(
+            "Expected ${baseAsset.tokenSymbol} balance: before $baseBefore, now: $baseAfter",
+            baseAfter,
+            closeTo(baseBefore, BigDecimal("0.01"))
+        )
+    }
+
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF),
+        ResourceLock(Constants.ATM_USER_2FA_OTF_OPERATION_SECOND)
+    )
+    @TmsLink("ATMCH-713")
+    @Test
+    @DisplayName("Streaming. Place offer. Buy, temporary offer")
+    fun streamingPlaceOfferBuyTemporaryOffer() {
+        val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
+        val user = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
+
+        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+            val base = getBalance(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getBalance(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
+        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val base = getHeldInOrders(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
+        with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
+            softAssert { elementContainingTextPresented("CREATE AN OFFER") }
+
             val fee = createStreaming(
                 AtmStreamingPage.OperationType.BUY,
                 "$quoteAsset/$baseAsset",
                 "$amountCount $quoteAsset",
                 unitPriceAmount.toString(),
-                AtmStreamingPage.ExpireType.TEMPORARY, userTwo
+                AtmStreamingPage.ExpireType.TEMPORARY, user
             )
-            with(AtmStreamingPage(driver)) {
-                findAndOpenOfferInOfferList(unitPriceAmount)
-                wait(15L) {
-                    until("Couldn't load fee") {
-                        offerFee.text.isNotEmpty()
-                    }
-                }
-            }
 
-            val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver) { submit(userTwo) }) {
+            assertThat(
+                "Offer with unit price $unitPrice should be exist",
+                isOfferExist(unitPriceAmount, myOffersList)
+            )
+
+            val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 val base = getBalance(baseAsset, firstWallet.name)
                 openPage<AtmWalletPage>(driver)
                 val quote = getBalance(quoteAsset, firstWallet.name)
                 base to quote
             }
 
+            val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+                val base = getHeldInOrders(baseAsset, firstWallet.name)
+                openPage<AtmWalletPage>(driver)
+                val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+                base to quote
+            }
+
             //fee расчитывается в baseAsset, при покупке baseBalance расчитывается сразу
             //Ожидаем снижение баланса на (amount * price + fee)
             val baseExpected = baseBefore - (BigDecimal.TEN * unitPriceAmount + fee)
+            val baseExpectedHeld = baseBeforeHeld + (BigDecimal.TEN) + fee
+
             assertThat(
-                "Expected base balance: $baseExpected, was: $baseAfter",
+                "Expected ${baseAsset.tokenSymbol} balance: $baseExpected, was: $baseAfter",
                 baseAfter,
                 closeTo(baseExpected, BigDecimal("0.01"))
             )
             assertThat(
-                "Expected quote balance: $quoteBefore, was: $quoteAfter",
+                "Expected ${quoteAsset.tokenSymbol} balance: $quoteBefore, was: $quoteAfter",
                 quoteAfter,
                 closeTo(quoteBefore, BigDecimal("0.01"))
             )
-
+            assertThat(
+                "Expected ${baseAsset.tokenSymbol} balance for held: $baseExpectedHeld, was: $baseAfterHeld",
+                baseAfterHeld,
+                closeTo(baseExpectedHeld, BigDecimal("0.01"))
+            )
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND)
+    @ResourceLock(Constants.ATM_USER_2FA_OTF_OPERATION_SECOND)
     @TmsLink("ATMCH-712")
     @Test
     @DisplayName("Streaming. Place offer. Sell, good till cancel")
@@ -140,13 +181,27 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
+        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val base = getHeldInOrders(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
+
         with(openPage<AtmStreamingPage>(driver) { submit(userThree) }) {
+            softAssert { elementContainingTextPresented("CREATE AN OFFER") }
+
             createStreaming(
                 AtmStreamingPage.OperationType.SELL,
                 "$quoteAsset/$baseAsset",
                 "$amountCount $quoteAsset",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, userThree
+            )
+            assertThat(
+                "Offer with unit price $unitPrice should be exist",
+                isOfferExist(unitPriceAmount, myOffersList)
             )
         }
 
@@ -157,7 +212,15 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
+        val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val base = getHeldInOrders(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
         val quoteExpected = quoteBefore - (BigDecimal.TEN)
+        val quoteExpectedHeld = quoteBeforeHeld + (BigDecimal.TEN)
 
         assertThat(
             "Expected base balance: $baseBefore, was: $baseAfter",
@@ -169,41 +232,67 @@ class OfferPlacementStreaming : BaseTest() {
             quoteAfter,
             closeTo(quoteExpected, BigDecimal("0.01"))
         )
+        assertThat(
+            "Expected quote balance for held: $quoteExpectedHeld, was: $quoteAfterHeld",
+            quoteAfterHeld,
+            closeTo(quoteExpectedHeld, BigDecimal("0.01"))
+        )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-714")
     @Test
     @DisplayName("Streaming. Place offer. Sell, temporary offer")
     fun streamingPlaceOfferSellTemporaryOffer() {
         val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
-        val user = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
 
-        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getBalance(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getBalance(quoteAsset, firstWallet.name)
             base to quote
         }
 
-        with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
+        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val base = getHeldInOrders(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
+
+        with(openPage<AtmStreamingPage>(driver) { submit(userThree) }) {
+            softAssert { elementContainingTextPresented("CREATE AN OFFER") }
+
             createStreaming(
                 AtmStreamingPage.OperationType.SELL,
                 "$quoteAsset/$baseAsset",
                 "$amountCount $quoteAsset",
                 unitPriceAmount.toString(),
-                AtmStreamingPage.ExpireType.TEMPORARY, user
+                AtmStreamingPage.ExpireType.TEMPORARY, userThree
+            )
+            assertThat(
+                "Offer with unit price $unitPrice should be exist",
+                isOfferExist(unitPriceAmount, myOffersList)
             )
         }
-        val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+
+        val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getBalance(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getBalance(quoteAsset, firstWallet.name)
             base to quote
         }
-        //fee в baseAsset, base asset не расчитывается до принятия оффера
-        //Ожидаем base без изменений, quote снижен на amount
-        val quoteExpected = quoteBefore - BigDecimal.TEN
+
+        val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val base = getHeldInOrders(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
+        val quoteExpected = quoteBefore - (BigDecimal.TEN)
+        val quoteExpectedHeld = quoteBeforeHeld + (BigDecimal.TEN)
 
         assertThat(
             "Expected base balance: $baseBefore, was: $baseAfter",
@@ -215,9 +304,14 @@ class OfferPlacementStreaming : BaseTest() {
             quoteAfter,
             closeTo(quoteExpected, BigDecimal("0.01"))
         )
+        assertThat(
+            "Expected quote balance for held: $quoteExpectedHeld, was: $quoteAfterHeld",
+            quoteAfterHeld,
+            closeTo(quoteExpectedHeld, BigDecimal("0.01"))
+        )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION)
+    @ResourceLock(Constants.ATM_USER_2FA_OTF_OPERATION)
     @TmsLink("ATMCH-719")
     @Test
     @DisplayName("Streaming. Place offer. Invalid signature")
@@ -241,8 +335,16 @@ class OfferPlacementStreaming : BaseTest() {
                 selectAmount(amountCount)
                 clear(unitPrice)
                 sendKeys(unitPrice, unitPriceAmount.toString())
-                limitedTimeOffer()
-                click(placeOffer)
+                click(goodTillCancelled)
+                wait {
+                    until("Manual signature should be appeared", 15L) {
+                        click(placeOffer)
+                        check {
+                            isElementPresented(manualSignatureLabel, 4L)
+                        }
+                    }
+                }
+                clickUntilElementIsPresented(placeOffer, "Manual signature", 15, 5)
                 click(privateKey)
                 sendKeys(privateKey, user.otfWallet.secretKey)
                 click(confirmPrivateKeyButton)
@@ -272,7 +374,7 @@ class OfferPlacementStreaming : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-613")
     @Test
     @DisplayName("Streaming. Placing buy offer")
@@ -309,7 +411,7 @@ class OfferPlacementStreaming : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+    @ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     @TmsLink("ATMCH-624")
     @Test
     @DisplayName("Streaming. Placing sell offer")
@@ -392,7 +494,7 @@ class OfferPlacementStreaming : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+    @ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     @TmsLink("ATMCH-647")
     @Test
     @DisplayName("Streaming. Place offer. Buy, good till cancel")
@@ -400,28 +502,34 @@ class OfferPlacementStreaming : BaseTest() {
         val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
         val user = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
 
-        prerequisite {
-            prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
-                "1", "1",
-                "FIXED", "FIXED",
-                true
-            )
-        }
-
         val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
             val base = getBalance(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getBalance(quoteAsset, firstWallet.name)
             base to quote
         }
+
+        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val base = getHeldInOrders(baseAsset, firstWallet.name)
+            openPage<AtmWalletPage>(driver)
+            val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+            base to quote
+        }
+
+
         with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
+            softAssert { elementContainingTextPresented("CREATE AN OFFER") }
+
             val fee = createStreaming(
                 AtmStreamingPage.OperationType.BUY,
                 "$quoteAsset/$baseAsset",
                 "$amountCount $quoteAsset",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, user
+            )
+            assertThat(
+                "Offer with unit price $unitPrice should be exist",
+                isOfferExist(unitPriceAmount, myOffersList)
             )
 
             val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
@@ -431,24 +539,37 @@ class OfferPlacementStreaming : BaseTest() {
                 base to quote
             }
 
+            val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+                val base = getHeldInOrders(baseAsset, firstWallet.name)
+                openPage<AtmWalletPage>(driver)
+                val quote = getHeldInOrders(quoteAsset, firstWallet.name)
+                base to quote
+            }
+
             //fee расчитывается в baseAsset, при покупке baseBalance расчитывается сразу
             //Ожидаем снижение баланса на (amount * price + fee)
             val baseExpected = baseBefore - (BigDecimal.TEN * unitPriceAmount + fee)
+            val baseExpectedHeld = baseBeforeHeld + (BigDecimal.TEN) + fee
+
             assertThat(
-                "Expected base balance: $baseExpected, was: $baseAfter",
+                "Expected ${baseAsset.tokenSymbol} balance: $baseExpected, was: $baseAfter",
                 baseAfter,
                 closeTo(baseExpected, BigDecimal("0.01"))
             )
             assertThat(
-                "Expected quote balance: $quoteBefore, was: $quoteAfter",
+                "Expected ${quoteAsset.tokenSymbol} balance: $quoteBefore, was: $quoteAfter",
                 quoteAfter,
                 closeTo(quoteBefore, BigDecimal("0.01"))
             )
-
+            assertThat(
+                "Expected ${baseAsset.tokenSymbol} balance for held: $baseExpectedHeld, was: $baseAfterHeld",
+                baseAfterHeld,
+                closeTo(baseExpectedHeld, BigDecimal("0.01"))
+            )
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-608")
     @Test
     @DisplayName("Streaming. Place offer. Invalid 2FA code")

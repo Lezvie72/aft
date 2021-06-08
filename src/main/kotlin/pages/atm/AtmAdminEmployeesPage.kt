@@ -102,7 +102,7 @@ class AtmAdminEmployeesPage(driver: WebDriver) : AtmAdminPage(driver) {
         applyFilterSearchByEmail(email)
         return {
             it[EMP_EMAIL]?.text?.toLowerCase()?.contains(email.toLowerCase()) ?: false
-                    && it[STATUS]?.text?.toLowerCase() == status.toLowerCase()
+                    && it[STATUS]?.text.equals(status, ignoreCase = true)
         }
     }
 

@@ -9,6 +9,8 @@ import models.CoinType.CC
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -19,18 +21,20 @@ import pages.atm.AtmAdminTokensPage
 import pages.atm.AtmMarketplacePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Transaction of the transfer with a fee")
 class TransactionTransferWithFee : BaseTest() {
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-706")
     @Test
     @DisplayName("Transfer with fee. Wrong wallet")
@@ -79,7 +83,7 @@ class TransactionTransferWithFee : BaseTest() {
     }
 
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET),
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET),
         ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     )
     @TmsLink("ATMCH-1962")
@@ -149,7 +153,7 @@ class TransactionTransferWithFee : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-701")
     @Test
     @DisplayName("Transfer with fee. Insufficient funds")
@@ -219,7 +223,7 @@ class TransactionTransferWithFee : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-702")
     @Test
     @DisplayName("Transfer with fee. Wrong 2FA code")
@@ -286,7 +290,7 @@ class TransactionTransferWithFee : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-704")
     @Test
     @DisplayName("Transfer with fee. Cancel transfer")
@@ -353,7 +357,7 @@ class TransactionTransferWithFee : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-705")
     @Test
     @DisplayName("Transfer with fee. Wrong signature")
@@ -423,7 +427,7 @@ class TransactionTransferWithFee : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-634")
     @Test
     @DisplayName("Transfer with fee")
@@ -479,7 +483,7 @@ class TransactionTransferWithFee : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_2MAIN_WALLET)
     @TmsLink("ATMCH-1963")
     @Test
     @DisplayName("Transfer with fee. Transfer with comment")

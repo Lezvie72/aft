@@ -8,6 +8,7 @@ import pages.htmlelements.blocks.BaseBlock
 import pages.htmlelements.elements.AtmAmount
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.TextBlock
 import ru.yandex.qatools.htmlelements.element.TextInput
 
 @Name("Streaming item")
@@ -56,6 +57,10 @@ class StreamingOfferItem : BaseBlock<AtmPage>() {
     @Name("Cancel button")
     private lateinit var cancelButton: Button
 
+    @FindBy(xpath = ".//span[contains(text(),'Maturity date')]/ancestor::atm-property-value//span[@class = 'date-property__date ng-star-inserted']")
+    @Name("Maturity date")
+    private lateinit var maturityDate: TextBlock
+
     val baseAmount
         get() = baseLocator.amount
 
@@ -80,6 +85,9 @@ class StreamingOfferItem : BaseBlock<AtmPage>() {
 
     val unitPriceCurrency
         get() = unitPriceLocator.currency
+
+    val maturityDateText
+        get() = maturityDate.text
 
     fun clickCancelButton() {
         if (isCancellable) {

@@ -13,6 +13,8 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -22,19 +24,21 @@ import pages.atm.AtmIssuancesPage.LimitType.MAX
 import pages.atm.AtmIssuancesPage.LimitType.MIN
 import pages.atm.AtmIssuancesPage.OperationType.SELL
 import utils.Constants
+import utils.TagNames
 import utils.helpers.OAuth
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.MARKETPLACE.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Marketplace")
 @Story("FT purchase for CC")
 class FTPurchaseForCC : BaseTest() {
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1975")
     @Test
     @DisplayName("Fractionalized Token. New order creating")
@@ -70,7 +74,7 @@ class FTPurchaseForCC : BaseTest() {
 
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1976")
     @Test
     @DisplayName("Fractionalized Token. Validation during order creating")
@@ -148,7 +152,7 @@ class FTPurchaseForCC : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1977")
     @Test
     @DisplayName("Fractionalized Token. Cancellation during order creating")
@@ -238,7 +242,7 @@ class FTPurchaseForCC : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1980")
     @Test
     @DisplayName("Fractionalized Token. Wrong 2FA code filling during order creating")

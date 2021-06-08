@@ -34,6 +34,10 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
     }
 
     //<editor-fold desc="ELEMENTS">
+    @Name("Atomyze Zzz Spinner waiting alert")
+    @FindBy(xpath = "//i[@nztype='atomyzeZzzSpinner']")
+    lateinit var waitSpinnerAlert: TextBlock
+
     @Name("View Incoming P2P")
     @FindBy(xpath = "//span[contains(text(), 'View Incoming')]")
     lateinit var viewIncomingP2P: Button
@@ -249,7 +253,8 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         amountReceive: String,
         expiryType: ExpireType,
         user: HasOtfWallet,
-        maturityDate: String = ""
+        maturityDate: String = "",
+        manualCompleted: Boolean = false
     ): BigDecimal =
         createP2P(
             walletID,
@@ -261,7 +266,8 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
             expiryType,
             user,
             user.otfWallet,
-            maturityDate
+            maturityDate,
+            manualCompleted
         )
 
     @Step("User create P2P")
@@ -276,7 +282,8 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         expiryType: ExpireType,
         user: User,
         wallet: SimpleWallet,
-        maturityDate: String = ""
+        maturityDate: String = "",
+        manualCompleted: Boolean = false
     ): BigDecimal {
         return createP2PwithoutSign(
             walletID,
@@ -286,7 +293,8 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
             tokenToReceive,
             amountReceive,
             expiryType,
-            maturityDate
+            maturityDate,
+            manualCompleted
         ).also {
             signAndSubmitMessage(user, wallet.secretKey)
         }
@@ -302,15 +310,22 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         tokenToReceive: CoinType,
         amountReceive: String,
         expiryType: ExpireType,
-        maturityDate: String = ""
+        maturityDate: String = "",
+        manualCompleted: Boolean = false
     ): BigDecimal {
         return e {
-            click(createBlockTrade)
+            click(viewMyP2P)
+            click(createFromMyBlockTrade)
+            waitSpinnerAlertDisappeared()
             sendKeys(toWallet, walletID)
-
             wait {
                 untilPresented<Button>(By.xpath("//nz-auto-option//div[contains(text(),'$toCounterparty')]"))
             }.clickJS()
+
+            if (check { isElementContainsText(assetToReceive, tokenToSend.tokenSymbol) }) {
+                assetToReceive.selectBeforeOther(tokenToSend.tokenSymbol, page)
+            }
+
             select(assetToSend, tokenToSend.tokenSymbol)
             select(assetToReceive, tokenToReceive.tokenSymbol)
 
@@ -335,7 +350,9 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
                 }
             }
             Thread.sleep(2000)
-            click(createDeal)
+            if (!manualCompleted) {
+                click(createDeal)
+            }
             newOfferFee.amount
         }
     }
@@ -367,6 +384,7 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
 
         e {
             click(acceptFromDetails)
+            alert { checkErrorAlert() }
             signAndSubmitMessage(user as DefaultUser, user.otfWallet.secretKey)
         }
         return fee
@@ -481,5 +499,25 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
     fun isOfferExist(amountReceive: BigDecimal, table: AtmTable<P2PItem>): Boolean {
         table.find { it.amountToSend == amountReceive } ?: return false
         return true
+    }
+
+    @Step("Wait waiting spinner alert disappeared")
+    fun waitSpinnerAlertDisappeared() {
+        wait {
+            until("Waiting alert should be not exist", 20L) {
+                check {
+                    !isElementPresented(waitSpinnerAlert, 1L)
+                }
+            }
+        }
+    }
+
+    @Step("Set filter today")
+    fun setFilterToday() {
+        e {
+            click(resetFilters)
+            click(dateFrom)
+            click(today)
+        }
     }
 }

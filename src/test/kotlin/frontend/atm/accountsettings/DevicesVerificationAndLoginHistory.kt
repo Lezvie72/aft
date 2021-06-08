@@ -6,6 +6,8 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -13,9 +15,11 @@ import org.openqa.selenium.By
 import pages.atm.*
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Environment
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.*
 
+@Tags(Tag(TagNames.Epic.ACCOUNTSETTINGS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Account settings")

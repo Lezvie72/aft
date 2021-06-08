@@ -9,26 +9,29 @@ import models.CoinType.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmAdminTokensPage
 import pages.atm.AtmAdminTokensPage.EquivalentType.*
-import pages.atm.AtmIssuancesPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Show balance in dollars equivalent")
 class ShowBalanceInDollarsEquivalent : BaseTest() {
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-2248")
     @Test
     @DisplayName(" USD equivalent, fractional rate")

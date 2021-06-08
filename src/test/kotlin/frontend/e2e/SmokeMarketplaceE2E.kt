@@ -18,13 +18,14 @@ import pages.atm.AtmMarketplacePage
 import pages.atm.AtmWalletPage
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import utils.helpers.to
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Marketplace")
@@ -274,7 +275,7 @@ class SmokeMarketplaceE2E : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5262")
     @Test
     @DisplayName("Buy CC Token And Check Balance steps 33-43")
@@ -305,7 +306,7 @@ class SmokeMarketplaceE2E : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5262")
     @Test
     @DisplayName("Buy VT Token And Check Balance steps 44-53")

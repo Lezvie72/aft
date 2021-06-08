@@ -6,25 +6,20 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.BankDetails.Companion.generate
-import models.user.classes.DefaultUser
 import org.apache.commons.lang3.RandomStringUtils.random
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.openqa.selenium.By
-import org.openqa.selenium.WebElement
 import pages.atm.*
 import utils.Constants
-import utils.gmail.GmailApi
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
-import java.awt.Button
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")

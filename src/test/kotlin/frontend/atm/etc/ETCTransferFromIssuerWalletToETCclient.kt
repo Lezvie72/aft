@@ -9,18 +9,21 @@ import models.CoinType.ETC
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmIssuancesPage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-
+@Tags(Tag(TagNames.Epic.ETC.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("ETC")
 @Story("ETC entity in the platform")
@@ -83,7 +86,8 @@ class ETCTransferFromIssuerWalletToETCclient : BaseTest() {
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_ETC_TOKEN_SECOND),
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_ETC_TOKEN_THIRD)
-    )    @TmsLink("ATMCH-4401")
+    )
+    @TmsLink("ATMCH-4401")
     @Test
     @DisplayName("ETC token. Transfer from issuer wallet to ETC client (without 2FA)")
     fun etcTokenTransferFromIssuerWalletToETCclientWithout2FA() {

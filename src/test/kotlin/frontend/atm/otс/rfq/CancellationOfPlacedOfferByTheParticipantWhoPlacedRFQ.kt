@@ -17,12 +17,13 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmRFQPage
 import pages.atm.AtmRFQPage.OperationType.BUY
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("RFQ"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.RFQ.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("RFQ")
@@ -52,7 +53,7 @@ class CancellationOfPlacedOfferByTheParticipantWhoPlacedRFQ : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF)//скорее всего будет переписан
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET)//скорее всего будет переписан
     @TmsLink("ATMCH-995")
     @Test
     @DisplayName("RFQ. Cancel offer by participant")

@@ -16,6 +16,7 @@ import pages.atm.AtmAdminFiatWithdrawalPage.StatusType.REJECT
 import pages.atm.AtmAdminFiatWithdrawalPage.StatusType.WITHDRAWAL
 import pages.atm.AtmAdminTokensPage.EquivalentType.FIXED
 import pages.atm.AtmAdminTokensPage.EquivalentType.FROM_MARKET
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
@@ -23,7 +24,7 @@ import utils.helpers.step
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Admin panel")

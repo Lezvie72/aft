@@ -7,15 +7,19 @@ import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType.ETC
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmMarketplacePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
+@Tags(Tag(TagNames.Epic.ETC.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("ETC")
 @Story("ETC Token Visibility And Constraint")

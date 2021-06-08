@@ -18,13 +18,14 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
 import pages.atm.AtmWalletPage.WalletType.*
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Wallet")
@@ -44,7 +45,7 @@ class SmokeE2EWallet : BaseTest() {
         return user
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("Main wallet, OTF wallet, Issuer wallet registration (1-5), (6-9), (10-13) and Assign wallet roles (44-52)")
@@ -162,7 +163,7 @@ class SmokeE2EWallet : BaseTest() {
     }
 
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("Move CC Token And Check Balance steps 14,15-18")
@@ -204,7 +205,7 @@ class SmokeE2EWallet : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("Move CC Token From OTF to Main And Check Balance steps 14,19-23")
@@ -250,7 +251,7 @@ class SmokeE2EWallet : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("Transfer CC Token to another user Check Balance steps 24-28")

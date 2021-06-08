@@ -26,6 +26,7 @@ import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
+import java.io.File
 import java.math.BigDecimal
 
 
@@ -484,6 +485,21 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
         }
         signAndSubmitMessage(user, wallet.secretKey)
 
+    }
+
+    @Step("Chek download file")
+    fun checkDownloadFile(fileName: String): Boolean {
+        val folder = File(System.getProperty("user.dir"))
+        val listOfFiles: Array<File> = folder.listFiles()
+        var found = false
+        for (listOfFile in listOfFiles) {
+            if (listOfFile.isFile) {
+                if (listOfFile.name.matches(Regex(fileName))) {
+                    found = true
+                }
+            }
+        }
+        return found
     }
 
     @Step("Delete document and check this document")

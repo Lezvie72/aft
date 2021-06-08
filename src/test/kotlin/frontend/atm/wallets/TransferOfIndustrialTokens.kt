@@ -11,6 +11,8 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
@@ -19,13 +21,14 @@ import pages.atm.AtmIssuancesPage.StatusType.APPROVE
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.OAuth
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Transfer of industrial tokens")
@@ -33,7 +36,7 @@ class TransferOfIndustrialTokens : BaseTest() {
 
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION),
-        ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     )
     @TmsLink("ATMCH-2948")
     @Test
@@ -125,7 +128,7 @@ class TransferOfIndustrialTokens : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF), ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF), ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET))
     @TmsLink("ATMCH-2951")
     @Test
     @DisplayName("Transfer of industrial tokens. Using 2FA.")
@@ -338,7 +341,7 @@ class TransferOfIndustrialTokens : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF), ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF), ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET))
     @TmsLink("ATMCH-2952")
     @Test
     @DisplayName("Transfer of industrial tokens. Using wrong 2FA.")

@@ -11,11 +11,12 @@ import org.openqa.selenium.support.FindBy
 import pages.core.annotations.Action
 import pages.core.annotations.PageName
 import pages.core.annotations.PageUrl
+import pages.htmlelements.elements.AtmAmount
+import pages.htmlelements.elements.AtmRadio
 import pages.htmlelements.elements.AtmSelect
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextInput
-import utils.helpers.step
 import utils.helpers.to
 
 @PageUrl("/validator/history")
@@ -46,16 +47,20 @@ class AtmValidatorPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//label//span[contains(text(), 'Node type')]//ancestor::form//nz-select")
     lateinit var nodeType: AtmSelect
 
-    @Name("From wallet")
-    @FindBy(xpath = "//label//span[contains(text(), 'From wallet')]//ancestor::form//nz-select")
-    lateinit var fromWallet: AtmSelect
+    @Name("Staking wallet")
+    @FindBy(xpath = "//label//span[contains(text(), 'Staking wallet')]//ancestor::form//nz-select")
+    lateinit var stakingWallet: AtmSelect
+
+    @Name("Stake step")
+    @FindBy(xpath = "//div[text() ='Stake']//ancestor::nz-step")
+    lateinit var stakeStep: AtmRadio
 
     @Name("Submit")
     @FindBy(xpath = "//button//span[contains(text(), 'Submit')]")
     lateinit var submit: Button
 
     @Name("Cancel")
-    @FindBy(xpath = "//span[contains(text(), 'Cancel')]")
+    @FindBy(xpath = "//button//span[contains(text(), 'Cancel')]")
     lateinit var cancel: Button
 
     @Name("Node steps")
@@ -82,6 +87,10 @@ class AtmValidatorPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-node-details//a[contains(@class,'node-details__btn-link')]//atm-span[contains(text(),'Download certificate')]")
     lateinit var downloadCertificateLink: Button
 
+    @Name("Available balance")
+    @FindBy(xpath = "//span[contains(text(), 'AVAILABLE BALANCE')]/ancestor::atm-property-value//atm-amount")
+    lateinit var availableBalance: AtmAmount
+
 //    @Name("Node details")
 //    @FindBy(xpath = "//a[contains(text(),'Node details')]")
 //    lateinit var nodeDetails: Button
@@ -95,6 +104,17 @@ class AtmValidatorPage(driver: WebDriver) : AtmPage(driver) {
         e {
             click(cardWithStatus)
             click(nodeDetails)
+        }
+    }
+
+    @Action("find and open awaiting node")
+    @Step("User find and open awaiting node")
+    fun findAwaitingNode() {
+        val cardWithStatus = wait {
+            untilPresented<WebElement>(By.xpath(".//atm-validator-current-nodes//atm-validator-card//nz-tag[contains(@class,'ant-tag ant-tag-cyan')][contains(text(),'Awaiting')]//ancestor::atm-validator-card//a"))
+        }.to<Button>("Card in statusActive")
+        e {
+            click(cardWithStatus)
         }
     }
 
@@ -115,7 +135,7 @@ class AtmValidatorPage(driver: WebDriver) : AtmPage(driver) {
             click(addNode)
             select(nodeType, typeNode.toString())
             click(submit)
-            select(fromWallet, wallet.name)
+            select(stakingWallet, wallet.name)
             click(submit)
             signAndSubmitMessage(user, wallet.secretKey)
             click(ok)

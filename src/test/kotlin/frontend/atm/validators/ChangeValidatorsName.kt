@@ -5,6 +5,8 @@ import io.qameta.allure.*
 import models.CoinType.CC
 import models.CoinType.VT
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
@@ -14,10 +16,11 @@ import pages.atm.AtmIssuancesPage.OperationType.SELL
 import pages.atm.AtmValidatorPage.NodeType.ENDORSER
 import pages.atm.AtmValidatorPage.NodeType.ORDERER
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
-
+@Tags(Tag(TagNames.Epic.VALIDATORS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("Validator")
 @Story("Change Validators name")

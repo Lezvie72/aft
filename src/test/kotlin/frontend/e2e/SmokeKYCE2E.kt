@@ -13,12 +13,13 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import pages.atm.*
 import pages.atm.AtmAdminKycManagementPage.StatusType.*
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("KYC")

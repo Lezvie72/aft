@@ -7,9 +7,7 @@ import models.OtfAmounts
 import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -20,11 +18,13 @@ import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmStreamingPage.ExpireType.*
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.OTCSETTINGS))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
@@ -156,7 +156,7 @@ class OtfStreamingSettings : BaseTest() {
         val number1 = RandomStringUtils.random(2, false, true)
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addTradingPair(
-                baseInputValue, quoteValue, number, number,
+                baseInputValue, quoteValue, "",number, number,
                 number, "FIXED", "FIXED", true
             )
             chooseTradingPair(baseInputValue, quoteValue)
@@ -301,7 +301,7 @@ class OtfStreamingSettings : BaseTest() {
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addTradingPairIfNotPresented(
-                baseValue, quoteValue, "1",
+                baseValue, quoteValue, "","1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -464,7 +464,7 @@ class OtfStreamingSettings : BaseTest() {
 
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF)
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     )
     @TmsLink("ATMCH-4096")
     @Test
@@ -483,7 +483,7 @@ class OtfStreamingSettings : BaseTest() {
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addTradingPairIfNotPresented(
-                baseAsset.tokenSymbol, quoteAsset.tokenSymbol,
+                baseAsset.tokenSymbol, quoteAsset.tokenSymbol,"",
                 "1.000000000", "", "",
                 MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
             )
@@ -663,7 +663,7 @@ class OtfStreamingSettings : BaseTest() {
             with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addTradingPairIfNotPresented(
                     baseValue,
-                    quoteValue,
+                    quoteValue,"",
                     "1.00000000",
                     "1.00000000",
                     "1.00000000",
@@ -702,7 +702,7 @@ class OtfStreamingSettings : BaseTest() {
 
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF)
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     )
     @TmsLink("ATMCH-5303")
     @Test
@@ -719,7 +719,7 @@ class OtfStreamingSettings : BaseTest() {
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addTradingPairIfNotPresented(
-                baseValue, quoteValue,
+                baseValue, quoteValue,"",
                 "1.000000000", "", "",
                 MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
             )
@@ -763,7 +763,7 @@ class OtfStreamingSettings : BaseTest() {
         step("Admin add Trading pair $baseValue/$quoteValue") {
             with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addTradingPair(
-                    baseValue, quoteValue,
+                    baseValue, quoteValue,"",
                     "1.000000000", "", "",
                     MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
                 )
@@ -773,7 +773,7 @@ class OtfStreamingSettings : BaseTest() {
 
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF)
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     )
     @TmsLink("ATMCH-5512")
     @Test
@@ -790,7 +790,7 @@ class OtfStreamingSettings : BaseTest() {
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addTradingPairIfNotPresented(
-                baseValue, quoteValue,
+                baseValue, quoteValue,"",
                 "1.000000000", "", "",
                 MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
             )

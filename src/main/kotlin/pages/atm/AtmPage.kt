@@ -137,15 +137,6 @@ open class AtmPage(driver: WebDriver) : BasePage(driver) {
     open fun submitConfirmationCode(oAuthSecret: String?): Boolean {
         repeat(3) {
             enterConfirmationCode(oAuthSecret)
-            nonCriticalWait(15L) {
-                until(
-                    "waiting for disappearance",
-                    or(
-                        invisibilityOfElementLocated(By.xpath("//atm-confirm-otp")),
-                        presenceOfElementLocated(By.xpath("//*[text()=' Wrong code ']"))
-                    )
-                )
-            }
             if (driver.findElements(By.xpath("//*[text()=' Wrong code ']")).size == 0) {
                 return true
             }

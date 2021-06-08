@@ -56,3 +56,5 @@ gradle clean tags -Dconfig="<config-file>" -DskipBalances=true -DincludeTags='Yo
 * Use parametrized launch with select Tag
 * Select your branch and enter tags name or names **_without quotes and comma_**
 
+###Rules for run with Tags
+**_https://sdexnt.atlassian.net/wiki/spaces/ATM/pages/3360325767/Tag+usability_**

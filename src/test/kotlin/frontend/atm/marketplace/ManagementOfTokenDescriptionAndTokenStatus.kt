@@ -8,9 +8,7 @@ import io.qameta.allure.TmsLink
 import models.CoinType
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.AtmAdminTokensPage
@@ -18,11 +16,13 @@ import pages.atm.AtmAdminTokensPage.Headers.TICKER_SYMBOL
 import pages.atm.AtmMarketplacePage
 import pages.core.actions.AssertActions
 import ru.yandex.qatools.htmlelements.element.Button
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.to
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.MARKETPLACE.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Marketplace")

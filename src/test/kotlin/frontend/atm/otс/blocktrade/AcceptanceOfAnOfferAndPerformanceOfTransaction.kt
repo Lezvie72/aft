@@ -21,13 +21,14 @@ import pages.atm.AtmP2PPage.ExpireType
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Blocktrade"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("P2P Blocktrade")
@@ -161,8 +162,8 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
         }
     }
 
-    @Issue("IT токен отключен для ОТС")
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_OTF), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-914")
     @Test
     @DisplayName("Accept P2P offer. Insufficient funds")
@@ -215,7 +216,6 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
         }
     }
 
-    //    @Disabled("ATMCH-4009")
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_THIRD),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_FORTH)
@@ -315,7 +315,7 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
 
     }
 
-    //    @Disabled("ATMCH-4009")
+
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_FIFTH),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SIXTH)

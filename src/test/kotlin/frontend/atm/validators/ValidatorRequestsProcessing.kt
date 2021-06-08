@@ -7,22 +7,26 @@ import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType.VT
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
 import pages.atm.AtmAdminNodesManagementPage.NodeType
 import pages.atm.AtmValidatorPage.NodeType.ENDORSER
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
+@Tags(Tag(TagNames.Epic.VALIDATORS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Story("Validator requests processing")
 @Feature("Validator")
 class ValidatorRequestsProcessing : BaseTest() {
 
-    @ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF)
+    @ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-4155")
     @Test
     @DisplayName("Nodes management. Check interface")

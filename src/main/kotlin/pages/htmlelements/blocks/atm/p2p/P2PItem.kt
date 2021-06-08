@@ -22,6 +22,10 @@ class P2PItem : BaseBlock<AtmPage>() {
     @Name("Amount received")
     lateinit var amountReceived: AtmAmount
 
+    @FindBy(xpath = ".//span[contains(text(), 'AMOUNT SENT')]/ancestor::atm-property-value//atm-amount")
+    @Name("Amount received")
+    lateinit var amountSend: AtmAmount
+
     @FindBy(xpath = ".//span[contains(text(), 'TO SEND')]/ancestor::atm-property-value//atm-amount")
     @Name("To send amount")
     lateinit var toSend: AtmAmount
@@ -38,6 +42,9 @@ class P2PItem : BaseBlock<AtmPage>() {
 
     val amountToSend
         get() = toSend.amount
+
+    val amountToSendHistory
+        get() = amountSend.amount
 
     val isCancellable
         get() = check {

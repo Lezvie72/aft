@@ -14,6 +14,10 @@ class AtmRadio(wrappedElement: WebElement) : TypifiedElement(wrappedElement) {
         return this.findElement(By.xpath("//span[@class='ant-radio ant-radio-checked']")).isDisplayed
     }
 
+    fun isStepSelected(): Boolean {
+        return this.findElement(By.xpath("//nz-step[contains(@class,'ant-steps-item-active')]")).isDisplayed
+    }
+
 
 
 }

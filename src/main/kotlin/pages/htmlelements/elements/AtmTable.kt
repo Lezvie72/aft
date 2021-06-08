@@ -1,9 +1,9 @@
 package pages.htmlelements.elements
 
 import io.qameta.allure.Step
-import org.openqa.selenium.By
-import org.openqa.selenium.TimeoutException
-import org.openqa.selenium.WebElement
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.openqa.selenium.*
 import org.openqa.selenium.support.FindBy
 import pages.BasePage
 import pages.core.annotations.Action
@@ -12,6 +12,7 @@ import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextBlock
 import kotlin.math.absoluteValue
+
 
 class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
 
@@ -43,6 +44,9 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
 
     @FindBy(css = "nz-spin")
     lateinit var loader: TextBlock
+
+    @FindBy(css = "div")
+    lateinit var input: Button
 
     lateinit var content: List<T>
 
@@ -118,7 +122,7 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
 
     @Step("Check: have next page")
     fun hasNextPage(): Boolean {
-        return check { isElementPresented(nextPageButton) && isElementEnabled(nextPageButton) }
+        return check { isElementPresented(nextPageButton, 2L) && isElementEnabled(nextPageButton, 2L) }
     }
 
     @Step("Check: have previous page")
@@ -153,6 +157,23 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
                 waitUntilReady()
             } else {
                 return null
+            }
+        }
+        return null
+    }
+
+    @Step("Search for item")
+    fun findListTable(predicate: (T) -> Boolean): T? {
+        val repeatCount = 10
+        repeat(repeatCount) {
+            try {
+                val result = content.find(predicate)
+                if (result != null) return result
+            } catch (e: NoSuchElementException) {
+                input.sendKeys(Keys.PAGE_DOWN)
+                runBlocking {
+                    delay(2000)
+                }
             }
         }
         return null

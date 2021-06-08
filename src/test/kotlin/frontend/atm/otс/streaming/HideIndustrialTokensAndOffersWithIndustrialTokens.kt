@@ -1,11 +1,17 @@
 package frontend.atm.otс.streaming
 
 import frontend.BaseTest
-import io.qameta.allure.*
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
 import models.CoinType
 import models.OtfAmounts
 import org.apache.commons.lang.RandomStringUtils
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -14,19 +20,19 @@ import pages.atm.AtmAdminTokensPage
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag("OTC"), Tag("Streaming"))
-@Tag("IT OTC")
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
 @Story("Hide industrial tokens and offers with industrial tokens from non-industrial participants")
 class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
     // precondition
-    private val maturityDateInnerDate = "21 September 2020"
+    private val maturityDateInnerDate = "22 September 2020"
     private val industrialUserOne = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02
     private val industrialUserTwo = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04
     private val nonIndustrialUser = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE05
@@ -35,7 +41,7 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
     private val amountSell = OtfAmounts.AMOUNT_10.amount
     private val amountBuy = OtfAmounts.AMOUNT_1.amount
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-4342")
     @Test
     @DisplayName("Offers with industrial tokens by industrial participant")
@@ -69,7 +75,7 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-4343")
     @Test
     @DisplayName("Offers with industrial tokens by non industrial participant")
@@ -125,7 +131,7 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-4336")
     @Test
     @DisplayName("Selection industrial tokens only by participants having industrial mark in admin panel")
@@ -199,7 +205,7 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-4339")
     @Test
     @DisplayName("Selection industrial tokens by non-industrial participants")

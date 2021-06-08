@@ -9,15 +9,14 @@ import models.user.classes.DefaultUser
 import org.apache.commons.lang3.RandomStringUtils.random
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.*
 import pages.atm.AtmAdminKycManagementPage.StatusType.CLEAR
 import pages.atm.AtmAdminKycManagementPage.StatusType.PASSED
 import ru.yandex.qatools.htmlelements.element.Button
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users.Companion.ATM_ADMIN
 import utils.helpers.openPage
@@ -27,6 +26,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
@@ -118,7 +118,7 @@ class ImplementKycLogFunctionalityInAdminPanel : BaseTest() {
     @Test
     @DisplayName("Log.  Check status after sending invitation without marked checkbox Passed KYC")
     fun logCheckStatusAfterSendingInvitationWithoutMarkedCheckboxPassedKyc() {
-        val (user, since) = step("Create new User") {
+        val (user, _) = step("Create new User") {
             createAndRegisterUser(false)
         }
 

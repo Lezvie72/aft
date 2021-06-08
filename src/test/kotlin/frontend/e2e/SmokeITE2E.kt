@@ -21,12 +21,13 @@ import pages.atm.AtmIssuancesPage.OperationType.REDEMPTION
 import pages.atm.AtmIssuancesPage.StatusType.APPROVE
 import pages.atm.AtmIssuancesPage.StatusType.DECLINE
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("IT")

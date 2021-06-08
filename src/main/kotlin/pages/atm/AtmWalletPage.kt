@@ -196,18 +196,6 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-property-value//span[contains(text(), 'Available')]//ancestor::div[3]//atm-amount[1]")
     lateinit var balanceTokenUser: AtmAmount
 
-    @Name("Held in offers")
-    @FindBy(xpath = "//div//span[contains(text(), 'Held in offers')]//ancestor::div[3]//atm-amount[1]")
-    lateinit var heldInOffersUser: AtmAmount
-
-    @Name("Amount to send")
-    @FindBy(xpath = "//div//span[contains(text(), 'AMOUNT TO SEND')]//ancestor::div[3]//atm-amount[1]")
-    lateinit var amountToSendValue: AtmAmount
-
-    @Name("Transaction fee")
-    @FindBy(xpath = "//div//span[contains(text(), ' Transaction fee ')]//ancestor::div[3]//atm-amount[1]")
-    lateinit var transactionFeeValue: AtmAmount
-
     @Name("Held in Orders/Offers")
     @FindBy(xpath = "//atm-property-value//span[contains(text(), 'Held in orders')]//ancestor::div[3]//atm-amount | //atm-property-value//span[contains(text(), 'Held in offers')]//ancestor::atm-property-value//atm-amount ")
     lateinit var heldInOrders: AtmAmount
@@ -226,10 +214,6 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//a[contains(@href, 'FT')]")
 //    @FindBy(xpath = "//a[contains(text(), 'Fractional Token')]")
     lateinit var fractionalizedTokenButton: Button
-
-    @Name("Available balance")
-    @FindBy(xpath = "//div//span[contains(text(), 'AVAILABLE BALANCE')]//ancestor::div[3]//atm-amount[1]")
-    lateinit var availableBalanceValue: AtmAmount
 
     @Name("Industrial token")
     @FindBy(xpath = "//a[contains(@href, 'IT')]")
@@ -847,20 +831,6 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
             click(fiatTokenButton)
             click(redemption)
             click(cancelButton)
-        }
-    }
-
-    @Step("Sending funds to another wallet")
-    @Action("Sending funds to another wallet")
-    fun sendingFundsToAnotherWallet(amount: String, secretKey: String, oAuthSecret: String) {
-        e {
-            click(move)
-            sendKeys(amountTransfer, amount)
-            click(submitButton)
-            sendKeys(privateKey, secretKey)
-            click(confirmPrivateKeyButton)
-            submitConfirmationCode(oAuthSecret)
-            click(doneButton)
         }
     }
 

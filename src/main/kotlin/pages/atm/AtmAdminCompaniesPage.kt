@@ -197,7 +197,7 @@ class AtmAdminCompaniesPage(driver: WebDriver) : AtmAdminPage(driver) {
         }
         val row = companiesTable.find {
             it[SHORT_NAME]?.text == companyDetails.shortName
-        } ?: error("Can't find row with short name '$companyDetails.shortName'")
+        } ?: error(String.format("Can't find row with short name %s", companyDetails.shortName))
 
         val shortNam = row[SHORT_NAME]?.text
         val addres = row[ADDRESS]?.text

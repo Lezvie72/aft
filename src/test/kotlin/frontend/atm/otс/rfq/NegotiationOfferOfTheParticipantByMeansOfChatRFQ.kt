@@ -14,12 +14,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.AtmRFQPage
 import pages.atm.AtmRFQPage.OperationType.BUY
 import pages.atm.AtmWalletPage
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("RFQ"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.RFQ.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("RFQ")

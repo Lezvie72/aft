@@ -20,12 +20,13 @@ import pages.atm.AtmIssuancesPage.StatusType.DECLINE
 import pages.atm.AtmWalletPage.RedemptionTypeETC.AUTO
 import pages.atm.AtmWalletPage.RedemptionTypeETC.MANUAL
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(OrderAnnotation::class)
 @Epic("Frontend")

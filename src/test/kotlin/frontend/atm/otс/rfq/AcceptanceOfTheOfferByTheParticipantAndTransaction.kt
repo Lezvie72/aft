@@ -20,12 +20,13 @@ import pages.atm.AtmRFQPage
 import pages.atm.AtmRFQPage.OperationType.BUY
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("RFQ"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.RFQ.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("RFQ")
@@ -33,7 +34,7 @@ import java.math.BigDecimal
 class AcceptanceOfTheOfferByTheParticipantAndTransaction : BaseTest() {
 
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF),
+        ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND)
     )
     @TmsLink("ATMCH-1037")

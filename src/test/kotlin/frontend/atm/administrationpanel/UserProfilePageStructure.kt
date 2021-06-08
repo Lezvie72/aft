@@ -5,39 +5,25 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.user.classes.DefaultUser
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.AtmAdminInvitesPage
 import pages.atm.AtmHomePage
 import pages.atm.AtmLoginPage
 import pages.atm.AtmProfilePage
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
 @Story("User Profile Page Structure")
 class UserProfilePageStructure : BaseTest() {
 
-    private fun createAndRegisterUser(kycPassed: Boolean = false): DefaultUser {
-        val user = newUser()
-        with(openPage<AtmAdminInvitesPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            sendInvitation(user.email, kycPassed)
-        }
-        openPage<AtmHomePage>(driver)
-        val href = GmailApi.getHrefForNewUserATM(user.email)
-        driver.navigate().to(href)
-        with(AtmLoginPage(driver)) {
-            fillRegForm()
-        }
-        return user
-    }
 
     @Disabled("Подписание участником новой версии Terms and Conditions не входит в объем реализации для сентября 2020")
     @TmsLink("ATMCH-1383")

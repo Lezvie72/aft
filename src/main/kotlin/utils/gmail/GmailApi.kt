@@ -77,7 +77,7 @@ object GmailApi {
     fun getHrefPassRecoveryLinkUserADMIN(
         email: String,
         since: LocalDateTime = LocalDateTime.ofEpochSecond(1, 0, ZoneOffset.UTC)
-    ): String = getHrefForAdminRecovery(email,since,"Password reset")
+    ): String = getHrefForAdminRecovery(email, since, "Password reset")
 
 
     @Step("Get href for registration employee of atm user with email '{email}'")
@@ -132,7 +132,7 @@ object GmailApi {
     fun getTextMessageNodeActivated(
         email: String,
         since: LocalDateTime = LocalDateTime.ofEpochSecond(1, 0, ZoneOffset.UTC)
-    ): String = getEmailBody(email,"Atomyze – Node activated",since)
+    ): String = getEmailBody(email, "Atomyze – Node activated", since)
 
     @Step("Get message about an order '{email}'")
     fun getTextMessageNodeCertificateIssued(
@@ -269,7 +269,9 @@ object GmailApi {
         subject: String
     ): String {
         val msg = getLastEmail(email, since, subject)
-        return "(http.*atm.*front.*)".toRegex().find(msg)?.groups?.first()?.value?.replaceAfter("com", "")
+        return "(http.*atm.*front.*)".toRegex().find(msg)?.groups?.first()?.value
+            ?.replaceAfter("\"", "")
+            ?.replace("\"", "")
             ?: error("No href found")
         /*
         * Регуляка ищет href для регистрации, так как теперь в письме приходят две ссылки одна ведет на gif файл вторая на регистрацию

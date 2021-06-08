@@ -18,18 +18,18 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
-import pages.atm.AtmAdminRfqSettingsPage
 import pages.atm.AtmRFQPage
 import pages.atm.AtmRFQPage.OperationType.BUY
 import pages.atm.AtmRFQPage.OperationType.SELL
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("RFQ"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.RFQ.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("RFQ")
@@ -83,8 +83,8 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
 
     //    @Disabled("ATMCH-4285")
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF),
-        ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     )
     @TmsLink("ATMCH-1271")
     @Test
@@ -258,7 +258,7 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
     }
 
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF),
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND)
     )
     @TmsLink("ATMCH-1323")
@@ -294,7 +294,7 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
     }
 
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF),
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND)
     )
     @TmsLink("ATMCH-1315")
@@ -337,8 +337,8 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
     }
 
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF),
-        ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     )
     @TmsLink("ATMCH-1316")
     @Test
@@ -381,8 +381,8 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
     }
 
     @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF),
-        ResourceLock(Constants.ROLE_USER_OTF_FOR_OTF)
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     )
     @TmsLink("ATMCH-1317")
     @Test

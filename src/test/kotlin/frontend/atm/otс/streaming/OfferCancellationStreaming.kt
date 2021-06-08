@@ -17,19 +17,20 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmStreamingPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag("OTC"), Tag("Streaming"))
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
 @Story("Offer Cancellation Streaming")
 class OfferCancellationStreaming : BaseTest() {
 
-    @ResourceLock(Constants.ROLE_USER_2FA_OTF)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-615")
     @Test
     @DisplayName("Streaming. Cancel buy offer")

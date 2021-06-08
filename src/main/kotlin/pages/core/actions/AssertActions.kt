@@ -126,10 +126,16 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
         }
     }
 
-    @Step("Check: element should be hide")
-    @Action("assert element with text should be not presented")
-    fun elementShouldBeHide(element: TypifiedElement, timeoutInSeconds: Long = page.getTimeoutInSeconds()) {
-        assertThat("Element should be hide ${element.name}", !page.isElementHide(page, element, timeoutInSeconds))
+    @Step("Check: element should be disappeared")
+    @Action("assert element with text should be not presented or disappeared")
+    fun elementShouldBeDisappeared(element: TypifiedElement, timeoutInSeconds: Long = page.getTimeoutInSeconds()) {
+        page.wait {
+            until("Element should be hide ${element.name}", timeoutInSeconds) {
+                page.check {
+                    !isElementPresented(element, 1L)
+                }
+            }
+        }
     }
 
     @Step("Assertion: Is element containing text presented")
@@ -322,7 +328,10 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
     @Action("assert text mail")
     @Step("Assertion: mail '{text}'")
     fun newTextEmail(href: String, text: String) {//TODO доработать регулярку
-        val str = href.replace("\\r\\n|<[^>]*>".toRegex(), "").replaceBefore("Atomyze","").replaceAfterLast("!","").replace("^ +| +$|( )+".toRegex(), " ")
+        val str = href.replace("\\r\\n|<[^>]*>".toRegex(), "")
+            .replaceBefore("Atomyze","")
+            .replaceAfterLast("!","")
+            .replace("^ +| +$|( )+".toRegex(), " ")
         assertThat(
             str,
             Matchers.containsString(text)

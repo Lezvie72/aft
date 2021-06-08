@@ -16,13 +16,15 @@ import org.junit.jupiter.api.parallel.ResourceLocks
 import org.openqa.selenium.WebDriver
 import pages.atm.*
 import pages.core.actions.ElementActions
+import ru.yandex.qatools.htmlelements.element.TextBlock
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 import java.util.*
 
-@Tag("Fee")
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER),Tag(TagNames.Flow.FEE))
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Epic("Frontend")
@@ -2817,6 +2819,10 @@ class PlacingOfTheNewOffer_And_AcceptingAnOffer : BaseTest() {
 
         with(openPage<AtmStreamingPage>(driver)) {
             e {
+                wait {
+                    untilPresentedAnyWithText<TextBlock>("Error", "error")
+                }
+
                 // check fee in offer
                 click(overview)
                 setFilterBuyToday(this, this@with)

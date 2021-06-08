@@ -1,6 +1,8 @@
 package pages
 
 import io.qameta.allure.model.Status
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -11,19 +13,26 @@ import utils.helpers.attachScreenshot
 import utils.helpers.getJSExecutor
 import utils.helpers.getName
 import utils.helpers.updateStep
+import kotlin.coroutines.CoroutineContext
 
 
 @Suppress("UNCHECKED_CAST")
 open class BasePage(
     val driver: WebDriver
-) : WebDriver by driver {
+) : WebDriver by driver, CoroutineScope {
+
+    private val timeForCompletelyLoading: Long = 5
+
+    open fun getTimeoutInSeconds(): Long {
+        return 20L
+    }
 
     init {
         PageFactory.initElements(
             HtmlElementBlockDecorator<BasePage>(CustomHtmlElementLocatorFactory(driver, null), this, null), this
         )
-        wait(30L) {
-            until("Page didnt load in 30 seconds") {
+        nonCriticalWait(timeForCompletelyLoading) {
+            until("Page didn't completely load in  seconds") {
                 getJSExecutor(driver).executeScript("return document.readyState") == "complete"
             }
         }
@@ -66,7 +75,6 @@ open class BasePage(
         return f.get(searchContext) as T
     }
 
-    open fun getTimeoutInSeconds(): Long {
-        return 20L
-    }
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default
 }

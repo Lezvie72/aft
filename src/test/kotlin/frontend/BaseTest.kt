@@ -57,7 +57,7 @@ open class BaseTest {
 
         fun newDriver(): ChromeDriver {
             val options = ChromeOptions().apply {
-//                addArguments("--headless")
+                addArguments("--headless")
                 addArguments("--window-size=1920,1080")
                 addArguments("--disable-dev-shm-usage")
                 addArguments("--no-sandbox")
@@ -70,7 +70,7 @@ open class BaseTest {
 
             return ChromeDriver(options).apply {
                 manage().window().maximize()
-                manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS)
+                manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS)
                 manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS)
 //                get(Environment.atm_front_url)
             }

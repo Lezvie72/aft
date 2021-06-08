@@ -14,6 +14,7 @@ import org.openqa.selenium.By
 import pages.atm.*
 import pages.atm.AtmWalletPage.RedemptionTypeETC.AUTO
 import utils.Constants
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
 import utils.helpers.openPage
@@ -22,6 +23,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Epic("Frontend")

@@ -102,7 +102,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         available: Boolean
     ) {
         openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.addTradingPairIfNotPresented(
-            baseInputValue, quoteValue, availableAmountValue, feePlaceAmountValue,
+            baseInputValue, quoteValue,"", availableAmountValue, feePlaceAmountValue,
             feeAcceptAmountValue, feePlaceModeValue, feeAcceptModeValue, available
         )
         openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeSettingsForTokenStreaming(

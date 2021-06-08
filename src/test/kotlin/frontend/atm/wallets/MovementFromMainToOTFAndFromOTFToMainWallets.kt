@@ -12,6 +12,8 @@ import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -21,9 +23,11 @@ import pages.atm.AtmAdminTokensPage
 import pages.atm.AtmMarketplacePage
 import pages.atm.AtmWalletPage
 import utils.Constants
+import utils.TagNames
 import utils.helpers.*
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Wallets")
@@ -31,7 +35,7 @@ import java.math.BigDecimal
 class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
 
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_MAIN_OTF_MOVE)
     @TmsLink("ATMCH-2530")
     @Test
     @DisplayName("Movement from Main to OTF wallet - Cancellation")
@@ -233,7 +237,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
         // TODO: Steps from 10 to 12 are missing cause of transactions part
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_MAIN_OTF_MOVE)
     @TmsLink("ATMCH-2532")
     @Test
     @DisplayName("Movement from OTF to Main wallet")
@@ -326,7 +330,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
         }
     }
 
-    @ResourceLock(Constants.USER_BALANCE_LOCK)
+    @ResourceLock(Constants.ROLE_USER_MAIN_OTF_MOVE)
     @TmsLink("ATMCH-2520")
     @Test
     @DisplayName("Movement between OTF and Main wallets - UI cheking")

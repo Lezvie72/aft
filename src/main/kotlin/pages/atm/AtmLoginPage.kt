@@ -1,7 +1,10 @@
 package pages.atm
 
 import io.qameta.allure.Step
-import models.user.classes.DefaultUser
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import models.user.interfaces.User
 import models.user.interfaces.auth.HasTwoFA
 import org.openqa.selenium.WebDriver
@@ -140,7 +143,7 @@ class AtmLoginPage(driver: WebDriver) : AtmPage(driver),
         }
 
         check {
-            captchaButton.ifPresented (5L) {
+            captchaButton.ifPresented(5L) {
                 wait {
                     until("Button 'Register' should be enabled") {
                         e {
@@ -231,8 +234,55 @@ class AtmLoginPage(driver: WebDriver) : AtmPage(driver),
             since
         }
 
+        runBlocking {
+            var isCanSubmit: Deferred<Boolean> = async { check { isElementPresented(atmOtpConfirmationInput, 5L) } }
+            var isLogIn: Deferred<Boolean> = async { check { isElementPresented(atmLogoutButton, 5L) } }
+
+            launch {
+                if (isCanSubmit.await() || !isLogIn.await()) {
+                    if (user !is HasTwoFA) {
+                        checkCaptchaAndDevice(user, since)
+                    } else {
+                        //2FA confirmation
+                        if (isCanSubmit.await()) {
+                            submitConfirmationCode(user.oAuthSecret)
+                        } else {
+                            checkCaptchaAndDevice(user, since)
+                            submitConfirmationCode(user.oAuthSecret)
+                        }
+                    }
+                }
+            }
+        }
+
+        async {
+            wait(20) {
+                until("Couldn't get token with email '${user.email}'") {
+                    this.getToken() != null
+                }
+            }
+        }
+
+        wait(10L) {
+            until("Couldn't authorization '${user.email}' - profile page not found") {
+                check { check { urlMatches(".*/profile/info$") } }
+            }
+        }
+
+        driver.authorize(Environment.atm_front_base_url)
+        driver.takeScreenshot()
+
+        return AtmProfilePage(driver)
+    }
+
+    private fun checkCaptchaAndDevice(user: User, since: LocalDateTime) {
+        checkCaptcha()
+        verifyDeviceIfNeeded(user, since)
+    }
+
+    private fun checkCaptcha() {
         check {
-            captchaButton.ifPresented (5L) {
+            captchaButton.ifPresented(5L) {
                 wait {
                     until("Button 'Register' should be enabled") {
                         e {
@@ -246,28 +296,8 @@ class AtmLoginPage(driver: WebDriver) : AtmPage(driver),
                 }
 
             }
+            //Verification of device
         }
-
-        //Verification of device
-        verifyDeviceIfNeeded(user, since)
-
-        //2FA confirmation
-        if(user is HasTwoFA) {
-            submitConfirmationCode(user.oAuthSecret)
-        }
-
-        wait(10) {
-            until("Couldn't authorize with email '${user.email}'") {
-                this.getToken() != null
-                        && check { urlMatches(".*/profile/info$") }
-                        && check { isElementPresented(atmLogoutButton) }
-            }
-        }
-
-        driver.authorize(Environment.atm_front_base_url)
-        driver.takeScreenshot()
-
-        return AtmProfilePage(driver)
     }
 
 //test

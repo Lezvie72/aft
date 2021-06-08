@@ -7,6 +7,8 @@ import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType.ETC
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.openqa.selenium.By
@@ -15,12 +17,13 @@ import org.openqa.selenium.WebElement
 import pages.atm.AtmIssuancesPage
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.Constants
+import utils.TagNames
 import utils.helpers.FileHelper
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.to
 
-
+@Tags(Tag(TagNames.Epic.ETC.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("ETC")
 @Story("New authorization check for smartcontract methods")

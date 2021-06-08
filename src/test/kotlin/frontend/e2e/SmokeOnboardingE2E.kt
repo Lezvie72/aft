@@ -16,12 +16,13 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import pages.atm.*
+import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.*
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Onboarding")

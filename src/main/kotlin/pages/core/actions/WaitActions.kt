@@ -27,9 +27,9 @@ class WaitActions<T : WebDriver>(page: BasePage, driver: T, val timeOutInSeconds
     }
 
     @Action("Wait any object with name")
-    inline fun <reified T : TypifiedElement> untilPresentedAnyWithText(objectText: String, name: String): T {
+    inline fun <reified T : TypifiedElement> untilPresentedAnyWithText(objectText: String, objectName: String): T {
         val by = By.xpath("//*[contains(text(), '$objectText')]")
-        return untilPresented(by, name)
+        return untilPresented(by, objectName)
     }
 
     @Step("Wait '{e.name}' to be presented")

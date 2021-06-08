@@ -73,6 +73,26 @@ class ElementActions<T : WebDriver>(page: BasePage, driver: T) : BaseActions<Bas
         }
     }
 
+    @Step("Click on element '{e.name}' until it presented")
+    fun clickElementUntilOtherElementIsPresented(
+        e: WebElement,
+        textElement: String,
+        timeoutInSeconds: Long,
+        pollingEveryInSeconds: Long
+    ) {
+        page.e {
+            until(
+                "Element '${e.getName()} didn't disappear in $timeoutInSeconds seconds",
+                timeoutInSeconds,
+                pollingEveryInSeconds
+            ) {
+                click(e)
+                page.check {
+                    isElementWithTextPresented(textElement)
+                }
+            }
+        }
+    }
 
     @Action("type value")
     fun sendKeys(name: String, value: String) {

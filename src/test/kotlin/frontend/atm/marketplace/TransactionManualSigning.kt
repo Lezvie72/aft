@@ -10,6 +10,8 @@ import models.CoinType.FIAT
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -18,13 +20,14 @@ import pages.atm.AtmAdminPaymentsPage
 import pages.atm.AtmMarketplacePage
 import pages.atm.AtmWalletPage
 import utils.Constants
-import utils.Environment
+import utils.TagNames
 import utils.helpers.OAuth
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
+@Tags(Tag(TagNames.Epic.MARKETPLACE.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Marketplace")
@@ -32,7 +35,7 @@ import java.math.BigDecimal
 class TransactionManualSigning : BaseTest() {
 
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-426")
     @Test
     @DisplayName("Buying a Currency Token using a manual signature. Integer amount")
@@ -71,7 +74,7 @@ class TransactionManualSigning : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1934")
     @Test
     @DisplayName("Buying Currency Token (СС). Amount is a number with decimal places after comma")
@@ -105,7 +108,7 @@ class TransactionManualSigning : BaseTest() {
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-1931")
     @Test
     @DisplayName("Buying Currency Token (CC). Wrong 2FA APP")

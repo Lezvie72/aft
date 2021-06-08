@@ -8,13 +8,16 @@ import io.qameta.allure.TmsLink
 import models.CoinType.ETC
 import models.CoinType.VT
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import pages.atm.AtmIssuancesPage
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 
-
+@Tags(Tag(TagNames.Epic.ETC.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("ETC")
 @Story("ETC Automatic Token Linkage")

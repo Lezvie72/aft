@@ -15,16 +15,18 @@ import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.*
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.to
 import java.math.BigDecimal
 
-@Tag("TVE")
+@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Flow.TVE))
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Epic("Frontend")
 @Feature("TVE.Streaming")
 @Story("TVE for OTF")
+
 class TveForOtf : BaseTest() {
     companion object {
         private var setupTve = mutableSetOf<String>()
@@ -39,7 +41,10 @@ class TveForOtf : BaseTest() {
     private val userTwo = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04
 
     @Order(10)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3720")
     @Test
     @DisplayName("TVE.Steaming. Green corridor checking")
@@ -115,7 +120,7 @@ class TveForOtf : BaseTest() {
                 acceptOffer(userTwo)
                 alert { checkErrorAlert() }
                 assert {
-                    elementShouldBeHide(acceptOffer, 10)
+                    elementShouldBeDisappeared(acceptOffer, 10)
                 }
                 setFilterBuyToday(baseAsset, quoteAsset)
                 assertThat(
@@ -127,7 +132,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(11)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3749")
     @Test
     @DisplayName("TVE.Blocktrade. Green corridor checking")
@@ -177,7 +185,7 @@ class TveForOtf : BaseTest() {
                 signAndSubmitMessage(userTwo, userTwo.otfWallet.secretKey)
                 alert { checkErrorAlert() }
                 assert {
-                    elementShouldBeHide(acceptFromDetails, 10)
+                    elementShouldBeDisappeared(acceptFromDetails, 10)
                 }
                 setFilterBuyToday(quoteAsset)
                 assertThat(
@@ -189,7 +197,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(12)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3736")
     @Test
     @DisplayName("TVE.RFQ. Green corridor checking")
@@ -238,7 +249,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(13)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3733")
     @Test
     @DisplayName("TVE.Steaming. Yellow corridor checking")
@@ -323,7 +337,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(14)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3757")
     @Test
     @DisplayName("TVE.Blocktrade. Yellow corridor checking")
@@ -372,7 +389,7 @@ class TveForOtf : BaseTest() {
                 signAndSubmitMessage(userTwo, userTwo.otfWallet.secretKey)
                 alert { checkErrorAlert() }
                 assert {
-                    elementShouldBeHide(acceptFromDetails, 10)
+                    elementShouldBeDisappeared(acceptFromDetails, 10)
                 }
                 setFilterBuyToday(quoteAsset)
                 assertThat(
@@ -384,7 +401,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(15)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3745")
     @Test
     @DisplayName("TVE.RFQ. Yellow corridor checking")
@@ -433,7 +453,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(16)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3734")
     @Test
     @DisplayName("TVE.Steaming. Red corridor checking")
@@ -506,13 +529,12 @@ class TveForOtf : BaseTest() {
                     ?: error("Couldn't find offer with amount $unitPriceOffer")
                 click(incomingOffer)
                 click(acceptOffer)
-                signAndSubmitMessage(userTwo, userTwo.otfWallet.secretKey)
                 alert {
                     waitAndCheckErrorAlertWithMessage("Unit price is out of the allowed price range")
                 }
                 click(cancelOffer)
                 assert {
-                    elementShouldBeHide(acceptOffer, 10)
+                    elementShouldBeDisappeared(acceptOffer, 10)
                 }
                 setFilterBuyToday(baseAsset, quoteAsset)
                 assertThat(
@@ -524,7 +546,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(17)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3759")
     @Test
     @DisplayName("TVE.Blocktrade. Red corridor checking")
@@ -576,7 +601,7 @@ class TveForOtf : BaseTest() {
                 }
                 click(closeBlockTradeCard)
                 assert {
-                    elementShouldBeHide(acceptFromDetails, 10)
+                    elementShouldBeDisappeared(acceptFromDetails, 10)
                 }
                 assertThat(
                     "Offer with unitPrice $amountToReceive should not exist",
@@ -587,7 +612,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(18)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3746")
     @Test
     @DisplayName("TVE.RFQ. Red corridor checking")
@@ -634,7 +662,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(19)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3735")
     @Test
     @DisplayName("TVE.Steaming. There is no corridor validation for IT")
@@ -707,7 +738,7 @@ class TveForOtf : BaseTest() {
                 acceptOffer(userTwo)
                 alert { checkErrorAlert() }
                 assert {
-                    elementShouldBeHide(acceptOffer, 10)
+                    elementShouldBeDisappeared(acceptOffer, 10)
                 }
                 assertThat(
                     "Offer with unitPrice $unitPriceOffer should not exist",
@@ -718,7 +749,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(20)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3760")
     @Test
     @DisplayName("TVE.Blocktrade. There is no corridor validation for IT")
@@ -769,7 +803,7 @@ class TveForOtf : BaseTest() {
                 signAndSubmitMessage(userTwo, userTwo.otfWallet.secretKey)
                 alert { checkErrorAlert() }
                 assert {
-                    elementShouldBeHide(acceptFromDetails, 10)
+                    elementShouldBeDisappeared(acceptFromDetails, 10)
                 }
                 assertThat(
                     "Offer with unitPrice $amountToReceive should not exist",
@@ -780,7 +814,10 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(21)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
     @TmsLink("ATMCH-3748")
     @Test
     @DisplayName("TVE.RFQ. There is no corridor validation for IT")
@@ -828,7 +865,7 @@ class TveForOtf : BaseTest() {
     }
 
     @Order(22)
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_OTF))
+    @ResourceLocks(ResourceLock(Constants.ROLE_ADMIN))
     @TmsLink("DEFAULT")
     @Test
     @DisplayName("TVE. Set default settings in TVE admin")

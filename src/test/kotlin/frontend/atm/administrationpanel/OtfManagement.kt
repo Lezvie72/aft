@@ -9,21 +9,20 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
 import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
-import utils.helpers.Users.Companion.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
 import utils.helpers.openPage
 import utils.helpers.to
 import utils.isChecked
 
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.OTCSETTINGS))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
@@ -614,6 +613,7 @@ class OtfManagement : BaseTest() {
             addTradingPair(
                 baseValue,
                 quoteValue,
+                "",
                 fieldValue,
 
                 fieldValue,
@@ -635,6 +635,92 @@ class OtfManagement : BaseTest() {
                 }
             }
             assert { elementWithTextNotPresented(fieldValue) }
+        }
+    }
+
+    @Disabled("Переключатели кликаются через раз")
+    @TmsLink("ATMCH-4112")
+    @Test
+    @DisplayName("[OTF manage] Disable and Enable trading sections")
+    fun disableAndEnableTradingSections() {
+        with(openPage<AtmAdminGeneralSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            e {
+                setCheckbox(rfqToggle, false)
+                setCheckbox(blocktradeToggle, false)
+                setCheckbox(streamingToggle, false)
+            }
+        }
+        with(openPage<AtmProfilePage>(driver) { submit(Users.ATM_USER_2FA_MANUAL_SIG_OTF2_WALLET) }) {
+            assert {
+                elementContainingTextNotPresented("RFQ")
+                elementContainingTextNotPresented("Streaming")
+                elementContainingTextNotPresented("Blocktrade")
+            }
+        }
+        with(openPage<AtmAdminGeneralSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            e {
+                setCheckbox(rfqToggle, true)
+                setCheckbox(blocktradeToggle, true)
+                setCheckbox(streamingToggle, true)
+            }
+        }
+        with(openPage<AtmStreamingPage>(driver) { submit(Users.ATM_USER_2FA_MANUAL_SIG_OTF2_WALLET) }) {
+            assert {
+                elementPresented(createOffer)
+                elementPresented(overview)
+                elementPresented(tradeHistory)
+            }
+            e{
+                click(tradeHistory)
+            }
+            assert {
+                elementPresented(overview)
+                elementPresented(myOffers)
+                elementPresented(tradeHistory)
+            }
+            e{
+                click(myOffers)
+            }
+            assert {
+                assert { elementPresented(placeOffer) }
+            }
+        }
+        with(openPage<AtmRFQPage>(driver) { submit(Users.ATM_USER_2FA_MANUAL_SIG_OTF2_WALLET) }) {
+            assert {
+                elementPresented(createRequest)
+                elementPresented(historyOffers)
+                elementPresented(myRequest)
+            }
+            e{
+                click(historyOffers)
+            }
+            assert {
+                elementPresented(myRequest)
+                elementPresented(tradeHistory)
+            }
+            e{
+                click(myRequest)
+            }
+            assert { elementPresented(createRequest) }
+        }
+        with(openPage<AtmP2PPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            assert {
+                elementPresented(createBlockTrade)
+                elementPresented(viewMyP2P)
+                elementPresented(viewHistoryP2P)
+            }
+            e{
+                click(viewIncomingP2P)
+            }
+            assert {
+                elementPresented(createBlockTrade)
+            }
+            e{
+                click(incomingBT)
+            }
+            assert {
+                elementPresented(createBlockTrade)
+            }
         }
     }
 }

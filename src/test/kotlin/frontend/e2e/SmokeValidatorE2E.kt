@@ -20,13 +20,14 @@ import pages.atm.AtmAdminNodesManagementPage.NodeType.ORDERER
 import pages.atm.AtmIssuancesPage.LimitType.MAX
 import pages.atm.AtmIssuancesPage.OperationType.SELL
 import utils.Constants
+import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
 import utils.isChecked
 import java.math.BigDecimal
 
-@Tag("SmokeE2E")
+@Tag(TagNames.Flow.SMOKEE2E)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("Validator")
@@ -98,12 +99,12 @@ class SmokeValidatorE2E : BaseTest() {
                 assert {
                     elementPresented(submit)
                     elementPresented(cancel)
-                    elementPresented(fromWallet)
+                    elementPresented(stakingWallet)
                     elementContainingTextPresented("AMOUNT TO STAKE")
                     elementContainingTextPresented("Available balance")
                 }
                 e {
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                     signAndSubmitMessage(userBuyer, mainWallet.secretKey)
                     click(ok)
@@ -287,12 +288,12 @@ class SmokeValidatorE2E : BaseTest() {
                 assert {
                     elementPresented(submit)
                     elementPresented(cancel)
-                    elementPresented(fromWallet)
+                    elementPresented(stakingWallet)
                     elementContainingTextPresented("AMOUNT TO STAKE")
                     elementContainingTextPresented("Available balance")
                 }
                 e {
-                    select(fromWallet, mainWallet.name)
+                    select(stakingWallet, mainWallet.name)
                     click(submit)
                     signAndSubmitMessage(userBuyer, mainWallet.secretKey)
                     click(ok)
