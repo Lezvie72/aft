@@ -162,6 +162,11 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//a[@href='/trading/rfq']")
     lateinit var rFQTab: Button
 
+    @Name("Trading tab")
+    @FindBy(xpath = "//a[@href='/trading']")
+    lateinit var tradingTab: Button
+
+
     @Name("I want to buy asset")
     @FindBy(xpath = "//nz-radio-group[@formcontrolname='direction']//span[contains(text(), ' I want to buy asset ')]")
     lateinit var iWantToBuyAsset: AtmRadio
@@ -186,13 +191,13 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-custom-select[@formcontrolname='pair']")
     lateinit var selectAssetPair: AtmSelectLazy
 
-    @Name("Select amount")
-    @FindBy(xpath = "//nz-select[@formcontrolname='baseAmount']")
-    lateinit var selectAmount: AtmSelect
-
     @Name("Asset pair")
     @FindBy(xpath = "(//nz-select-item[contains(@class,'ant-select-selection-item')])[1]")
     lateinit var assetPairSelector: AtmSelectLazy
+
+    @Name("Select amount")
+    @FindBy(xpath = "//nz-select[@formcontrolname='baseAmount']")
+    lateinit var selectAmount: AtmSelect
 
     @Name("Select fee")
     @FindBy(xpath = "//label[contains(text(),'Select fee option')]//ancestor::nz-form-item//nz-select")
@@ -513,7 +518,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             click(today)
         }
     }
-
     @Step("Check 'Sell' offer is successfully created (start)")
     fun checkSellOfferIsSuccessfullyCreatedStart(amount: String) {
         e {
@@ -530,44 +534,6 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             sendKeys(expiresIn, "1")
         }
     }
-
-    @Step("Check 'Sell' offer is successfully created (end)")
-    fun checkSellOfferIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
-        e {
-            click(placeOffer)
-            sendKeys(privateKey, secretKey)
-            click(confirmPrivateKeyButton)
-            submitConfirmationCode(oAuthSecret)
-        }
-    }
-
-    @Step("Check 'Buy' offer is successfully created (start)")
-    fun checkBuyOfferIsSuccessfullyCreatedStart(amount: String) {
-        e {
-            click(createOffer)
-            click(iWantToBuyAsset)
-//            wait {
-//                until("Active element loaded", 15) {
-            check {
-                isElementPresented(assetPairSelector)
-            }
-//                }
-//            }
-            sendKeys(unitPrice, amount)
-            sendKeys(expiresIn, "1")
-        }
-    }
-
-    @Step("Check 'Buy' offer is successfully created (end)")
-    fun checkBuyOfferIsSuccessfullyCreatedEnd(secretKey: String, oAuthSecret: String) {
-        e {
-            click(placeOffer)
-            sendKeys(privateKey, secretKey)
-            click(confirmPrivateKeyButton)
-            submitConfirmationCode(oAuthSecret)
-        }
-    }
-
     @Step("Check 'Sell' RFQ is successfully created (start)")
     fun checkSellRFQIsSuccessfullyCreatedStart(amount: String) {
         e {
@@ -605,8 +571,29 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             submitConfirmationCode(oAuthSecret)
         }
     }
+    @Step("Confirm RFQ with values remembering (start)")
+    fun confirmRFQWithValuesRememberingStart(amount: String) {
+        e {
+            click(tradingTab)
+            click(rFQTab)
+            click(viewRFQ)
+            click(createAnOffer)
+            sendKeys(unitPrice, amount)
+        }
+    }
+
+    @Step("Confirm RFQ with values remembering (end)")
+    fun confirmRFQWithValuesRememberingEnd(secretKey: String, oAuthSecret: String) {
+        e{
+            sendKeys(expiresIn, "1")
+            click(makeOffer)
+            sendKeys(privateKey, secretKey)
+            click(confirmPrivateKeyButton)
+            submitConfirmationCode(oAuthSecret)
+        }
+    }
     @Step("Check 'Sell' RFQ is successfully accepted (start)")
-    fun checkSellRFQIsSuccessfullyAcceptedStart(secretKey: String, oAuthSecret: String) {
+    fun checkSellRFQIsSuccessfullyAcceptedStart() {
         e {
             click(rFQTab)
             click(viewRFQ)
@@ -614,6 +601,11 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             click(requestsWithOffers)
             click(viewOffers)
             click(openChat)
+        }
+    }
+    @Step("Check 'Sell' RFQ is successfully accepted (end)")
+    fun checkSellRFQIsSuccessfullyAcceptedEnd(secretKey: String, oAuthSecret: String) {
+        e {
             click(acceptOffer)
             sendKeys(privateKey, secretKey)
             click(confirmPrivateKeyButton)

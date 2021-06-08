@@ -3233,10 +3233,72 @@ class Users {
                 mainWallet = MainWallet()
             )
         }
-
     }
+    //User for RFQ
+
+            val ATM_USER_2FA_WITH_WALLET_MTEST03 = when (Environment.stand) {
+            DEVELOP -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+testRel888@gmail.com",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+//            RELEASE -> UserWithMainWalletAndOtf(
+            RELEASE -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+testRel888@gmail.com",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "502962b57f850f7b8960d1bacc62ee4e7e7d41be848aa4e2ee16a3254b7150a8",
+                    secretKey = "e1152a3175a8233ec2d38a2e735966a9453353054a7e662e0bec98ec85c3e8e0502962b57f850f7b8960d1bacc62ee4e7e7d41be848aa4e2ee16a3254b7150a8"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "e216e7b635dc0002e276083d24c7f388ac83266120e21d04ace2ff7d9afd64ba",
+                    secretKey = "f7e71b0164d3468c1175eed57bf1f3bca8b1ae898a9e356a153d1c0a939c9061e216e7b635dc0002e276083d24c7f388ac83266120e21d04ace2ff7d9afd64ba"
+                ),
+                castodian = ""
+            )
+            PREPROD -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+testRel888@gmail.com",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+            PROD -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            SHARED -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+        }
 
     enum class Stand {
         DEVELOP, RELEASE, PREPROD, PROD, SHARED, TOKEN_TRUST
     }
+
 }
+
