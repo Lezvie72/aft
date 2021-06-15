@@ -1,0 +1,6 @@
+stand: tokentrust
+front:
+  atm:
+    url: atm-front.dev.app.atomyze.ch
+  atm_admin:
+    url: admin-front.dev.app.atomyze.ch
