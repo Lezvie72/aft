@@ -23,7 +23,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="relBr">
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/validators/ValidationCheckForAmountFields.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/validators/ValidationCheckForAmountFields.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/administrationpanel/UserWithRightsToChange.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminGeneralSettingsPage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminGeneralSettingsPage.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,10 +57,17 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="ATMCH2510" />
+        <entry key="$PROJECT_DIR$" value="releaseBrunch" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -77,6 +86,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
@@ -152,43 +162,5 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="relBr" />
     <option name="LAST_COMMIT_MESSAGE" value="relBr" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1623748621876">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1623748621876" />
-    <state x="463" y="118" key="FileChooserDialogImpl" timestamp="1623055536571">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="463" y="118" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1623055536571" />
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.center" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.left" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.right" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state x="184" y="8" key="SettingsEditor" timestamp="1622811212463">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="184" y="8" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1622811212463" />
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2" timestamp="1623151419594">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2/0.0.1366.728/1366.-325.1920.1040@0.0.1366.728" timestamp="1623151419594" />
-    <state x="391" y="81" width="622" height="566" key="find.popup" timestamp="1623747887288">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="391" y="81" width="622" height="566" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1623747887288" />
   </component>
 </project>
