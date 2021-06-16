@@ -37,31 +37,25 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestAcceptance : BaseTest() {
         val user1 = Users.ATM_USER_2FA_WITH_WALLET_MTEST01
         val user3 = Users.ATM_USER_2FA_WITH_WALLET_MTEST03
         val amount = "1"
-        val heldInOffers = "0.00000000"
-        val mainWallet = user1.mainWallet
         val otfWallet = user1.otfWallet
         var expectedCCBalanceFromOTFWalletDouble: Double = 0.0
         var expectedVTBalanceFromOTFWalletDouble: Double = 0.0
-        var availableBalanceValueBeforeSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterSellDoubleRFQ: Double = 0.0
-        var oTFWalletCCTokenBalanceRFQAfterSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceRFQAfterSellResult: Double = 0.0
         var expectedCCBalanceFromOTFWalletOffer: Double = 0.0
         var expectedVTBalanceFromOTFWalletOffer: Double = 0.0
         var amountToSendValueDouble: Double = 0.0
-        var expectedCCBalanceFromOTFWalletDoubleAfter: Double = 0.0
-        var expectedCCBalanceFromOTFWalletOfferAfter: Double = 0.0
-        var expectedVTBalanceFromOTFWalletDoubleAfter: Double = 0.0
-        var expectedVTBalanceFromOTFWalletOfferAfter: Double = 0.0
-        var expectedVTBalanceFromOTFWalletDoubleAfterResultUser3: Double = 0.0
-        var expectedVTBalanceFromOTFWalletOfferAfterResultUser3: Double = 0.0
+        var expectedCCBalanceFromOTFWalletDoubleAfter: Double
+        var expectedCCBalanceFromOTFWalletOfferAfter: Double
+        var expectedVTBalanceFromOTFWalletDoubleAfter: Double
+        var expectedVTBalanceFromOTFWalletOfferAfter: Double
+        var expectedVTBalanceFromOTFWalletDoubleAfterResultUser3: Double
+        var expectedVTBalanceFromOTFWalletOfferAfterResultUser3: Double
         var amountToSendValueDoubleUser1: Double = 0.0
-        var expectedCCBalanceFromOTFWalletDoubleAfterUser1: Double = 0.0
-        var expectedCCBalanceFromOTFWalletOfferAfterUser1: Double = 0.0
-        var expectedVTBalanceFromOTFWalletDoubleAfterUser1: Double = 0.0
-        var expectedVTBalanceFromOTFWalletOfferAfterUser1: Double = 0.0
-        var expectedVTBalanceFromOTFWalletDoubleAfterResultUser1: Double = 0.0
-        var expectedCCBalanceFromOTFWalletOfferAfterResultUser1: Double = 0.0
+        var expectedCCBalanceFromOTFWalletDoubleAfterUser1: Double
+        var expectedCCBalanceFromOTFWalletOfferAfterUser1: Double
+        var expectedVTBalanceFromOTFWalletDoubleAfterUser1: Double
+        var expectedVTBalanceFromOTFWalletOfferAfterUser1: Double
+        var expectedVTBalanceFromOTFWalletDoubleAfterResultUser1: Double
+        var expectedCCBalanceFromOTFWalletOfferAfterResultUser1: Double
         var expectedCCBalanceFromOTFWalletDoubleUser3: Double = 0.0
         var expectedCCBalanceFromOTFWalletOfferUser3: Double = 0.0
         var expectedVTBalanceFromOTFWalletDoubleUser3: Double = 0.0
@@ -96,10 +90,14 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestAcceptance : BaseTest() {
                 waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
+                Thread.sleep(5000)
+                driver.navigate().refresh()
                 expectedCCBalanceFromOTFWalletDoubleUser3 = balanceTokenUser.amount.toDouble()
                 expectedCCBalanceFromOTFWalletOfferUser3 = heldInOffersUser.heldInOffers.toDouble()
                 driver.navigate().back()
                 chooseToken(CoinType.VT)
+                Thread.sleep(5000)
+                driver.navigate().refresh()
                 expectedVTBalanceFromOTFWalletDoubleUser3 = balanceTokenUser.amount.toDouble()
                 expectedVTBalanceFromOTFWalletOfferUser3 = heldInOffersUser.heldInOffers.toDouble()
             }
@@ -131,29 +129,28 @@ class CheckingTheOTFWalletBalanceAfterRFQRequestAcceptance : BaseTest() {
                     expectedVTBalanceFromOTFWalletDoubleAfter = balanceTokenUser.amount.toDouble()
                     expectedVTBalanceFromOTFWalletOfferAfter = heldInOffersUser.heldInOffers.toDouble()
                     MatcherAssert.assertThat(
-                        expectedVTBalanceFromOTFWalletDoubleAfter,
-                        Matchers.equalTo(expectedVTBalanceFromOTFWalletDoubleUser3)
+                        expectedCCBalanceFromOTFWalletDoubleAfter,
+                        Matchers.equalTo(expectedCCBalanceFromOTFWalletDoubleUser3)
                     )
                     MatcherAssert.assertThat(
-                        expectedVTBalanceFromOTFWalletOfferAfter,
-                        Matchers.equalTo(expectedVTBalanceFromOTFWalletOfferUser3)
+                        expectedCCBalanceFromOTFWalletOfferAfter,
+                        Matchers.equalTo(expectedCCBalanceFromOTFWalletOfferUser3)
                     )
                     expectedVTBalanceFromOTFWalletDoubleAfterResultUser3 =
-                        expectedCCBalanceFromOTFWalletDoubleUser3 - expectedCCBalanceFromOTFWalletDoubleAfter
-                    val amountDouble = amount.toDouble()
+                        expectedVTBalanceFromOTFWalletDoubleUser3 - expectedVTBalanceFromOTFWalletDoubleAfter
                     val expectedVTBalanceFromOTFWalletDoubleAfterResultMath: Double =
                         (expectedVTBalanceFromOTFWalletDoubleAfterResultUser3 * 100.0).roundToLong() / 100.0
                     MatcherAssert.assertThat(
                         expectedVTBalanceFromOTFWalletDoubleAfterResultMath,
-                        Matchers.equalTo(amountDouble)
+                        Matchers.equalTo(amountToSendValueDouble)
                     )
                     expectedVTBalanceFromOTFWalletOfferAfterResultUser3 =
-                        expectedCCBalanceFromOTFWalletOfferAfter - expectedCCBalanceFromOTFWalletOfferUser3
+                        expectedVTBalanceFromOTFWalletOfferAfter - expectedVTBalanceFromOTFWalletOfferUser3
                     val expectedVTBalanceFromOTFWalletOfferAfterResultMath: Double =
                         (expectedVTBalanceFromOTFWalletOfferAfterResultUser3 * 100.0).roundToLong() / 100.0
                     MatcherAssert.assertThat(
                         expectedVTBalanceFromOTFWalletOfferAfterResultMath,
-                        Matchers.equalTo(amountDouble)
+                        Matchers.equalTo(amountToSendValueDouble)
                     )
                 }
             }
