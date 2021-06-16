@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmWalletPage
 import utils.Constants
@@ -27,10 +26,7 @@ import kotlin.math.roundToLong
 @Story("Wallet/Checking the OTF wallet balance")
 class CheckingTheOTFWalletBalance : BaseTest() {
 
-    @ResourceLocks(
-        ResourceLock(Constants.ATM_USER_2FA_WITH_WALLET_MTEST01),
-        ResourceLock(Constants.ATM_USER_2FA_WITHOUT_WALLET_MTEST02)
-    )
+    @ResourceLock(Constants.USER_BALANCE_LOCK)
     @TmsLink("ATMCH-2501")
     @Test
     @DisplayName("Checking the OTF wallet balance (held by Streaming offers)")
@@ -39,144 +35,156 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         var expectedIDTBalanceFromOTFWalletOffer: String = ""
         var expectedIDTBalanceFromOTFWalletAfterSending: String = ""
         var expectedIDTBalanceFromOTFWalletOfferAfterSending: String = ""
-        var expectedIDTBalanceFromOTFWalletAfterSendingDouble: Double = 0.0
-        var expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble: String = ""
-        var expectedIDTBalanceFromOTFWalletDouble: Double = 0.0
-        var expectedIDTBalanceFromOTFWalletAfterSendingResult: Double = 0.0
+        var expectedIDTBalanceFromOTFWalletAfterSendingDouble: Double
+        var expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble: Double
+        var expectedIDTBalanceFromOTFWalletDouble: Double
+        var expectedIDTBalanceFromOTFWalletAfterSendingResult: Double
         var amountToReceiveValueBeforeSell: String = ""
         var amountToSendValueBeforeSell: String = ""
-        var amountToSendValueBeforeSellDouble: Double = 0.0
+        var amountToSendValueBeforeSellDouble: Double
         var transactionFeeValueBeforeSell: String = ""
         var oTFWalletCCTokenBalanceBeforeSell: String = ""
         var oTFWalletCCTokenBalanceOfferBeforeSell: String = ""
-        var oTFWalletCCTokenBalanceBeforeSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterSell: String = ""
-        var oTFWalletCCTokenBalanceAfterSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferAfterSell: String = ""
-        var oTFWalletCCTokenBalanceAfterSellResult: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferAfterSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferBeforeSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferAfterSellResult: Double = 0.0
+        var oTFWalletCCTokenBalanceBeforeSellDouble: Double
+        var oTFWalletCCTokenBalanceAfterSell: String
+        var oTFWalletCCTokenBalanceAfterSellDouble: Double
+        var oTFWalletCCTokenBalanceOfferAfterSell: String
+        var oTFWalletCCTokenBalanceAfterSellResult: Double
+        var oTFWalletCCTokenBalanceOfferAfterSellDouble: Double
+        var oTFWalletCCTokenBalanceOfferBeforeSellDouble: Double
+        var oTFWalletCCTokenBalanceOfferAfterSellResult: Double
         var amountToReceiveValueBeforeBuy: String = ""
         var amountToSendValueBeforeBuy: String = ""
-        var amountToSendValueBeforeBuyDouble: Double = 0.0
+        var amountToSendValueBeforeBuyDouble: Double
         var transactionFeeValueBeforeBuy: String = ""
         var oTFWalletCCTokenBalanceBeforeBuy: String = ""
         var oTFWalletCCTokenBalanceOfferBeforeBuy: String = ""
-        var oTFWalletCCTokenBalanceBeforeBuyDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterBuyDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterBuyResult: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferAfterBuyDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferBeforeBuyDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceOfferAfterBuyResult: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterBuy: String = ""
-        var oTFWalletCCTokenBalanceOfferAfterBuy: String = ""
+        var oTFWalletCCTokenBalanceBeforeBuyDouble: Double
+        var oTFWalletCCTokenBalanceAfterBuyDouble: Double
+        var oTFWalletCCTokenBalanceAfterBuyResult: Double
+        var expectedIDTBalanceFromOTFWalletOfferDouble: Double
+        var oTFWalletCCTokenBalanceOfferAfterBuyDouble: Double
+        var oTFWalletCCTokenBalanceOfferBeforeBuyDouble: Double
+        var oTFWalletCCTokenBalanceOfferAfterBuyResult: Double
+        var oTFWalletCCTokenBalanceAfterBuy: String
+        var oTFWalletCCTokenBalanceOfferAfterBuy: String
         val user1 = Users.ATM_USER_2FA_WITH_WALLET_MTEST01
-        val user2 = Users.ATM_USER_2FA_WITHOUT_WALLET_MTEST02
         val amount = "0.01"
-        val heldInOffers = "0E-8"
         val mainWallet = user1.mainWallet
         val otfWallet = user1.otfWallet
 
         with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user1) }) {
-            step("The OTF wallet balance remembering") {
-                waitWalletsAreDisplayed()
-                chooseWallet(otfWallet.name)
-                chooseToken(CoinType.CC)
+//            step("The OTF wallet balance remembering") {
+//                waitWalletsAreDisplayed()
+//                chooseWallet(otfWallet.name)
+//                chooseToken(CoinType.CC)
+//                expectedIDTBalanceFromOTFWallet = balanceTokenUser.amount.toString()
 //                expectedIDTBalanceFromOTFWalletOffer = heldInOffersUser.heldInOffers.toString()
-                expectedIDTBalanceFromOTFWalletDouble = balanceTokenUser.amount.toDouble()
-            }
-            step("Go into CC token in Main 1 wallet") {
-                openPage<AtmWalletPage> {}
-                waitWalletsAreDisplayed()
-                chooseWallet("Main 1")
-                chooseToken(CoinType.CC)
-                sendingFundsToAnotherWallet(amount, mainWallet.secretKey, user1.oAuthSecret)
-            }
-            step("Check balance in OTF wallet") {
-                openPage<AtmWalletPage> {}
-                waitWalletsAreDisplayed()
-                chooseWallet(otfWallet.name)
-                chooseToken(CoinType.CC)
+//            }
+//            step("Go into CC token in Main 1 wallet") {
+//                openPage<AtmWalletPage> {}
+//                waitWalletsAreDisplayed()
+//                chooseWallet("Main 1")
+//                chooseToken(CoinType.CC)
+//                sendingFundsToAnotherWallet(amount, mainWallet.secretKey, user1.oAuthSecret)
+//            }
+//            step("Check balance in OTF wallet") {
+//                openPage<AtmWalletPage> {}
+//                chooseWallet(otfWallet.name)
+//                chooseToken(CoinType.CC)
+//                Thread.sleep(5000)
+//                driver.navigate().refresh()
+//                expectedIDTBalanceFromOTFWalletAfterSending = balanceTokenUser.amount.toString()
 //                expectedIDTBalanceFromOTFWalletOfferAfterSending = heldInOffersUser.heldInOffers.toString()
-                expectedIDTBalanceFromOTFWalletAfterSendingDouble = balanceTokenUser.amount.toDouble()
-            }
-            step("Check transfers success") {
-                openPage<AtmWalletPage> {}
-                waitWalletsAreDisplayed()
-                chooseWallet(otfWallet.name)
-                chooseToken(CoinType.CC)
-                expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble = heldInOffersUser.heldInOffers.toString()
-                expectedIDTBalanceFromOTFWalletAfterSendingResult =
-                    expectedIDTBalanceFromOTFWalletAfterSendingDouble - expectedIDTBalanceFromOTFWalletDouble
-                val expectedIDTBalanceFromOTFWalletAfterSendingResultDouble: Double =
-                    (expectedIDTBalanceFromOTFWalletAfterSendingResult * 100.0).roundToLong() / 100.0
-                val amountDouble = amount.toDouble()
-                MatcherAssert.assertThat(
-                    expectedIDTBalanceFromOTFWalletAfterSendingResultDouble,
-                    Matchers.equalTo(amountDouble)
-                )
-                MatcherAssert.assertThat(
-                    expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble,
-                    Matchers.equalTo(heldInOffers)
-                )
-            }
-            step("The OTF wallet balance checking before offer selling") {
-                openPage<AtmWalletPage> {}
-                waitWalletsAreDisplayed()
-                chooseWallet(otfWallet.name)
-                chooseToken(CoinType.CC)
-                oTFWalletCCTokenBalanceBeforeSellDouble = balanceTokenUser.amount.toDouble()
-                oTFWalletCCTokenBalanceOfferBeforeSellDouble = heldInOffersUser.heldInOffers.toDouble()
-            }
-        }
-        with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
-            step("Check 'Sell' offer is successfully created (start)") {
-                checkSellOfferIsSuccessfullyCreatedStart(amount)
-            }
-        }
-        with(AtmWalletPage(driver)) {
-            step("Values remembering amount and fee") {
-                Thread.sleep(5000)
-//                amountToReceiveValueBeforeSell = amountToReceiveValue.amount.toString()
-                amountToSendValueBeforeSellDouble = amountToSendValue.amount.toDouble()
-//                transactionFeeValueBeforeSell = transactionFeeValue.amount.toString()
-            }
-        }
-        with(AtmStreamingPage(driver)) {
-            step("Check 'Sell' offer is successfully created (end)") {
-                checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
-            }
+//            }
+//            step("Check transfers success") {
+//                openPage<AtmWalletPage> {}
+//                chooseWallet(otfWallet.name)
+//                chooseToken(CoinType.CC)
+//                expectedIDTBalanceFromOTFWalletAfterSendingDouble =
+//                    expectedIDTBalanceFromOTFWalletAfterSending.toDouble()
+//                expectedIDTBalanceFromOTFWalletOfferDouble =
+//                    expectedIDTBalanceFromOTFWalletOffer.toDouble()
+//                expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble =
+//                    expectedIDTBalanceFromOTFWalletOfferAfterSending.toDouble()
+//                expectedIDTBalanceFromOTFWalletDouble = expectedIDTBalanceFromOTFWallet.toDouble()
+//                expectedIDTBalanceFromOTFWalletAfterSendingResult =
+//                    expectedIDTBalanceFromOTFWalletAfterSendingDouble - expectedIDTBalanceFromOTFWalletDouble
+//                val expectedIDTBalanceFromOTFWalletAfterSendingResultDouble: Double =
+//                    (expectedIDTBalanceFromOTFWalletAfterSendingResult * 100.0).roundToLong() / 100.0
+//                val amountDouble = amount.toDouble()
+//                MatcherAssert.assertThat(
+//                    expectedIDTBalanceFromOTFWalletAfterSendingResultDouble,
+//                    Matchers.equalTo(amountDouble)
+//                )
+//                MatcherAssert.assertThat(
+//                    expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble,
+//                    Matchers.equalTo(expectedIDTBalanceFromOTFWalletOfferDouble)
+//                )
+//            }
+//        }
+//        with(utils.helpers.openPage<AtmWalletPage>(driver)) {
+//            step("The OTF wallet balance checking before offer selling") {
+//                waitWalletsAreDisplayed()
+//                chooseWallet(otfWallet.name)
+//                chooseToken(CoinType.CC)
+//                oTFWalletCCTokenBalanceBeforeSell = balanceTokenUser.amount.toString()
+//                oTFWalletCCTokenBalanceOfferBeforeSell = heldInOffersUser.heldInOffers.toString()
+//            }
+//        }
+//        with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
+//            step("Check 'Sell' offer is successfully created (start)") {
+//                Thread.sleep(5000)
+//                driver.navigate().refresh()
+//                checkSellOfferIsSuccessfullyCreatedStart(amount)
+//            }
+//        }
+//        with(AtmWalletPage(driver)) {
+//            step("Values remembering amount and fee") {
+//                Thread.sleep(5000)
+//                amountToSendValueBeforeSell = amountToSendValue.amount.toString()
+//            }
+//        }
+//        with(AtmStreamingPage(driver)) {
+//            step("Check 'Sell' offer is successfully created (end)") {
+//                checkSellOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+//            }
+//        }
+//        with(utils.helpers.openPage<AtmWalletPage>(driver)) {
+//            step("The OTF wallet balance checking after offer selling") {
+//                waitWalletsAreDisplayed()
+//                chooseWallet(otfWallet.name)
+//                chooseToken(CoinType.CC)
+//                oTFWalletCCTokenBalanceAfterSell = balanceTokenUser.amount.toString()
+//                oTFWalletCCTokenBalanceOfferAfterSell = heldInOffersUser.heldInOffers.toString()
+//                oTFWalletCCTokenBalanceAfterSellDouble = oTFWalletCCTokenBalanceAfterSell.toDouble()
+//                oTFWalletCCTokenBalanceBeforeSellDouble = oTFWalletCCTokenBalanceBeforeSell.toDouble()
+//                amountToSendValueBeforeSellDouble = amountToSendValueBeforeSell.toDouble()
+//                oTFWalletCCTokenBalanceOfferAfterSellDouble = oTFWalletCCTokenBalanceOfferAfterSell.toDouble()
+//                oTFWalletCCTokenBalanceOfferBeforeSellDouble = oTFWalletCCTokenBalanceOfferBeforeSell.toDouble()
+//                oTFWalletCCTokenBalanceAfterSellResult = oTFWalletCCTokenBalanceBeforeSellDouble - oTFWalletCCTokenBalanceAfterSellDouble
+//                val oTFWalletCCTokenBalanceAfterSellResultDouble: Double =
+//                    (oTFWalletCCTokenBalanceAfterSellResult * 100.0).roundToLong() / 100.0
+//                MatcherAssert.assertThat(
+//                    oTFWalletCCTokenBalanceAfterSellResultDouble,
+//                    Matchers.equalTo(amountToSendValueBeforeSellDouble)
+//                )
+//                oTFWalletCCTokenBalanceOfferAfterSellResult = oTFWalletCCTokenBalanceOfferAfterSellDouble - oTFWalletCCTokenBalanceOfferBeforeSellDouble
+//                val oTFWalletCCTokenBalanceOfferAfterSellResultDouble: Double =
+//                    (oTFWalletCCTokenBalanceOfferAfterSellResult * 100.0).roundToLong() / 100.0
+//                MatcherAssert.assertThat(
+//                    oTFWalletCCTokenBalanceOfferAfterSellResultDouble,
+//                    Matchers.equalTo(amountToSendValueBeforeSellDouble)
+//                )
+//            }
         }
         with(utils.helpers.openPage<AtmWalletPage>(driver)) {
-            step("The OTF wallet balance checking after offer selling") {
-                waitWalletsAreDisplayed()
-                chooseWallet(otfWallet.name)
-                chooseToken(CoinType.CC)
-                oTFWalletCCTokenBalanceAfterSellDouble = balanceTokenUser.amount.toDouble()
-                oTFWalletCCTokenBalanceOfferAfterSellDouble = heldInOffersUser.heldInOffers.toDouble()
-                oTFWalletCCTokenBalanceAfterSellResult = oTFWalletCCTokenBalanceBeforeSellDouble - oTFWalletCCTokenBalanceAfterSellDouble
-                val oTFWalletCCTokenBalanceAfterSellResultDouble: Double =
-                    (oTFWalletCCTokenBalanceAfterSellResult * 100.0).roundToLong() / 100.0
-                MatcherAssert.assertThat(
-                    oTFWalletCCTokenBalanceAfterSellResultDouble,
-                    Matchers.equalTo(amountToSendValueBeforeSellDouble)
-                )
-                oTFWalletCCTokenBalanceOfferAfterSellResult = oTFWalletCCTokenBalanceOfferAfterSellDouble - oTFWalletCCTokenBalanceOfferBeforeSellDouble
-                val oTFWalletCCTokenBalanceOfferAfterSellResultDouble: Double =
-                    (oTFWalletCCTokenBalanceOfferAfterSellResult * 100.0).roundToLong() / 100.0
-                MatcherAssert.assertThat(
-                    oTFWalletCCTokenBalanceOfferAfterSellResultDouble,
-                    Matchers.equalTo(amountToSendValueBeforeSellDouble)
-                )
-            }
             step("The OTF wallet balance checking before offer buying") {
-                openPage<AtmWalletPage> {}
                 waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
-                oTFWalletCCTokenBalanceBeforeBuyDouble = balanceTokenUser.amount.toDouble()
-                oTFWalletCCTokenBalanceOfferBeforeBuyDouble = heldInOffersUser.heldInOffers.toDouble()
+                oTFWalletCCTokenBalanceBeforeBuy = balanceTokenUser.amount.toString()
+                oTFWalletCCTokenBalanceOfferBeforeBuy = heldInOffersUser.heldInOffers.toString()
             }
         }
         with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
@@ -187,31 +195,37 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         with(AtmWalletPage(driver)) {
             step("Values remembering amount and fee") {
                 Thread.sleep(5000)
-//                amountToReceiveValueBeforeBuy = amountToReceiveValue.amount.toString()
                 amountToSendValueBeforeBuyDouble = amountToSendValue.amount.toDouble()
-//                transactionFeeValueBeforeBuy = transactionFeeValue.amount.toString()
             }
         }
         with(AtmStreamingPage(driver)) {
             step("Check 'Buy' offer is successfully created (end)") {
                 checkBuyOfferIsSuccessfullyCreatedEnd(user1.otfWallet.secretKey, user1.oAuthSecret)
+                Thread.sleep(5000)
+                driver.navigate().refresh()
             }
         }
         with(utils.helpers.openPage<AtmWalletPage>(driver)) {
-            step("The OTF wallet balance checking after offer selling") {
-                waitWalletsAreDisplayed()
+            step("The OTF wallet balance checking after offer buying") {
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
-                oTFWalletCCTokenBalanceAfterBuyDouble = balanceTokenUser.amount.toDouble()
-                oTFWalletCCTokenBalanceOfferAfterBuyDouble = heldInOffersUser.heldInOffers.toDouble()
-                oTFWalletCCTokenBalanceAfterBuyResult = oTFWalletCCTokenBalanceBeforeBuyDouble - oTFWalletCCTokenBalanceAfterBuyDouble
+//                Thread.sleep(5000)
+//                driver.navigate().refresh()
+                oTFWalletCCTokenBalanceAfterBuy = balanceTokenUser.amount.toString()
+                oTFWalletCCTokenBalanceOfferAfterBuy = heldInOffersUser.heldInOffers.toString()
+                oTFWalletCCTokenBalanceAfterBuyDouble = oTFWalletCCTokenBalanceAfterBuy.toDouble()
+                oTFWalletCCTokenBalanceBeforeBuyDouble = oTFWalletCCTokenBalanceBeforeBuy.toDouble()
+                amountToSendValueBeforeBuyDouble = amountToSendValueBeforeBuy.toDouble()
+                oTFWalletCCTokenBalanceOfferAfterBuyDouble = oTFWalletCCTokenBalanceOfferAfterBuy.toDouble()
+                oTFWalletCCTokenBalanceOfferBeforeBuyDouble = oTFWalletCCTokenBalanceOfferBeforeBuy.toDouble()
+                oTFWalletCCTokenBalanceAfterBuyResult = oTFWalletCCTokenBalanceAfterBuyDouble - oTFWalletCCTokenBalanceBeforeBuyDouble
                 val oTFWalletCCTokenBalanceAfterBuyResultDouble: Double =
                     (oTFWalletCCTokenBalanceAfterBuyResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
                     oTFWalletCCTokenBalanceAfterBuyResultDouble,
                     Matchers.equalTo(amountToSendValueBeforeBuyDouble)
                 )
-                oTFWalletCCTokenBalanceOfferAfterBuyResult = oTFWalletCCTokenBalanceOfferAfterBuyDouble - oTFWalletCCTokenBalanceOfferBeforeBuyDouble
+                oTFWalletCCTokenBalanceOfferAfterBuyResult = oTFWalletCCTokenBalanceOfferBeforeBuyDouble - oTFWalletCCTokenBalanceOfferAfterBuyDouble
                 val oTFWalletCCTokenBalanceOfferAfterBuyResultDouble: Double =
                     (oTFWalletCCTokenBalanceOfferAfterBuyResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
@@ -222,4 +236,3 @@ class CheckingTheOTFWalletBalance : BaseTest() {
         }
     }
 }
-

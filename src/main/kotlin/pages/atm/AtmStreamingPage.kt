@@ -475,13 +475,11 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
         e {
             click(createOffer)
             click(iWantToSellAsset)
-//            wait {
-//                until("Active element loaded", 15) {
-            check {
-                isElementPresented(assetPairSelector)
+        }
+        check {
+            isElementPresented(assetPairSelector)
             }
-//                }
-//            }
+        e {
             sendKeys(unitPrice, amount)
             sendKeys(expiresIn, "1")
         }
@@ -502,13 +500,11 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
         e {
             click(createOffer)
             click(iWantToBuyAsset)
-//            wait {
-//                until("Active element loaded", 15) {
-            check {
-                isElementPresented(assetPairSelector)
+        }
+        check {
+            isElementPresented(assetPairSelector)
             }
-//                }
-//            }
+        e {
             sendKeys(unitPrice, amount)
             sendKeys(expiresIn, "1")
         }
@@ -523,5 +519,4 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
             submitConfirmationCode(oAuthSecret)
         }
     }
-
 }
