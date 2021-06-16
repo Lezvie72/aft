@@ -30,7 +30,6 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
 
     @ResourceLocks(
         ResourceLock(Constants.ATM_USER_2FA_WITH_WALLET_MTEST01),
-        ResourceLock(Constants.ATM_USER_2FA_WITHOUT_WALLET_MTEST02),
         ResourceLock(Constants.ATM_USER_2FA_WITH_WALLET_MTEST03)
     )
     @TmsLink("ATMCH-2510")
@@ -38,12 +37,10 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
     @DisplayName("Checking the OTF wallet balance (held by RFQ requests)")
     fun checkingTheOTFWalletBalanceByRFQRequests() {
         var expectedIDTBalanceFromOTFWalletAfterSendingDouble: Double = 0.0
-        var expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble: Double = 0.0
-        var expectedIDTBalanceFromOTFWalletDouble: Double = 0.0
-        var expectedIDTBalanceFromOTFWalletAfterSendingResult: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterSellResultRFQ: Double = 0.0
+        var expectedIDTBalanceFromOTFWalletOfferAfterSendingDouble: Double
+        var expectedIDTBalanceFromOTFWalletAfterSendingResult: Double
+        var oTFWalletCCTokenBalanceAfterSellResultRFQ: Double
         val user1 = Users.ATM_USER_2FA_WITH_WALLET_MTEST01
-        val user2 = Users.ATM_USER_2FA_WITHOUT_WALLET_MTEST02
         val user3 = Users.ATM_USER_2FA_WITH_WALLET_MTEST03
         val amountVal = "1"
         val heldInOffers: Double = 0.0
@@ -51,9 +48,8 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
         val otfWallet = user1.otfWallet
         var expectedCCBalanceFromOTFWalletDouble: Double = 0.0
         var availableBalanceValueBeforeSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceAfterSellDoubleRFQ: Double = 0.0
-        var oTFWalletCCTokenBalanceRFQAfterSellDouble: Double = 0.0
-        var oTFWalletCCTokenBalanceRFQAfterSellResult: Double = 0.0
+        var oTFWalletCCTokenBalanceAfterSellDoubleRFQ: Double
+        var oTFWalletCCTokenBalanceRFQAfterSellDouble: Double
         var expectedCCBalanceFromOTFWalletOffer: Double = 0.0
 
         with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user1) }) {
@@ -76,6 +72,8 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
                 waitWalletsAreDisplayed()
                 chooseWallet(otfWallet.name)
                 chooseToken(CoinType.CC)
+                Thread.sleep(5000)
+                driver.navigate().refresh()
                 expectedIDTBalanceFromOTFWalletAfterSendingDouble = balanceTokenUser.amount.toDouble()
             }
             step("Check transfers success") {
@@ -107,7 +105,6 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
                 expectedCCBalanceFromOTFWalletOffer = heldInOffersUser.heldInOffers.toDouble()
             }
         }
-
         with(utils.helpers.openPage<AtmStreamingPage>(driver)) {
             step("Check 'Sell' RFQ is successfully created (start)") {
                 checkSellRFQIsSuccessfullyCreatedStart(amountVal)
@@ -125,22 +122,12 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
             }
         }
         utils.helpers.openPage<AtmWalletPage>(driver).logout()
-//        with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user3) }) {
-//            step("Confirm RFQ") {
-//                waitWalletsAreDisplayed()
-//            }
-//        }
         with(utils.helpers.openPage<AtmStreamingPage>(driver) { submit(user3) }) {
             step("Confirm RFQ") {
                 confirmRFQ(amountVal, user3.otfWallet.secretKey, user3.oAuthSecret)
             }
         }
         utils.helpers.openPage<AtmWalletPage>(driver).logout()
-//        with(utils.helpers.openPage<AtmWalletPage>(driver) { submit(user1) }) {
-//            step("Check 'Sell' RFQ is successfully accepted (start)") {
-//                waitWalletsAreDisplayed()
-//            }
-//        }
         with(utils.helpers.openPage<AtmStreamingPage>(driver) { submit(user1) }) {
             step("Check 'Sell' RFQ is successfully accepted (start)") {
                 checkSellRFQIsSuccessfullyAcceptedStart(user1.otfWallet.secretKey, user1.oAuthSecret)
@@ -161,13 +148,9 @@ class CheckingTheOTFWalletBalanceHeldByRFQRequests : BaseTest() {
                     oTFWalletCCTokenBalanceAfterSellResultDoubleRFQ,
                     Matchers.equalTo(amountDouble)
                 )
-                oTFWalletCCTokenBalanceRFQAfterSellResult =
-                    oTFWalletCCTokenBalanceRFQAfterSellDouble - expectedCCBalanceFromOTFWalletOffer
-                val oTFWalletCCTokenBalanceRFQAfterSellResultDouble: Double =
-                    (oTFWalletCCTokenBalanceRFQAfterSellResult * 100.0).roundToLong() / 100.0
                 MatcherAssert.assertThat(
-                    oTFWalletCCTokenBalanceRFQAfterSellResultDouble,
-                    Matchers.equalTo(amountDouble)
+                    oTFWalletCCTokenBalanceRFQAfterSellDouble,
+                    Matchers.equalTo(expectedCCBalanceFromOTFWalletOffer)
                 )
             }
         }
