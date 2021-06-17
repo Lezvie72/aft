@@ -14,6 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import pages.atm.*
 import utils.TagNames
 import utils.helpers.Users
+import utils.helpers.step
 
 @Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
@@ -26,10 +27,9 @@ class AdminRolesVIEWER: BaseTest(){
     @DisplayName("Admin with viewer role checks links")
     fun adminWithViewerRoleChecksLinks() {
         val user1 = Users.ATM_USER_VIEWER_ROLE
-        with(utils.helpers.openPage<AtmAdminInvitesPage>(driver) { submit(user1) }) {
-            assert {
-                elementWithTextPresented(" Invites ")
-//                findElement(By.xpath("//*[text()='e-Mail ']"))
+        with(utils.helpers.openPage<AtmAdminEmployeesPage>(driver) { submit(user1) }) {
+            step("Check all tabs are changed for admin with viewer role") {
+                checkAllTabsAreChangedForAdminWithViewerRole()
             }
         }
         with(utils.helpers.openPage<AtmAdminEmployeesPage>(driver)) {
@@ -57,16 +57,25 @@ class AdminRolesVIEWER: BaseTest(){
                 elementWithTextPresented(" Bank details ")
             }
         }
-        with(utils.helpers.openPage<AtmAdminTokensPage>(driver)) {
-            assert {
-                elementWithTextPresented(" Tokens ")
-            }
-        }
+//        with(utils.helpers.openPage<AtmAdminBankDetailsPage>(driver)) {
+//            e {
+//                click(tokenTab)
+//            }
+//            assert {
+//                elementWithTextPresented(" Tokens ")
+//            }
+//        }
         with(utils.helpers.openPage<AtmAdminRegisterOfIssuersPage>(driver)) {
             assert {
                 elementWithTextPresented(" Register of issuers ")
             }
         }
+
+
+
+
+
+
         with(utils.helpers.openPage<AtmAdminFinancialDataSourcesManagement>(driver)) {
             assert {
                 elementWithTextPresented(" Financial data sources management ")

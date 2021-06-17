@@ -23,7 +23,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="relBr">
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/validators/ValidationCheckForAmountFields.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/validators/ValidationCheckForAmountFields.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/jarAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/javaCompile/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminEmployeesPage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminEmployeesPage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminPage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminPage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/frontend/BaseTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/BaseTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/administrationpanel/AdminRolesVIEWER.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/administrationpanel/AdminRolesVIEWER.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,42 +168,15 @@
     <MESSAGE value="relBr" />
     <option name="LAST_COMMIT_MESSAGE" value="relBr" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1623748621876">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1623748621876" />
-    <state x="463" y="118" key="FileChooserDialogImpl" timestamp="1623055536571">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="463" y="118" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1623055536571" />
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.center" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.left" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.right" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state x="184" y="8" key="SettingsEditor" timestamp="1622811212463">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="184" y="8" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1622811212463" />
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2" timestamp="1623151419594">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2/0.0.1366.728/1366.-325.1920.1040@0.0.1366.728" timestamp="1623151419594" />
-    <state x="391" y="81" width="622" height="566" key="find.popup" timestamp="1623747887288">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="391" y="81" width="622" height="566" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1623747887288" />
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="assert(driver.findElement(By.xpath(&quot;//mat-icon/following-sibling::text()&quot;)).text.contains(&quot; Tokens &quot;))" language="kotlin" />
+        <watch expression="textElement" language="kotlin" />
+        <watch expression="text" language="kotlin" />
+        <watch expression="Unresolved reference: text" language="kotlin" />
+        <watch expression="driver.findElement(textElement).text.contains(&quot; Tokens &quot;)" language="kotlin" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

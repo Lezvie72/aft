@@ -53,6 +53,4 @@ open class AtmAdminPage(driver: WebDriver) : BasePage(driver) {
         }
     }
     //test
-
-
 }
