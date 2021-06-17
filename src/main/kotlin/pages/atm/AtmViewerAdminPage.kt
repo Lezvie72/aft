@@ -3,25 +3,14 @@ package pages.atm
 import io.qameta.allure.Step
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
-import pages.core.annotations.PageUrl
 import pages.htmlelements.elements.AtmSelect
 import pages.htmlelements.elements.SdexTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextInput
-import utils.helpers.to
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
-@PageUrl("/employees")
-class AtmAdminEmployeesPage(driver: WebDriver) : AtmAdminPage(driver) {
-
-    companion object Headers {
-        const val EMP_EMAIL = "Employee e-mail"
-        const val STATUS = "Status"
-    }
+class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
 
     @Name("Invite tab")
     @FindBy(xpath = "//span[contains(text(), 'Invites')]")
@@ -87,55 +76,61 @@ class AtmAdminEmployeesPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-select[@formcontrolname='type']")
     lateinit var requestStatusSelect: AtmSelect
 
-    @Step("Apply filter by email: {email}")
-    fun applyFilterSearchByEmail(email: String) {
+    @Step("Check all tabs are changed for admin with viewer role")
+    fun checkAllTabsAreChangedForAdminWithViewerRole() {
         e {
-            sendKeysAndEnter(filterSearchByEmailInput, email)
+            click(inviteTab)
         }
-    }
-
-    @Step("Approve user {email}")
-    fun approveUserWithEmail(email: String): LocalDateTime {
-        applyFilterSearchByEmail(email)
-        val row = inviteTable.find(findApprovalWithEmailAndStatus(email, "submitted"))
-            ?.get(EMP_EMAIL)?.to<Button>("Employee $email") ?: error("Row with email '$email' not found in table")
-
+        assert {
+            elementWithTextPresented(" Invites ")
+        }
         e {
-            click(row)
-            click(acceptInvite)
+            click(employeesApprovalTab)
         }
-        val since = LocalDateTime.now(ZoneOffset.UTC)
-        nonCriticalWait(10L) {
-            untilInvisibility(acceptInvite)
+        assert {
+            elementWithTextPresented(" Employees approval ")
         }
-        return since
-    }
-
-    @Step("Reject user {email}")
-    fun rejectUserWithEmail(email: String): LocalDateTime {
-        applyFilterSearchByEmail(email)
-        val row = inviteTable.find(findApprovalWithEmailAndStatus(email, "submitted"))
-            ?.get(EMP_EMAIL)?.to<Button>("Employee $email") ?: error("Row with email '$email' not found in table")
-
         e {
-            click(row)
-            click(rejectInvite)
+            click(paymentsTab)
         }
-        val since = LocalDateTime.now(ZoneOffset.UTC)
-        nonCriticalWait(10L) {
-            untilInvisibility(rejectInvite)
+        assert {
+            elementWithTextPresented(" Payments ")
         }
-        return since
+        e {
+            click(fiatWithdrawTab)
+        }
+        assert {
+            elementWithTextPresented(" Fiat withdraw ")
+        }
+        e {
+            click(companiesTab)
+        }
+        assert {
+            elementWithTextPresented(" Companies ")
+        }
+        e {
+            click(bankDetailsTab)
+        }
+        assert {
+            elementWithTextPresented(" Bank details ")
+        }
+        e {
+            click(tokensTab)
+        }
+        assert {
+            driver.findElement(By.xpath("//label/mat-label[contains(text(), 'Update date from')]"))
+        }
+        assert {
+            (driver.findElement(By.xpath("//mat-icon/following-sibling::text()")).text.contains(" Tokens "))
+        }
+        e {
+            click(registerOfIssuersTab)
+        }
+//        assert {
+//            elementWithTextPresented(" Register of issuers ")
+//        }
+        assert {
+            driver.findElement(By.xpath("//label/mat-label[contains(text(), 'Issuers')]"))
+        }
     }
-
-    @Step("Find approval with {email} and {status}")
-    fun findApprovalWithEmailAndStatus(email: String, status: String): (Map<String, WebElement>) -> Boolean {
-        //TODO: is it possible without previously filtering?
-        applyFilterSearchByEmail(email)
-        return {
-            it[EMP_EMAIL]?.text?.toLowerCase()?.contains(email.toLowerCase()) ?: false
-                    && it[STATUS]?.text.equals(status, ignoreCase = true)
-        }
-    }
-
 }
