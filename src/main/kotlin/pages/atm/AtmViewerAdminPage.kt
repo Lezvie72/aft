@@ -1,15 +1,14 @@
 package pages.atm
 
 import io.qameta.allure.Step
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.FindBy
-import pages.htmlelements.elements.AtmSelect
-import pages.htmlelements.elements.SdexTable
+import pages.core.annotations.PageUrl
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
-import ru.yandex.qatools.htmlelements.element.TextInput
+import ru.yandex.qatools.htmlelements.element.TextBlock
 
+@PageUrl("/")
 class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
 
     @Name("Invite tab")
@@ -44,37 +43,57 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
     @FindBy(xpath = "//span[contains(text(), 'Register of issuers')]")
     lateinit var registerOfIssuersTab: Button
 
-    @Name("Employee table")
-    @FindBy(css = "sdex-employees")
-    lateinit var inviteTable: SdexTable
+    @Name("Financial data sources management tab")
+    @FindBy(xpath = "//span[contains(text(), 'Financial data sources management')]")
+    lateinit var financialDataSourcesManagementTab: Button
 
-    @Name("Reject invite")
-    @FindBy(xpath = "//span[text()=' REJECT ']/ancestor::button")
-    lateinit var rejectInvite: TextInput
+    @Name("General settings tab")
+    @FindBy(xpath = "//span[contains(text(), 'General settings')]")
+    lateinit var generalSettingsTab: Button
 
-    @Name("Accept invite")
-    @FindBy(xpath = "//span[text()=' APPROVE ']/ancestor::button")
-    lateinit var acceptInvite: TextInput
+    @Name("Streaming settings tab")
+    @FindBy(xpath = "//span[contains(text(), 'Streaming settings')]")
+    lateinit var streamingSettingsTab: Button
 
-    @Name("Cancel dialog with invite request")
-    @FindBy(xpath = "//span[text()=' CANCEL ']/ancestor::button")
-    lateinit var cancel: TextInput
+    @Name("RFQ settings tab")
+    @FindBy(xpath = "//span[contains(text(), 'RFQ settings')]")
+    lateinit var rFQSettingsTab: Button
 
-    @Name("Search by email input")
-    @FindBy(css = "input[formcontrolname='searchString']")
-    lateinit var filterSearchByEmailInput: TextInput
+    @Name("Blocktrade settings tab")
+    @FindBy(xpath = "//span[contains(text(), 'Blocktrade settings')]")
+    lateinit var blocktradeSettingsTab: Button
 
-    @Name("Update Date From")
-    @FindBy(xpath = "//input[@formcontrolname='updateDateFrom']")
-    lateinit var updateDateFrom: TextInput
+    @Name("TVE settings tab")
+    @FindBy(xpath = "//span[contains(text(), 'TVE settings')]")
+    lateinit var tVESettingsTab: Button
 
-    @Name("Update Date To")
-    @FindBy(xpath = "//input[@formcontrolname='updateDateTo']")
-    lateinit var updateDateTo: TextInput
+    @Name("Access right tab")
+    @FindBy(xpath = "//span[contains(text(), 'Access right')]")
+    lateinit var accessRightTab: Button
 
-    @Name("Request status dropdown")
-    @FindBy(xpath = "//mat-select[@formcontrolname='type']")
-    lateinit var requestStatusSelect: AtmSelect
+    @Name("User management tab")
+    @FindBy(xpath = "//span[contains(text(), 'User management')]")
+    lateinit var userManagementTab: Button
+
+    @Name("Nodes management tab")
+    @FindBy(xpath = "//span[contains(text(), 'Nodes management')]")
+    lateinit var nodesManagementTab: Button
+
+    @Name("Translate tab")
+    @FindBy(xpath = "//span[contains(text(), 'Translate')]")
+    lateinit var translateTab: Button
+
+    @Name("KYC management tab")
+    @FindBy(xpath = "//span[contains(text(), 'KYC management')]")
+    lateinit var kYCManagementTab: Button
+
+    @Name("Tokens text block")
+    @FindBy(xpath = "//h1[contains(text(), 'Tokens')]")
+    lateinit var tokensText: TextBlock
+
+    @Name("Register of issuers text block")
+    @FindBy(xpath = "//h1[contains(text(), 'Register of issuers')]")
+    lateinit var registerOfIssuersText: TextBlock
 
     @Step("Check all tabs are changed for admin with viewer role")
     fun checkAllTabsAreChangedForAdminWithViewerRole() {
@@ -117,20 +136,76 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
         e {
             click(tokensTab)
         }
-        assert {
-            driver.findElement(By.xpath("//label/mat-label[contains(text(), 'Update date from')]"))
-        }
-        assert {
-            (driver.findElement(By.xpath("//mat-icon/following-sibling::text()")).text.contains(" Tokens "))
-        }
+        assert { elementPresented(tokensText) }
         e {
             click(registerOfIssuersTab)
         }
-//        assert {
-//            elementWithTextPresented(" Register of issuers ")
-//        }
+        assert { elementPresented(registerOfIssuersText) }
+        e {
+            click(financialDataSourcesManagementTab)
+        }
         assert {
-            driver.findElement(By.xpath("//label/mat-label[contains(text(), 'Issuers')]"))
+            elementWithTextPresented(" Financial data sources management ")
+        }
+        e {
+            click(generalSettingsTab)
+        }
+        assert {
+            elementWithTextPresented(" OTF general settings ")
+        }
+        e {
+            click(streamingSettingsTab)
+        }
+        assert {
+            elementWithTextPresented(" Streaming settings ")
+        }
+        e {
+            click(rFQSettingsTab)
+        }
+        assert {
+            elementWithTextPresented(" Rfq settings ")
+        }
+        e {
+            click(blocktradeSettingsTab)
+        }
+        assert {
+            elementWithTextPresented(" Blocktrade settings ")
+        }
+        e {
+            click(tVESettingsTab)
+        }
+        assert {
+            elementWithTextPresented(" Tve settings ")
+        }
+        e {
+            click(accessRightTab)
+        }
+        assert {
+            elementWithTextPresented(" Access right ")
+        }
+        e {
+            click(userManagementTab)
+        }
+        assert {
+            elementWithTextPresented(" Users list ")
+        }
+        e {
+            click(nodesManagementTab)
+        }
+        assert {
+            elementWithTextPresented(" Nodes management ")
+        }
+        e {
+            click(translateTab)
+        }
+        assert {
+            elementWithTextPresented(" Available languages ")
+        }
+        e {
+            click(kYCManagementTab)
+        }
+        assert {
+            elementWithTextPresented(" KYC management ")
         }
     }
 }
