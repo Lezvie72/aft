@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
+import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.step
@@ -22,11 +24,15 @@ import utils.helpers.step
 @Feature("Administration panel")
 @Story("Admin with viewer role checks links")
 class AdminRolesVIEWER: BaseTest(){
+
+    val user1 = Users.ATM_USER_VIEWER_ROLE
+
+    @ResourceLock(Constants.ATM_USER_VIEWER_ROLE)
     @TmsLink("ATMCH-5510")
     @Test
     @DisplayName("Admin with viewer role checks links")
     fun adminWithViewerRoleChecksLinks() {
-        val user1 = Users.ATM_USER_VIEWER_ROLE
+
         with(utils.helpers.openPage<AtmAdminEmployeesPage>(driver) { submit(user1) }) {
             step("Check all tabs are changed for admin with viewer role") {
                 checkAllTabsAreChangedForAdminWithViewerRole()

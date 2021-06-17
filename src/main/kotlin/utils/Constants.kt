@@ -88,6 +88,7 @@ object Constants {
     const val ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04 = "ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04"
 
     const val ROLE_ADMIN = "ATM_ADMIN"
+    const val ATM_USER_VIEWER_ROLE = "ATM_USER_VIEWER_ROLE"
 
     //Token -> Fee size and type
     const val FEE = "Fixed fee by precondition"
