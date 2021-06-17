@@ -113,9 +113,10 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
         "Nodes management" to nodesManagementTab,
         "Available languages" to translateTab,
         "KYC management" to kYCManagementTab,
-        tokensText to tokensTab,
-        registerOfIssuersText to registerOfIssuersTab
-        //TODO: Дописать мапу
+        "Tokens" to tokensTab,
+        "Register of issuers" to registerOfIssuersTab
+//        tokensText to tokensTab,
+//        registerOfIssuersText to registerOfIssuersTab
     )
 
     @Step("Check all tabs are changed for admin with viewer role")
@@ -123,6 +124,9 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
         for ((tab, page) in tabs) {
             e {
                 click(page)
+            }
+            assert {
+                elementContainingTextPresented(tab)
             }
 //            if ((tab != String) in tabs) {
 //            if (tab in tabs != "") {
@@ -134,18 +138,6 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
 //                    elementWithTextPresented(" $tab ")
 //                }
 //            }
-            e {
-                click(tokensTab)
-            }
-            assert {
-                elementPresented(tokensText)
-            }
-            e {
-                click(registerOfIssuersTab)
-            }
-            assert {
-                elementPresented(registerOfIssuersText)
-            }
         }
     }
 }
