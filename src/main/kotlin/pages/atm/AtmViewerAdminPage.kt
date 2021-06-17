@@ -169,7 +169,7 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
             assert {
                 elementContainingTextPresented(tab) // Проверка заголовка страницы
                 if (page[1] != null) {
-                    elementContainingTextNotPresented(tab) // Проверка видимости для админа с ролью VIEWER
+                    elementNotPresented(page[1]!!) // Проверка видимости для админа с ролью VIEWER
                 }
                 if (tab == "OTF general settings") {
                     elementDisabled(disabledBtn)
