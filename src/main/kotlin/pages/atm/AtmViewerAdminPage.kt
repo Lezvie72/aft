@@ -95,8 +95,22 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
     @FindBy(xpath = "//h1[contains(text(), 'Register of issuers')]")
     lateinit var registerOfIssuersText: TextBlock
 
+    private val tabs = mapOf(
+        "Invites" to inviteTab
+        //TODO: Дописать мапу
+    )
+
     @Step("Check all tabs are changed for admin with viewer role")
     fun checkAllTabsAreChangedForAdminWithViewerRole() {
+        for ((tab, page) in tabs) {
+            e {
+                click(page)
+            }
+            assert {
+                elementWithTextPresented(" $tab ")
+            }
+        }
+
         e {
             click(inviteTab)
         }
@@ -136,11 +150,15 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
         e {
             click(tokensTab)
         }
-        assert { elementPresented(tokensText) }
+        assert {
+            elementPresented(tokensText)
+        }
         e {
             click(registerOfIssuersTab)
         }
-        assert { elementPresented(registerOfIssuersText) }
+        assert {
+            elementPresented(registerOfIssuersText)
+        }
         e {
             click(financialDataSourcesManagementTab)
         }

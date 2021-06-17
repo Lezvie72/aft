@@ -22,7 +22,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="ATMCH-5510(Alexander) Новая ветка" />
+    <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="ATMCH-5510(Alexander) Новая ветка">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmViewerAdminPage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmViewerAdminPage.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
