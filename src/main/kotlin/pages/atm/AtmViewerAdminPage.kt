@@ -2,6 +2,7 @@ package pages.atm
 
 import io.qameta.allure.Step
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
 import pages.core.annotations.PageUrl
 import ru.yandex.qatools.htmlelements.annotations.Name
@@ -111,6 +112,10 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
     @FindBy(xpath = "//span[contains(text(), 'Add user')]")
     lateinit var addUserBtn: Button
 
+    @Name("Disabled button")
+    @FindBy(xpath = "//label/div/input")
+    lateinit var disabledBtn: Button
+
 //    private val tabsNotVisable = mapOf(
 //        "Send invite" to sendInviteBtn, //Invites
 //        "Employees approval" to same, //Employees approval
@@ -134,36 +139,41 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
 //    )
 
     private val tabs = mapOf(
-        "Invites" to inviteTab,
-        "Employees approval" to employeesApprovalTab,
-        "Payments" to paymentsTab,
-        "Fiat withdraw" to fiatWithdrawTab,
-        "Companies" to companiesTab,
-        "Bank details" to bankDetailsTab,
-        "Tokens" to tokensTab,
-        "Register of issuers" to registerOfIssuersTab,
-        "Financial data sources management" to financialDataSourcesManagementTab,
-        "OTF general settings" to generalSettingsTab,
-        "Streaming settings" to streamingSettingsTab,
-        "Rfq settings" to rFQSettingsTab,
-        "Blocktrade settings" to blocktradeSettingsTab,
-        "Tve settings" to tVESettingsTab,
-        "Access right" to accessRightTab,
-        "Users list" to userManagementTab,
-        "Nodes management" to nodesManagementTab,
-        "Available languages" to translateTab,
-        "KYC management" to kYCManagementTab
+        "Invites" to arrayOf<WebElement?>(inviteTab, sendInviteBtn),
+        "Employees approval" to arrayOf<WebElement?>(employeesApprovalTab, null),
+        "Payments" to arrayOf<WebElement?>(paymentsTab, addPaymentBtn),
+        "Fiat withdraw" to arrayOf<WebElement?>(fiatWithdrawTab, null),
+        "Companies" to arrayOf<WebElement?>(companiesTab, addBtn),
+        "Bank details" to arrayOf<WebElement?>(bankDetailsTab, addBtn),
+        "Tokens" to arrayOf<WebElement?>(tokensTab, addBtn),
+        "Register of issuers" to arrayOf<WebElement?>(registerOfIssuersTab, editBtn),
+        "Financial data sources management" to arrayOf<WebElement?>(financialDataSourcesManagementTab, updateDateSourceBtn),
+        "OTF general settings" to arrayOf<WebElement?>(generalSettingsTab, null),
+        "Streaming settings" to arrayOf<WebElement?>(streamingSettingsTab, addBtn),
+        "Rfq settings" to arrayOf<WebElement?>(rFQSettingsTab, addBtn),
+        "Blocktrade settings" to arrayOf<WebElement?>(blocktradeSettingsTab, addBtn),
+        "Tve settings" to arrayOf<WebElement?>(tVESettingsTab, addBtn),
+        "Access right" to arrayOf<WebElement?>(accessRightTab, addUserBtn),
+        "Users list" to arrayOf<WebElement?>(userManagementTab, editBtn),
+        "Nodes management" to arrayOf<WebElement?>(nodesManagementTab, editBtn),
+        "Available languages" to arrayOf<WebElement?>(translateTab, null),
+        "KYC management" to arrayOf<WebElement?>(kYCManagementTab, null)
     )
 
     @Step("Check all tabs are changed for admin with viewer role")
     fun checkAllTabsAreChangedForAdminWithViewerRole() {
         for ((tab, page) in tabs) {
             e {
-                click(page)
+                click(page[0]!!)
             }
             assert {
                 elementContainingTextPresented(tab) // Проверка заголовка страницы
-                elementContainingTextNotPresented(tab) // Проверка видимости для админа с ролью VIEWER
+                if (page[1] != null) {
+                    elementContainingTextNotPresented(tab) // Проверка видимости для админа с ролью VIEWER
+                }
+                if (tab == "OTF general settings") {
+                    elementDisabled(disabledBtn)
+                }
             }
         }
     }
