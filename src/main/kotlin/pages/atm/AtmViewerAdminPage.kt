@@ -96,7 +96,25 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
     lateinit var registerOfIssuersText: TextBlock
 
     private val tabs = mapOf(
-        "Invites" to inviteTab
+        "Invites" to inviteTab,
+        "Employees approval" to employeesApprovalTab,
+        "Payments" to paymentsTab,
+        "Fiat withdraw" to fiatWithdrawTab,
+        "Companies" to companiesTab,
+        "Bank details" to bankDetailsTab,
+        "Financial data sources management" to financialDataSourcesManagementTab,
+        "OTF general settings" to generalSettingsTab,
+        "Streaming settings" to streamingSettingsTab,
+        "Rfq settings" to rFQSettingsTab,
+        "Blocktrade settings" to blocktradeSettingsTab,
+        "Tve settings" to tVESettingsTab,
+        "Access right" to accessRightTab,
+        "Users list" to userManagementTab,
+        "Nodes management" to nodesManagementTab,
+        "Available languages" to translateTab,
+        "KYC management" to kYCManagementTab,
+        tokensText to tokensTab,
+        registerOfIssuersText to registerOfIssuersTab
         //TODO: Дописать мапу
     )
 
@@ -106,124 +124,52 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
             e {
                 click(page)
             }
-            assert {
-                elementWithTextPresented(" $tab ")
+//            if ((tab != String) in tabs) {
+//            if (tab in tabs != "") {
+//                assert {
+//                    elementPresented({$tab})
+//                }
+//            } else {
+//                assert {
+//                    elementWithTextPresented(" $tab ")
+//                }
+//            }
+            e {
+                click(tokensTab)
             }
-        }
-
-        e {
-            click(inviteTab)
-        }
-        assert {
-            elementWithTextPresented(" Invites ")
-        }
-        e {
-            click(employeesApprovalTab)
-        }
-        assert {
-            elementWithTextPresented(" Employees approval ")
-        }
-        e {
-            click(paymentsTab)
-        }
-        assert {
-            elementWithTextPresented(" Payments ")
-        }
-        e {
-            click(fiatWithdrawTab)
-        }
-        assert {
-            elementWithTextPresented(" Fiat withdraw ")
-        }
-        e {
-            click(companiesTab)
-        }
-        assert {
-            elementWithTextPresented(" Companies ")
-        }
-        e {
-            click(bankDetailsTab)
-        }
-        assert {
-            elementWithTextPresented(" Bank details ")
-        }
-        e {
-            click(tokensTab)
-        }
-        assert {
-            elementPresented(tokensText)
-        }
-        e {
-            click(registerOfIssuersTab)
-        }
-        assert {
-            elementPresented(registerOfIssuersText)
-        }
-        e {
-            click(financialDataSourcesManagementTab)
-        }
-        assert {
-            elementWithTextPresented(" Financial data sources management ")
-        }
-        e {
-            click(generalSettingsTab)
-        }
-        assert {
-            elementWithTextPresented(" OTF general settings ")
-        }
-        e {
-            click(streamingSettingsTab)
-        }
-        assert {
-            elementWithTextPresented(" Streaming settings ")
-        }
-        e {
-            click(rFQSettingsTab)
-        }
-        assert {
-            elementWithTextPresented(" Rfq settings ")
-        }
-        e {
-            click(blocktradeSettingsTab)
-        }
-        assert {
-            elementWithTextPresented(" Blocktrade settings ")
-        }
-        e {
-            click(tVESettingsTab)
-        }
-        assert {
-            elementWithTextPresented(" Tve settings ")
-        }
-        e {
-            click(accessRightTab)
-        }
-        assert {
-            elementWithTextPresented(" Access right ")
-        }
-        e {
-            click(userManagementTab)
-        }
-        assert {
-            elementWithTextPresented(" Users list ")
-        }
-        e {
-            click(nodesManagementTab)
-        }
-        assert {
-            elementWithTextPresented(" Nodes management ")
-        }
-        e {
-            click(translateTab)
-        }
-        assert {
-            elementWithTextPresented(" Available languages ")
-        }
-        e {
-            click(kYCManagementTab)
-        }
-        assert {
-            elementWithTextPresented(" KYC management ")
+            assert {
+                elementPresented(tokensText)
+            }
+            e {
+                click(registerOfIssuersTab)
+            }
+            assert {
+                elementPresented(registerOfIssuersText)
+            }
         }
     }
 }
+
+//    @Step("Check all tabs are changed for admin with viewer role")
+//    fun checkAllTabsAreChangedForAdminWithViewerRole() {
+//        for ((tab, page) in tabs) {
+//            e {
+//                click(page)
+//            }
+//            assert {
+//                elementWithTextPresented(" $tab ")
+//            }
+//        }
+//        e {
+//            click(tokensTab)
+//        }
+//        assert {
+//            elementPresented(tokensText)
+//        }
+//        e {
+//            click(registerOfIssuersTab)
+//        }
+//        assert {
+//            elementPresented(registerOfIssuersText)
+//        }
+//    }
