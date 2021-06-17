@@ -87,13 +87,51 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
     @FindBy(xpath = "//span[contains(text(), 'KYC management')]")
     lateinit var kYCManagementTab: Button
 
-    @Name("Tokens text block")
-    @FindBy(xpath = "//h1[contains(text(), 'Tokens')]")
-    lateinit var tokensText: TextBlock
+    @Name("Send invite button")
+    @FindBy(xpath = "//span[contains(text(), 'Send invite')]")
+    lateinit var sendInviteBtn: Button
 
-    @Name("Register of issuers text block")
-    @FindBy(xpath = "//h1[contains(text(), 'Register of issuers')]")
-    lateinit var registerOfIssuersText: TextBlock
+    @Name("Add payment button")
+    @FindBy(xpath = "//span[contains(text(), 'Add payment')]")
+    lateinit var addPaymentBtn: Button
+
+    @Name("Add button")
+    @FindBy(xpath = "//span[contains(text(), 'ADD')]")
+    lateinit var addBtn: Button
+
+    @Name("Edit button")
+    @FindBy(xpath = "//span[contains(text(), 'EDIT')]")
+    lateinit var editBtn: Button
+
+    @Name("Update date source button")
+    @FindBy(xpath = "//span[contains(text(), 'Update date source')]")
+    lateinit var updateDateSourceBtn: Button
+
+    @Name("Add user button")
+    @FindBy(xpath = "//span[contains(text(), 'Add user')]")
+    lateinit var addUserBtn: Button
+
+//    private val tabsNotVisable = mapOf(
+//        "Send invite" to sendInviteBtn, //Invites
+//        "Employees approval" to same, //Employees approval
+//        "Add payment" to addPaymentBtn, //Payments
+//        "Fiat withdraw" to same, //Fiat withdraw
+//        "ADD" to addBtn, //Companies
+//        "ADD" to addBtn, //Bank details
+//        "ADD" to addBtn, //Tokens
+//        "EDIT" to editBtn, //Register of issuers
+//        "Update date source" to updateDateSourceBtn, //Financial data sources management
+//        "OTF general settings" to disabled, // другой метод (одинаковые во всем остальном) //OTF general settings
+//        "ADD" to addBtn, //Streaming settings
+//        "ADD" to addBtn, //Rfq settings
+//        "ADD" to addBtn, //Blocktrade settings
+//        "ADD" to addBtn, //Tve settings
+//        "Add user" to addUserBtn, //Access right
+//        "EDIT" to editBtn, //Users list
+//        "EDIT" to editBtn, //Nodes management
+//        "Available languages" to same, //Available languages
+//        "KYC management" to same //KYC management
+//    )
 
     private val tabs = mapOf(
         "Invites" to inviteTab,
@@ -102,6 +140,8 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
         "Fiat withdraw" to fiatWithdrawTab,
         "Companies" to companiesTab,
         "Bank details" to bankDetailsTab,
+        "Tokens" to tokensTab,
+        "Register of issuers" to registerOfIssuersTab,
         "Financial data sources management" to financialDataSourcesManagementTab,
         "OTF general settings" to generalSettingsTab,
         "Streaming settings" to streamingSettingsTab,
@@ -112,11 +152,7 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
         "Users list" to userManagementTab,
         "Nodes management" to nodesManagementTab,
         "Available languages" to translateTab,
-        "KYC management" to kYCManagementTab,
-        "Tokens" to tokensTab,
-        "Register of issuers" to registerOfIssuersTab
-//        tokensText to tokensTab,
-//        registerOfIssuersText to registerOfIssuersTab
+        "KYC management" to kYCManagementTab
     )
 
     @Step("Check all tabs are changed for admin with viewer role")
@@ -126,42 +162,9 @@ class AtmViewerAdminPage(driver: WebDriver): AtmAdminPage(driver) {
                 click(page)
             }
             assert {
-                elementContainingTextPresented(tab)
+                elementContainingTextPresented(tab) // Проверка заголовка страницы
+                elementContainingTextNotPresented(tab) // Проверка видимости для админа с ролью VIEWER
             }
-//            if ((tab != String) in tabs) {
-//            if (tab in tabs != "") {
-//                assert {
-//                    elementPresented({$tab})
-//                }
-//            } else {
-//                assert {
-//                    elementWithTextPresented(" $tab ")
-//                }
-//            }
         }
     }
 }
-
-//    @Step("Check all tabs are changed for admin with viewer role")
-//    fun checkAllTabsAreChangedForAdminWithViewerRole() {
-//        for ((tab, page) in tabs) {
-//            e {
-//                click(page)
-//            }
-//            assert {
-//                elementWithTextPresented(" $tab ")
-//            }
-//        }
-//        e {
-//            click(tokensTab)
-//        }
-//        assert {
-//            elementPresented(tokensText)
-//        }
-//        e {
-//            click(registerOfIssuersTab)
-//        }
-//        assert {
-//            elementPresented(registerOfIssuersText)
-//        }
-//    }
