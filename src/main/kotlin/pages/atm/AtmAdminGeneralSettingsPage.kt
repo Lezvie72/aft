@@ -66,15 +66,22 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//a[@href='/p2p-settings']")
     lateinit var blocktradeLink: Button
 
-    @Step("Checking the displaying of all toggles")
-    fun togglesAreDisplayed() {
+    @Step("Checking the displaying title and all toggles")
+    fun pageIsDisplayed(isrfqLink: String? = null, isstreamingLink: String? = null, isblocktradeLink: String? = null) {
         assert {
+            elementContainingTextPresented("OTF general settings")
             elementPresented(rfqToggleAlt)
-            elementPresented(rfqLink)
+            if (isrfqLink != null) {
+                elementPresented(rfqLink)
+            }
             elementPresented(streamingToggleAlt)
-            elementPresented(streamingLink)
+            if (isstreamingLink != null) {
+                elementPresented(streamingLink)
+            }
             elementPresented(blocktradeToggleAlt)
-            elementPresented(blocktradeLink)
+            if (isblocktradeLink != null) {
+                elementPresented(blocktradeLink)
+            }
         }
     }
 

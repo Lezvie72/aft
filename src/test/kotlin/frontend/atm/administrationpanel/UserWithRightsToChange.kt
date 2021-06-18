@@ -38,14 +38,15 @@ class UserWithRightsToChange : BaseTest() {
     @DisplayName("User with rights to change")
     fun userWithRightsToChange() {
         with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
-            togglesAreDisplayed()
+            pageIsDisplayed("rfqLink", "streamingLink", "blocktradeLink")
             checkingTogglesInitialStatus()
             changeStreamingStatusAndCheckResult()
             driver.navigate().refresh()
         }
         AtmAdminGeneralSettingsPage(driver).logout()
         with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user2)} ) {
-            // тута будет код
+            pageIsDisplayed("rfqLink", null, "blocktradeLink")
+
         }
     }
 }
