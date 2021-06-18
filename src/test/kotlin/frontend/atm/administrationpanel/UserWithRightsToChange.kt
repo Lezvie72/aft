@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmAdminGeneralSettingsPage
 import utils.Constants
 import utils.TagNames
@@ -23,13 +24,20 @@ import utils.helpers.Users
 @Feature("Administration panel")
 @Story("User with rights to change")
 class UserWithRightsToChange : BaseTest() {
-    private val admin1 = Users.ATM_ADMIN
-    @ResourceLock(Constants.ROLE_ADMIN)
+
+    val user1 = Users.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE
+    val user2 = Users.ATM_USER_FINANCE_MANAGER_ROLE
+    val user3 = Users.ATM_USER_OTF_TVE_MANAGER_ROLE
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE),
+        ResourceLock(Constants.ATM_USER_FINANCE_MANAGER_ROLE),
+        ResourceLock(Constants.ATM_USER_OTF_TVE_MANAGER_ROLE)
+    )
     @TmsLink("ATMCH-4091")
     @Test
     @DisplayName("User with rights to change")
     fun userWithRightsToChange() {
-        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(admin1)} ) {
+        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
             togglesAreDisplayed()
             checkingTogglesInitialStatus()
             changeStreamingStatusAndCheckResult()
