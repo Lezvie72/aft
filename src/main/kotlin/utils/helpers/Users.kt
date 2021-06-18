@@ -155,6 +155,33 @@ class Users {
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+0_aftuser@gmail.com")
         }
 
+        val ATM_USER_FINANCE_MANAGER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+        }
+
+        val ATM_USER_PLATFORM_ADMINISTRATOR_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+        }
+
+        val ATM_USER_OTF_TVE_MANAGER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+        }
+
         // Atm user: KYC0, no 2FA, Autotest
         val ATM_USER_KYC0_2FA_NONE = when (Environment.stand) {
             DEVELOP -> DefaultUser()
