@@ -20,16 +20,24 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-panel-title[contains(text(),'RFQ')]/ancestor::div//mat-slide-toggle/label")
     lateinit var rfqToggle: CheckBox
 
+    @Name("Rfq toggle")
+    @FindBy(xpath = "//div[*[contains(text(), 'RFQ')]] //label")
+    lateinit var rfqToggleAlt: CheckBox
+
     @Name("Rfq toggle status")
-    @FindBy(xpath = "//mat-panel-title[contains(text(),'RFQ')]/ancestor::div//mat-slide-toggle/label/span")
+    @FindBy(xpath = "//div[*[contains(text(), 'RFQ')]] //label/span")
     lateinit var rfqToggleStatus: TextBlock
 
     @Name("Streaming toggle")
     @FindBy(xpath = "//mat-panel-title[contains(text(),'Streaming')]/ancestor::div//mat-slide-toggle/label")
     lateinit var streamingToggle: CheckBox
 
+    @Name("Streaming toggle")
+    @FindBy(xpath = "//div[*[contains(text(), 'Streaming')]] //label")
+    lateinit var streamingToggleAlt: CheckBox
+
     @Name("Streaming toggle status")
-    @FindBy(xpath = "//mat-panel-title[contains(text(),'Streaming')]/ancestor::div//mat-slide-toggle/label/span")
+    @FindBy(xpath = "//div[*[contains(text(), 'Streaming')]] //label/span")
     lateinit var streamingToggleStatus: TextBlock
 
     @Name("Blocktrade toggle")
@@ -37,7 +45,11 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var blocktradeToggle: CheckBox
 
     @Name("Blocktrade toggle")
-    @FindBy(xpath = "//mat-panel-title[contains(text(),'Blocktrade')]/ancestor::div//mat-slide-toggle/label/span")
+    @FindBy(xpath = "//div[*[contains(text(), 'Blocktrade')]] //label")
+    lateinit var blocktradeToggleAlt: CheckBox
+
+    @Name("Blocktrade toggle")
+    @FindBy(xpath = "//div[*[contains(text(), 'Blocktrade')]] //label/span")
     lateinit var blocktradeToggleStatus: TextBlock
 
     @Name("Rfq link")
@@ -55,11 +67,11 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Step("Checking the displaying of all toggles")
     fun togglesAreDisplayed() {
         assert {
-            elementPresented(rfqToggle)
+            elementPresented(rfqToggleAlt)
             elementPresented(rfqLink)
-            elementPresented(streamingToggle)
+            elementPresented(streamingToggleAlt)
             elementPresented(streamingLink)
-            elementPresented(blocktradeToggle)
+            elementPresented(blocktradeToggleAlt)
             elementPresented(blocktradeLink)
         }
     }
@@ -76,7 +88,7 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Step("Change status of streaming settings then check")
     fun changeStreamingStatusAndCheckResult() {
         e {
-            click(streamingToggle)
+            click(streamingToggleAlt)
         }
         assert {
             elementContainsText(streamingToggleStatus, "disable")
