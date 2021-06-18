@@ -1,6 +1,9 @@
 package utils
 
 object Constants {
+    //Kibana
+    const val KIBANA_LOGIN = "user"
+    const val KIBANA_PASSWORD = "WzTdxTB142oDadvL2lz0Xr65DeuBuV"
 
     //Frontend
     const val DEFAULT_AUTH_CODE = "123456"
@@ -88,6 +91,7 @@ object Constants {
     const val ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04 = "ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04"
 
     const val ROLE_ADMIN = "ATM_ADMIN"
+    const val ATM_USER_FOR_KIBANA = "ATM_USER_FOR_KIBANA"
 
     //Token -> Fee size and type
     const val FEE = "Fixed fee by precondition"

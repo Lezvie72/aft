@@ -34,6 +34,15 @@ class Users {
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+change_password@gmail.com")
         }
 
+        val ATM_USER_FOR_KIBANA = when (Environment.stand) {
+            DEVELOP -> KibanaUser()
+            RELEASE -> KibanaUser("user")
+            PREPROD -> KibanaUser("user")
+            PROD -> KibanaUser("user")
+            SHARED -> KibanaUser("user")
+            TOKEN_TRUST -> KibanaUser("user")
+        }
+
         val ATM_USER_WITH_BLOCK_WALLET = when (Environment.stand) {
             DEVELOP -> UserWithMainWallet2FA(
                 mainWallet = MainWallet(),
