@@ -41,6 +41,11 @@ class UserWithRightsToChange : BaseTest() {
             togglesAreDisplayed()
             checkingTogglesInitialStatus()
             changeStreamingStatusAndCheckResult()
+            driver.navigate().refresh()
+        }
+        AtmAdminGeneralSettingsPage(driver).logout()
+        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user2)} ) {
+            // тута будет код
         }
     }
 }

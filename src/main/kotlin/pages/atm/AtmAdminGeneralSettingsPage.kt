@@ -3,6 +3,7 @@ package pages.atm
 import io.qameta.allure.Step
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.FindBy
+import pages.core.annotations.PageName
 import pages.core.annotations.PageUrl
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
@@ -10,6 +11,7 @@ import ru.yandex.qatools.htmlelements.element.CheckBox
 import ru.yandex.qatools.htmlelements.element.TextBlock
 
 @PageUrl("/otc-settings")
+@PageName("Admin general settings page")
 class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Name("Cancel add token")
