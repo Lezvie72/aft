@@ -2,6 +2,7 @@ package pages.atm
 
 import io.qameta.allure.Step
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
 import pages.core.annotations.PageName
 import pages.core.annotations.PageUrl
@@ -66,43 +67,57 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//a[@href='/p2p-settings']")
     lateinit var blocktradeLink: Button
 
-    @Step("Checking the displaying title and all toggles")
-    fun pageIsDisplayed(isrfqLink: String? = null, isstreamingLink: String? = null, isblocktradeLink: String? = null) {
+    @Step("Checking the displaying title on page")
+    fun pageIsDisplayed() {
         assert {
             elementContainingTextPresented("OTF general settings")
             elementPresented(rfqToggleAlt)
-            if (isrfqLink != null) {
-                elementPresented(rfqLink)
-            }
             elementPresented(streamingToggleAlt)
-            if (isstreamingLink != null) {
-                elementPresented(streamingLink)
-            }
             elementPresented(blocktradeToggleAlt)
-            if (isblocktradeLink != null) {
-                elementPresented(blocktradeLink)
-            }
         }
     }
 
-    @Step("Checking toggle's status")
-    fun checkingTogglesInitialStatus() {
-        assert {
-            elementContainsText(rfqToggleStatus, "enable")
-            elementContainsText(streamingToggleStatus, "enable")
-            elementContainsText(blocktradeToggleStatus, "enable")
+    @Step("Checking toggle's status and corresponding links")
+    fun checkingTogglesStatusAndCorrespondingLinks(rfqToggleStatusText: String, streamingToggleStatusText: String, blocktradeToggleStatusText: String) {
+        val settings = mapOf(
+            "RFQ" to arrayOf(rfqToggleStatusText, rfqToggleStatus, rfqLink),
+            "Streaming" to arrayOf(streamingToggleStatusText, streamingToggleStatus, streamingLink),
+            "Blocktrade" to arrayOf(blocktradeToggleStatusText, rfqToggleStatus, rfqLink)
+        )
+        for ((key, value) in settings) {
+            assert {
+                elementContainsText(value[1] as WebElement, value[0] as String)
+                when (rfqToggleStatusText) {
+                    "enable" -> elementPresented(value[2] as WebElement)
+                    "disable" -> elementNotPresented(value[2] as WebElement)
+                }
+            }
+//            elementContainsText(streamingToggleStatus, streamingToggleStatusText)
+//            when (streamingToggleStatusText) {
+//                "enable" -> elementPresented(streamingLink)
+//                "disable" -> elementNotPresented(streamingLink)
+//            }
+//            elementContainsText(blocktradeToggleStatus, blocktradeToggleStatusText)
+//            when (blocktradeToggleStatusText) {
+//                "enable" -> elementPresented(blocktradeLink)
+//                "disable" -> elementNotPresented(blocktradeLink)
+//            }
         }
     }
 
     @Step("Change status of streaming settings then check")
-    fun changeStreamingStatusAndCheckResult() {
-        e {
-            click(streamingToggleAlt)
+    fun changeToggleStatus(toggle1: String? = null, toggle2: String? = null, toggle3: String? = null) {
+        val toggles = arrayOf(toggle1, toggle2, toggle3)
+        for (toggle in toggles) {
+            e {
+                when (toggle1) {
+                    "RFQ" -> click(rfqToggleAlt)
+                    "Streaming" -> click(streamingToggleAlt)
+                    "Blocktrade" -> click(blocktradeToggleAlt)
+                }
+            }
         }
-        assert {
-            elementContainsText(streamingToggleStatus, "disable")
-            elementNotPresented(streamingLink)
-        }
+
     }
 
 }
