@@ -28,6 +28,7 @@ class UserWithRightsToChange : BaseTest() {
     val user1 = Users.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE
     val user2 = Users.ATM_USER_FINANCE_MANAGER_ROLE
     val user3 = Users.ATM_USER_OTF_TVE_MANAGER_ROLE
+
     @ResourceLocks(
         ResourceLock(Constants.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE),
         ResourceLock(Constants.ATM_USER_FINANCE_MANAGER_ROLE),
@@ -37,16 +38,38 @@ class UserWithRightsToChange : BaseTest() {
     @Test
     @DisplayName("User with rights to change")
     fun userWithRightsToChange() {
-        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
-            pageIsDisplayed("rfqLink", "streamingLink", "blocktradeLink")
-            checkingTogglesInitialStatus()
-            changeStreamingStatusAndCheckResult()
-            driver.navigate().refresh()
-        }
-        AtmAdminGeneralSettingsPage(driver).logout()
-        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user2)} ) {
-            pageIsDisplayed("rfqLink", null, "blocktradeLink")
 
+        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
+            pageIsDisplayed()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
+            changeToggleStatus("Streaming")
+            driver.navigate().refresh()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
         }
+
+        AtmAdminGeneralSettingsPage(driver).logout()
+
+        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user2)} ) {
+            pageIsDisplayed()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
+            changeToggleStatus("Streaming")
+            driver.navigate().refresh()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
+            changeToggleStatus("RFQ", "Blocktrade")
+            driver.navigate().refresh()
+            checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
+        }
+
+        AtmAdminGeneralSettingsPage(driver).logout()
+
+        with(utils.helpers.openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
+            pageIsDisplayed()
+            checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
+            changeToggleStatus("RFQ", "Blocktrade")
+            driver.navigate().refresh()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
+        }
+
     }
+
 }
