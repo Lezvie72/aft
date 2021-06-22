@@ -110,7 +110,7 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         val toggles = arrayOf(toggle1, toggle2, toggle3)
         for (toggle in toggles) {
             e {
-                when (toggle1) {
+                when (toggle) {
                     "RFQ" -> click(rfqToggleAlt)
                     "Streaming" -> click(streamingToggleAlt)
                     "Blocktrade" -> click(blocktradeToggleAlt)
