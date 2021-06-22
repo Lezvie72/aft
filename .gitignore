@@ -36,3 +36,4 @@ build/
 .gradle/
 chromedriver.exe
 *.iml
+/.idea/
