@@ -30,56 +30,58 @@ class UserWithRightsToChange : BaseTest() {
     val user2 = Users.ATM_USER_FINANCE_MANAGER_ROLE
     val user3 = Users.ATM_USER_OTF_TVE_MANAGER_ROLE
 
-    //TODO: Дописать игнор третьего шага в случае падения второго
+    var switch: Boolean
 
     @ResourceLock(Constants.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE)
     @TmsLink("ATMCH-4091")
     @Test
-    @DisplayName("User with rights to change1")
-    fun step1 () {
+    @DisplayName("User with rights to change step 1")
+    fun userWithRightsToChangeStep1 () {
+        switch = false
         with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
-            step("ffffgg") {
-                pageIsDisplayed()
-                checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
-                changeToggleStatus("Streaming")
-                Thread.sleep(5000)
-                driver.navigate().refresh()
-                Thread.sleep(5000)
-                checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
-            }
+            pageIsDisplayed()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
+            changeToggleStatus("Streaming")
+            Thread.sleep(5000)
+            driver.navigate().refresh()
+            Thread.sleep(5000)
+            checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
         }
-
         openPage<AtmAdminGeneralSettingsPage>(driver).logout()
+        switch = true
     }
+
     @ResourceLock(Constants.ATM_USER_FINANCE_MANAGER_ROLE)
     @TmsLink("ATMCH-4091")
     @Test
-    @DisplayName("User with rights to change2")
-    fun step2 () {
+    @EnabledIf(switch.toString())
+    @DisplayName("User with rights to change step 2")
+    fun userWithRightsToChangeStep2 () {
+        switch = false
         with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user2)} ) {
-            step("fff") {
-                pageIsDisplayed()
-                checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
-                changeToggleStatus("Streaming")
-                Thread.sleep(5000)
-                driver.navigate().refresh()
-                Thread.sleep(5000)
-                checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
-                changeToggleStatus("RFQ", "Blocktrade")
-                Thread.sleep(5000)
-                driver.navigate().refresh()
-                Thread.sleep(5000)
-                checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
-            }
+            pageIsDisplayed()
+            checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
+            changeToggleStatus("Streaming")
+            Thread.sleep(5000)
+            driver.navigate().refresh()
+            Thread.sleep(5000)
+            checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
+            changeToggleStatus("RFQ", "Blocktrade")
+            Thread.sleep(5000)
+            driver.navigate().refresh()
+            Thread.sleep(5000)
+            checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
         }
-
         AtmAdminGeneralSettingsPage(driver).logout()
+        switch = true
     }
+
     @ResourceLock (Constants.ATM_USER_OTF_TVE_MANAGER_ROLE)
     @TmsLink("ATMCH-4091")
     @Test
-    @DisplayName("User with rights to change3")
-    fun step3 () {
+    @EnabledIf(switch.toString())
+    @DisplayName("User with rights to change step 3")
+    fun userWithRightsToChangeStep3 () {
         with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
             pageIsDisplayed()
             checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
@@ -90,4 +92,5 @@ class UserWithRightsToChange : BaseTest() {
             checkingTogglesStatusAndCorrespondingLinks("enable", "enable", "enable")
         }
     }
+
 }

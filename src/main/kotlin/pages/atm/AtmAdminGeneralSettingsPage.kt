@@ -92,16 +92,6 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                     "disable" -> elementNotPresented(value[2] as WebElement)
                 }
             }
-//            elementContainsText(streamingToggleStatus, streamingToggleStatusText)
-//            when (streamingToggleStatusText) {
-//                "enable" -> elementPresented(streamingLink)
-//                "disable" -> elementNotPresented(streamingLink)
-//            }
-//            elementContainsText(blocktradeToggleStatus, blocktradeToggleStatusText)
-//            when (blocktradeToggleStatusText) {
-//                "enable" -> elementPresented(blocktradeLink)
-//                "disable" -> elementNotPresented(blocktradeLink)
-//            }
         }
     }
 
