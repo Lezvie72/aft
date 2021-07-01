@@ -33,11 +33,7 @@ class UserWithRightsToChange : BaseTest() {
 
 //    var switch: Boolean = false
 
-    @ResourceLocks(
-        ResourceLock(Constants.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE),
-        ResourceLock(Constants.ATM_USER_FINANCE_MANAGER_ROLE),
-        ResourceLock(Constants.ATM_USER_OTF_TVE_MANAGER_ROLE)
-    )
+    @ResourceLock(Constants.ATM_USER_PLATFORM_ADMINISTRATOR_ROLE)
     @TmsLink("ATMCH-4091")
     @Test
     @DisplayName("User with rights to change step 1")
@@ -89,7 +85,7 @@ class UserWithRightsToChange : BaseTest() {
 //    @EnabledIf("switch")
     @DisplayName("User with rights to change step 3")
     fun userWithRightsToChangeStep3 () {
-        with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
+        with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user3)} ) {
             pageIsDisplayed()
             checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
             changeToggleStatus("RFQ", "Blocktrade")
