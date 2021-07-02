@@ -9,16 +9,11 @@ import pages.core.annotations.PageUrl
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.CheckBox
-import ru.yandex.qatools.htmlelements.element.Link
 import ru.yandex.qatools.htmlelements.element.TextBlock
 
 @PageUrl("/otc-settings")
 @PageName("Admin general settings page")
 class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
-
-    @Name("Cancel add token")
-    @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CANCEL')]")
-    lateinit var cancelDialog: Button
 
     @Name("Rfq toggle")
     @FindBy(xpath = "//mat-panel-title[contains(text(),'RFQ')]/ancestor::div//mat-slide-toggle/label")
@@ -72,18 +67,6 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "(//a[@href='/p2p-settings'])[2]")
     lateinit var blocktradeLink: Button
 
-    @Name("Rfq hidden link")
-    @FindBy(xpath = "//mat-expansion-panel[.//mat-panel-title[contains(text(),'RFQ')]]//div[@style='height: 0px; visibility: hidden;']")
-    lateinit var rfqHiddenLink: Link
-
-    @Name("Streaming hidden link")
-    @FindBy(xpath = "//mat-expansion-panel[.//mat-panel-title[contains(text(),'Streaming')]]//div[@style='height: 0px; visibility: hidden;']")
-    lateinit var streamingHiddenLink: Link
-
-    @Name("blocktrade hidden link")
-    @FindBy(xpath = "//mat-expansion-panel[.//mat-panel-title[contains(text(),'Blocktrade')]]//div[@style='height: 0px; visibility: hidden;']")
-    lateinit var blocktradeHiddenLink: Link
-
     @Name("Rfq visible link")
     @FindBy(xpath = "//mat-expansion-panel[.//mat-panel-title[contains(text(),'RFQ')]]//div[@style='visibility: visible;']")
     lateinit var rfqVisibleLink: Button
@@ -115,6 +98,7 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         )
         for ((key, value) in settings) {
             assert {
+                elementPresented(value[1] as WebElement)
                 elementContainsText(value[1] as WebElement, value[0] as String)
                 when (value[0]) {
                     "enable" -> elementPresented(value[2] as WebElement)
@@ -130,13 +114,13 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         for (toggle in toggles) {
             e {
                 when (toggle) {
-                    "RFQ" -> click(rfqStringAlt)
-                    "Streaming" -> click(streamingToggleAlt)
-                    "Blocktrade" -> click(blocktradeToggleAlt)
+                    "RFQ" -> {click(rfqStringAlt)}
+                    "Streaming" -> {click(streamingToggleAlt)}
+                    "Blocktrade" -> {click(blocktradeToggleAlt)}
                 }
             }
+            Thread.sleep(2000)
         }
-
     }
 
     @Step("Checking toggle's status and switching to correct")
@@ -153,7 +137,6 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                 }
             }
         }
-        Thread.sleep(2000)
     }
 
 }
