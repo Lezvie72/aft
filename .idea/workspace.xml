@@ -22,7 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="Добавление условного запуска шагов" />
+    <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="Добавление условного запуска шагов">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminGeneralSettingsPage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/pages/atm/AtmAdminGeneralSettingsPage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/pages/core/actions/AssertActions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/pages/core/actions/AssertActions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/frontend/BaseTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/BaseTest.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -79,7 +84,7 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.UserWithRightsToChange">
     <configuration name="AdminRolesVIEWER.adminWithViewerRoleChecksLinks" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
       <module name="atm-aft.test" />
       <useClassPathOnly />
@@ -91,6 +96,46 @@
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea -Dconfig-file=application-release.yml -DskipBalances=true -DskipInitToken=true" />
       <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserWithRightsToChange" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="atm-aft.test" />
+      <useClassPathOnly />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="frontend.atm.administrationpanel.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="frontend.atm.administrationpanel" />
+      <option name="MAIN_CLASS_NAME" value="frontend.atm.administrationpanel.UserWithRightsToChange" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea -Dconfig-file=application-release.yml -DskipBalances=true -DskipInitToken=true" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserWithRightsToChange.userWithRightsToChangeStep1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="atm-aft.test" />
+      <useClassPathOnly />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="frontend.atm.administrationpanel.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="frontend.atm.administrationpanel" />
+      <option name="MAIN_CLASS_NAME" value="frontend.atm.administrationpanel.UserWithRightsToChange" />
+      <option name="METHOD_NAME" value="userWithRightsToChangeStep1" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="PARAMETERS" value="" />
+      <envs>
+        <env name="-ea -Dconfig-file" value="application-release.yml -DskipBalances=true -DskipInitToken=true" />
+      </envs>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -108,6 +153,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.UserWithRightsToChange.userWithRightsToChangeStep1" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -165,43 +215,5 @@
     <MESSAGE value="relBr" />
     <MESSAGE value="Добавление условного запуска шагов" />
     <option name="LAST_COMMIT_MESSAGE" value="Добавление условного запуска шагов" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1623748621876">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1623748621876" />
-    <state x="463" y="118" key="FileChooserDialogImpl" timestamp="1623055536571">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="463" y="118" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1623055536571" />
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.center" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.left" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.right" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state x="184" y="8" key="SettingsEditor" timestamp="1622811212463">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="184" y="8" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1622811212463" />
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2" timestamp="1623151419594">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2/0.0.1366.728/1366.-325.1920.1040@0.0.1366.728" timestamp="1623151419594" />
-    <state x="391" y="81" width="622" height="566" key="find.popup" timestamp="1623747887288">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="391" y="81" width="622" height="566" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1623747887288" />
   </component>
 </project>

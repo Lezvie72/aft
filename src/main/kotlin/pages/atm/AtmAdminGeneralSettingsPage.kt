@@ -102,8 +102,8 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                 elementPresented(value[1] as WebElement)
                 elementContainsText(value[1] as WebElement, value[0] as String)
                 when (value[0]) {
-                    "enable" -> elementPresented(value[2] as WebElement)
-                    "disable" -> elementNotPresented(value[2] as WebElement)
+                    "enable" -> elementPresentedWithCustomTimeout(value[2] as WebElement, 1)
+                    "disable" -> elementNotPresentedWithCustomTimeout(value[2] as WebElement, 1)
                 }
             }
         }

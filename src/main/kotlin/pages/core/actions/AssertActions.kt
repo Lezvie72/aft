@@ -222,9 +222,23 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
         }
     }
 
+    @Step("Assertion: element '{e.name}' should be not presented on page")
+    fun elementNotPresentedWithCustomTimeout(e: WebElement, t: Long) {
+        assert(page.check { !isElementPresented(e, t) }) {
+            "Element ${e.getName()} presented on page"
+        }
+    }
+
     @Step("Assertion: element '{e.name}' should be presented on page")
     fun elementPresented(e: WebElement) {
         assert(page.check { isElementPresented(e, timeoutInSeconds) }) {
+            "Element ${e.getName()} not presented on page"
+        }
+    }
+
+    @Step("Assertion: element '{e.name}' should be presented on page")
+    fun elementPresentedWithCustomTimeout(e: WebElement, t: Long) {
+        assert(page.check { isElementPresented(e, t) }) {
             "Element ${e.getName()} not presented on page"
         }
     }
