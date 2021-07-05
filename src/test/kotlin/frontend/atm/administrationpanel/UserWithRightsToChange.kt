@@ -5,6 +5,7 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
+import org.junit.Assume.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
@@ -17,6 +18,10 @@ import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
+
+
+var switch: Boolean? = null
+
 
 @Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
@@ -34,6 +39,7 @@ class UserWithRightsToChange : BaseTest() {
     @Test
     @DisplayName("User with rights to change step 1")
     fun userWithRightsToChangeStep1 () {
+        switch = false
         with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
             pageIsDisplayed()
             checkingTogglesStatusAndSwitchingToCorrect()
@@ -43,6 +49,7 @@ class UserWithRightsToChange : BaseTest() {
             checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
         }
         openPage<AtmAdminGeneralSettingsPage>(driver).logout()
+        switch = true
     }
 
     @ResourceLock(Constants.ATM_USER_FINANCE_MANAGER_ROLE)
@@ -50,6 +57,8 @@ class UserWithRightsToChange : BaseTest() {
     @Test
     @DisplayName("User with rights to change step 2")
     fun userWithRightsToChangeStep2 () {
+        assumeTrue(switch!!)
+        switch = false
         with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user2)} ) {
             pageIsDisplayed()
             checkingTogglesStatusAndCorrespondingLinks("enable", "disable", "enable")
@@ -61,6 +70,7 @@ class UserWithRightsToChange : BaseTest() {
             checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
         }
         AtmAdminGeneralSettingsPage(driver).logout()
+        switch = true
     }
 
     @ResourceLock (Constants.ATM_USER_OTF_TVE_MANAGER_ROLE)
@@ -68,6 +78,7 @@ class UserWithRightsToChange : BaseTest() {
     @Test
     @DisplayName("User with rights to change step 3")
     fun userWithRightsToChangeStep3 () {
+        assumeTrue(switch!!)
         with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user3)} ) {
             pageIsDisplayed()
             checkingTogglesStatusAndCorrespondingLinks("disable", "enable", "disable")
@@ -78,3 +89,4 @@ class UserWithRightsToChange : BaseTest() {
     }
 
 }
+

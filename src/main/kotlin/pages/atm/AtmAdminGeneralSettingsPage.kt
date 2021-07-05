@@ -96,6 +96,7 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             "Streaming" to arrayOf(streamingToggleStatusText, streamingToggleStatus, streamingVisibleLink),
             "Blocktrade" to arrayOf(blocktradeToggleStatusText, blocktradeToggleStatus, blocktradeVisibleLink)
         )
+        Thread.sleep(2000)
         for ((key, value) in settings) {
             assert {
                 elementPresented(value[1] as WebElement)
@@ -132,7 +133,7 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         )
         for ((key, value) in settings) {
             check {
-                if(!isElementPresented(value[0] as WebElement)) {
+                if(!isElementPresented(value[0] as WebElement, 1)) {
                     e { click(value[1] as WebElement) }
                 }
             }
