@@ -2,7 +2,7 @@ package frontend.atm.administrationpanel
 
 import frontend.BaseTest
 import io.qameta.allure.*
-import models.CoinType
+import models.CoinType.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
@@ -26,6 +26,8 @@ import utils.helpers.openPage
 @Feature("Administration panel")
 @Story("User roles")
 class CreationOfAMatrixOfRolesTests : BaseTest() {
+
+    private val maturityDate = IT.maturityDateMonthNumber
 
     @ResourceLock(Constants.ROLE_USER_ETC_TOKEN)
     @TmsLink("ATMCH-5375")
@@ -92,7 +94,7 @@ class CreationOfAMatrixOfRolesTests : BaseTest() {
             assertThat(
                 "One or more tokens type are incorrect", tokens, equalTo(expectedTokens)
             )
-            buyTokenNew(CoinType.IT, "1", user, wallet)
+            buyOrReceiveToken(IT, "1",user, wallet)
             assert {
                 elementContainingTextPresented("Order submitted successfully")
             }

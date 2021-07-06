@@ -64,7 +64,7 @@ class ETCTokenVisibilityAndConstraint : BaseTest() {
     @DisplayName("ETC. Check Marketplace for ETC token")
     fun etcCheckMarketplaceForETCToken() {
         val user = Users.ATM_USER_FOR_ETC_TOKENS
-        val mainWallet = user.walletList[0]
+
         step("User go to wallet, check button Redemption for ETC token") {
             with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
                 assert { elementContainingTextPresented(ETC.tokenName) }
@@ -82,7 +82,6 @@ class ETCTokenVisibilityAndConstraint : BaseTest() {
     fun etcCheckIssuerWallet() {
         val user = Users.ATM_USER_FOR_ACCEPT_ETC_TOKENS_WITHOUT_2FA
         val mainWallet = user.walletList[0]
-        val mainWallet1 = user.walletList[1]
         step("User go to wallet, check ETC token") {
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 chooseWallet(mainWallet.name)

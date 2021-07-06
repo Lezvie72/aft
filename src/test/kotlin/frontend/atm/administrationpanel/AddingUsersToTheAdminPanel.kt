@@ -54,7 +54,7 @@ class AddingUsersToTheAdminPanel : BaseTest() {
             val href =
                 GmailApi.getHrefPassRecoveryLinkUserADMIN(user.email, since)
             driver.navigate().to(href)
-            val sinceRec = LocalDateTime.now(ZoneOffset.UTC)
+            LocalDateTime.now(ZoneOffset.UTC)
             enterNewPassword(password)
             openPage<AtmAdminLoginPage>(driver)
             submit(email, password)
@@ -67,7 +67,6 @@ class AddingUsersToTheAdminPanel : BaseTest() {
     fun settingsAccessRightDeleteUser() {
         val user = newUser()
         val password = "Aa1!${RandomStringUtils.random(10, true, true)}"
-        val since = LocalDateTime.now(ZoneOffset.UTC)
         val email = user.email
         with(openPage<AtmAdminAccessRightPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
@@ -194,7 +193,6 @@ class AddingUsersToTheAdminPanel : BaseTest() {
         with(openPage<AtmAdminLoginPage>(driver)) {
             val href = GmailApi.getHrefPassRecoveryLinkUserADMIN(user.email, since)
             driver.navigate().to(href)
-            val sinceRec = LocalDateTime.now(ZoneOffset.UTC)
             enterNewPassword(password)
 
             openPage<AtmAdminLoginPage>(driver)

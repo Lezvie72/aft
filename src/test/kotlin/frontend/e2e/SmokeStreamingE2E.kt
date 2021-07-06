@@ -1,7 +1,10 @@
 package frontend.e2e
 
 import frontend.BaseTest
-import io.qameta.allure.*
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
 import models.CoinType
 import models.OtfAmounts
 import org.apache.commons.lang.RandomStringUtils
@@ -47,21 +50,12 @@ class SmokeStreamingE2E : BaseTest() {
         val taker = Users.ATM_USER_2FA_OTF_OPERATION_FIFTH
         val maker = Users.ATM_USER_2FA_OTF_OPERATION_SIXTH
 
-        prerequisite {
-            prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
-                "1", "1",
-                "FIXED", "FIXED",
-                true
-            )
-        }
-
         step("${maker.email} check Streaming Sell offer with $unitPriceSell") {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceSell.toString(),
                     AtmStreamingPage.ExpireType.TEMPORARY, maker
                 )
@@ -72,8 +66,8 @@ class SmokeStreamingE2E : BaseTest() {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceBuy.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, maker
                 )
@@ -169,21 +163,12 @@ class SmokeStreamingE2E : BaseTest() {
 
         val maker = Users.ATM_USER_2FA_OTF_OPERATION_SIXTH
 
-        prerequisite {
-            prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
-                "1", "1",
-                "FIXED", "FIXED",
-                true
-            )
-        }
-
         step("${maker.email} check Streaming Sell offer with $unitPriceSell") {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceSell.toString(),
                     AtmStreamingPage.ExpireType.TEMPORARY, maker
                 )
@@ -194,8 +179,8 @@ class SmokeStreamingE2E : BaseTest() {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceBuy.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, maker
                 )

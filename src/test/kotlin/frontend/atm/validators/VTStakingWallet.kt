@@ -63,7 +63,6 @@ class VTStakingWallet : BaseTest() {
 
         AtmProfilePage(driver).logout()
 
-//        openPage<AtmWalletPage>(driver)
 
         val balanceBefore = step("User check balance before operation") {
             openPage<AtmWalletPage>(driver) { submit(userBuyer) }.getBalance(VT, mainWallet.name)
@@ -78,7 +77,7 @@ class VTStakingWallet : BaseTest() {
                     elementContainingTextPresented("New node request")
                 }
                 e {
-                    select(nodeType, ENDORSER.toString())
+                    select(nodeType, ENDORSER.name)
                     click(submit)
                 }
                 assert {
@@ -127,7 +126,7 @@ class VTStakingWallet : BaseTest() {
             with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                 e {
                     click(addNode)
-                    select(nodeType, ENDORSER.toString())
+                    select(nodeType, ENDORSER.name)
                     click(submit)
                 }
                 assert { stakeStep.isStepSelected() }

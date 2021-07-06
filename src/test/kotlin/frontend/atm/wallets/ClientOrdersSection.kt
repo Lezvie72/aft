@@ -14,12 +14,16 @@ import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import pages.atm.AtmMarketplacePage
 import pages.atm.AtmOrdersPage
 import pages.atm.AtmWalletPage
+import ru.yandex.qatools.htmlelements.element.Button
 import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
+import utils.helpers.to
 import java.math.BigDecimal
 
 @Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
@@ -40,7 +44,7 @@ class ClientOrdersSection : BaseTest() {
         prerequisite {
             addCurrencyCoinToWallet(user, "10", mainWallet)
         }
-        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(VT, amount.toString(), user, mainWallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(VT, amount.toString(), user, mainWallet)
 
         with(openPage<AtmOrdersPage>(driver) { submit(user) }) {
             findOrderAndCheckStatus(mainWallet, VT, amount, "executed")
@@ -115,8 +119,12 @@ class ClientOrdersSection : BaseTest() {
                 elementPresented(orderTokenItem)
             }
             chooseToken(CC)
+            val coinButton = wait {
+                untilPresented<WebElement>(By.xpath("//div[contains(text(), '${CC.tokenSymbol}')]"))
+            }.to<Button>("Coin button '${CC.tokenSymbol}'")
+
             assert {
-                elementPresented(currencyCoinButton)
+                elementPresented(coinButton)
                 elementWithTextPresented(" PENDING ")
             }
         }

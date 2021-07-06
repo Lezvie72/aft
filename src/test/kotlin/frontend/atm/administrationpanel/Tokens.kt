@@ -25,7 +25,6 @@ import utils.helpers.openPage
 @Story("Tokens")
 class Tokens : BaseTest() {
 
-
     @TmsLink("ATMCH-4282")
     @Test
     @DisplayName("Adm.platform.Tokens. Transfer fee distribution. Cancel change validator share.")
@@ -34,10 +33,10 @@ class Tokens : BaseTest() {
             assert {
                 elementPresented(addToken)
                 elementPresented(editToken)
-                elementPresented(transferFee)
+                elementPresented(transferFeeDistribution)
             }
             e {
-                click(transferFee)
+                click(transferFeeDistribution)
             }
             val validatorShareValue = validatorShare.value
             e {
@@ -49,7 +48,7 @@ class Tokens : BaseTest() {
             }
             e {
                 click(close)
-                click(transferFee)
+                click(transferFeeDistribution)
             }
             assertThat("Changes not applied", validatorShareValue, Matchers.containsString(validatorShare.value))
         }

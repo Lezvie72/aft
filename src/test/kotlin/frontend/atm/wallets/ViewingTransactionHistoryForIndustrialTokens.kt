@@ -1,7 +1,10 @@
 package frontend.atm.wallets
 
 import frontend.BaseTest
-import io.qameta.allure.*
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
 import models.CoinType.IT
 import org.apache.commons.lang.RandomStringUtils.randomNumeric
 import org.hamcrest.MatcherAssert.assertThat
@@ -22,6 +25,7 @@ import pages.atm.AtmMarketplacePage
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import pages.htmlelements.elements.AtmRadio
+import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
@@ -31,13 +35,13 @@ import utils.helpers.to
 import java.math.BigDecimal
 
 @Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
-@Issue("ATMCH-5912")
 @Epic("Frontend")
 @Feature("Wallets")
 @Story("Viewing transaction history for industrial tokens (top tabs for navigations)")
 class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
 
-    private val maturityDate = "122020"
+    private val maturityDateForBuy = IT.maturityDateMonthNumber
+    private val maturityDateForRedemption = IT.maturityDateMonthString
 
     private val maturityDateButton1: Pair<String, String> = "09.22.20" to "09.21.20"
     private val maturityDateButton2: Pair<String, String> = "10.22.20" to "10.21.20"
@@ -61,13 +65,20 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
         val user1 = Users.ATM_USER_FOR_ACCEPT_CCVTIT_TOKENS
         val wallet = user1.walletList[0]
 
-        step("User buy and accepted IT token") {
-            prerequisite {
-                addCurrencyCoinToWallet(user, "10", mainWallet)
-                placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1)
+
+        step("User buy IT token") {
+
+            with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
+                buyOrReceiveToken(IT, amount.toString(), user, mainWallet, maturityDateForBuy)
+            }
+            AtmProfilePage(driver).logout()
+
+            with(openPage<AtmIssuancesPage>(driver) { submit(user1) }) {
+                changeStatusForOfferWithAmount(IT, amount, APPROVE, user1, wallet)
             }
             AtmProfilePage(driver).logout()
         }
+
         step("User check transaction") {
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 chooseWallet(mainWallet.name)
@@ -85,12 +96,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     untilPresented<WebElement>(
                         By.xpath(
                             generateLocatorForMaturityButton(
-                                maturityDateButton4.first,
-                                maturityDateButton4.second
+                                maturityDateButton1.first,
+                                maturityDateButton1.second
                             )
                         )
                     )
-                }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
 
                 e {
                     click(maturityButton)
@@ -129,13 +140,19 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
         val user1 = Users.ATM_USER_FOR_ACCEPT_IT_TOKEN_SECOND
         val wallet = user1.walletList[0]
 
-        step("User buy and accepted IT token") {
-            prerequisite {
-                addCurrencyCoinToWallet(user, "10", mainWallet)
-                placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1)
+        step("User buy IT token") {
+
+            with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
+                buyOrReceiveToken(IT, amount.toString(), user, mainWallet, maturityDateForBuy)
+            }
+            AtmProfilePage(driver).logout()
+
+            with(openPage<AtmIssuancesPage>(driver) { submit(user1) }) {
+                changeStatusForOfferWithAmount(IT, amount, APPROVE, user1, wallet)
             }
             AtmProfilePage(driver).logout()
         }
+
         step("User check transaction") {
 
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
@@ -154,12 +171,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     untilPresented<WebElement>(
                         By.xpath(
                             generateLocatorForMaturityButton(
-                                maturityDateButton4.first,
-                                maturityDateButton4.second
+                                maturityDateButton1.first,
+                                maturityDateButton1.second
                             )
                         )
                     )
-                }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
 
                 e {
                     click(maturityButton)
@@ -207,10 +224,6 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
 
         val user1 = Users.ATM_USER_FOR_ACCEPT_CCVTIT_TOKENS
         val wallet = user1.walletList[0]
-
-        prerequisite {
-            addCurrencyCoinToWallet(user, "10", mainWallet)
-        }
 
         step("User buy and accepted IT token") {
             with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
@@ -404,10 +417,15 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
         val user1 = Users.ATM_USER_FOR_ACCEPT_CCVTIT_TOKENS
         val wallet = user1.walletList[0]
 
-        step("User buy, accepted and get balance from wallet IT token") {
-            prerequisite {
-                addCurrencyCoinToWallet(user, "10", mainWallet)
-                placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1)
+        step("User buy IT token") {
+
+            with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
+                buyOrReceiveToken(IT, amount.toString(), user, mainWallet, maturityDateForBuy)
+            }
+            AtmProfilePage(driver).logout()
+
+            with(openPage<AtmIssuancesPage>(driver) { submit(user1) }) {
+                changeStatusForOfferWithAmount(IT, amount, APPROVE, user1, wallet)
             }
             AtmProfilePage(driver).logout()
         }
@@ -419,7 +437,7 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     mainWallet,
                     secondMainWallet,
                     amountToTransfer.toString(),
-                    maturityDate,
+                    maturityDateForBuy,
                     "note",
                     user
                 )
@@ -442,12 +460,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                         untilPresented<WebElement>(
                             By.xpath(
                                 generateLocatorForMaturityButton(
-                                    maturityDateButton4.first,
-                                    maturityDateButton4.second
+                                    maturityDateButton1.first,
+                                    maturityDateButton1.second
                                 )
                             )
                         )
-                    }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                    }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
                     e {
                         click(maturityButton)
                     }
@@ -487,12 +505,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                         untilPresented<WebElement>(
                             By.xpath(
                                 generateLocatorForMaturityButton(
-                                    maturityDateButton4.first,
-                                    maturityDateButton4.second
+                                    maturityDateButton1.first,
+                                    maturityDateButton1.second
                                 )
                             )
                         )
-                    }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                    }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
                     e {
                         click(maturityButton)
                     }
@@ -515,7 +533,6 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
         }
     }
 
-
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_IT_TOKEN_ONE),
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN_ONE)
@@ -528,8 +545,6 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
 
         val amount = min + BigDecimal("2.${randomNumeric(8)}")
         val amountForRedemption = min + BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_MAIN_FOR_IT_ONE
         val mainWallet = userBuyer.mainWallet
@@ -538,9 +553,14 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
         val itWallet = itIssuer.walletList[0]
 
         step("User buy IT token") {
-            prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10", mainWallet)
-                addITToken(userBuyer, itIssuer, "10", mainWallet, itWallet, amount)
+
+            with(openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }) {
+                buyOrReceiveToken(IT, amount.toString(), userBuyer, mainWallet, maturityDateForBuy)
+            }
+            AtmProfilePage(driver).logout()
+
+            with(openPage<AtmIssuancesPage>(driver) { submit(itIssuer) }) {
+                changeStatusForOfferWithAmount(IT, amount, APPROVE, itIssuer, itWallet)
             }
             AtmProfilePage(driver).logout()
         }
@@ -551,7 +571,7 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     IT,
                     mainWallet,
                     amountForRedemption.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -573,12 +593,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     untilPresented<WebElement>(
                         By.xpath(
                             generateLocatorForMaturityButton(
-                                maturityDateButton4.first,
-                                maturityDateButton4.second
+                                maturityDateButton1.first,
+                                maturityDateButton1.second
                             )
                         )
                     )
-                }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
                 e {
                     click(maturityButton)
                 }
@@ -612,18 +632,22 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
 
         val amount = min + BigDecimal("2.${randomNumeric(8)}")
         val amountForRedemption = min + BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_2FA_OTF_OPERATION_SECOND
         val mainWallet = userBuyer.mainWallet
 
         val itIssuer = Users.ATM_USER_FOR_ACCEPT_IT_TOKEN_SECOND
         val itWallet = itIssuer.walletList[0]
+
         step("User buy IT token") {
-            prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10", mainWallet)
-                addITToken(userBuyer, itIssuer, "10", mainWallet, itWallet, amount)
+
+            with(openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }) {
+                buyOrReceiveToken(IT, amount.toString(), userBuyer, mainWallet, maturityDateForBuy)
+            }
+            AtmProfilePage(driver).logout()
+
+            with(openPage<AtmIssuancesPage>(driver) { submit(itIssuer) }) {
+                changeStatusForOfferWithAmount(IT, amount, APPROVE, itIssuer, itWallet)
             }
             AtmProfilePage(driver).logout()
         }
@@ -634,7 +658,7 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     IT,
                     mainWallet,
                     amountForRedemption.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -666,12 +690,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     untilPresented<WebElement>(
                         By.xpath(
                             generateLocatorForMaturityButton(
-                                maturityDateButton4.first,
-                                maturityDateButton4.second
+                                maturityDateButton1.first,
+                                maturityDateButton1.second
                             )
                         )
                     )
-                }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
                 e {
                     click(maturityButton)
                 }
@@ -705,18 +729,22 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
 
         val amount = min + BigDecimal("2.${randomNumeric(8)}")
         val amountForRedemption = min + BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_MAIN_FOR_IT_SECOND
         val mainWallet = userBuyer.mainWallet
 
         val itIssuer = Users.ATM_USER_FOR_ACCEPT_IT_TOKEN_SECOND
         val itWallet = itIssuer.walletList[0]
+
         step("User buy IT token") {
-            prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10", mainWallet)
-                addITToken(userBuyer, itIssuer, "10", mainWallet, itWallet, amount)
+
+            with(openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }) {
+                buyOrReceiveToken(IT, amount.toString(), userBuyer, mainWallet, maturityDateForBuy)
+            }
+            AtmProfilePage(driver).logout()
+
+            with(openPage<AtmIssuancesPage>(driver) { submit(itIssuer) }) {
+                changeStatusForOfferWithAmount(IT, amount, APPROVE, itIssuer, itWallet)
             }
             AtmProfilePage(driver).logout()
         }
@@ -727,7 +755,7 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     IT,
                     mainWallet,
                     amountForRedemption.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -760,12 +788,12 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
                     untilPresented<WebElement>(
                         By.xpath(
                             generateLocatorForMaturityButton(
-                                maturityDateButton4.first,
-                                maturityDateButton4.second
+                                maturityDateButton1.first,
+                                maturityDateButton1.second
                             )
                         )
                     )
-                }.to<AtmRadio>("Wallet '${maturityDateButton4.first}' or '${maturityDateButton4.second}'")
+                }.to<AtmRadio>("Wallet '${maturityDateButton1.first}' or '${maturityDateButton1.second}'")
                 e {
                     click(maturityButton)
                 }
@@ -785,7 +813,6 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
             }
         }
     }
-
 
     @TmsLink("ATMCH-5363")
     @Test
@@ -812,20 +839,22 @@ class ViewingTransactionHistoryForIndustrialTokens : BaseTest() {
             with(openPage<AtmWalletPage>(driver) { submit(userBuyer) }) {
                 chooseWallet(mainWallet.name)
                 chooseToken(IT)
-
                 wait {
                     until("transaction list is presented", 30) {
                         check {
-                            isElementPresented(By.xpath("//atm-transactions//atm-ind-issue-list"))
+                            isElementPresented(By.xpath(".//atm-transactions//atm-ind-issue-list"))
                         }
                     }
                 }
+
+                wait {
+                    untilPresented<WebElement>(By.xpath(".//atm-transactions//atm-ind-issue-list"))
+                }.to<Button>("Issue list")
 
                 val maturityDatesWallets =
                     findElements(By.xpath("//atm-ind-issue-list//label//span[2]")).map { it.text }.toMutableList()
 
                 assertThat("List not equality", maturityDates, equalTo(maturityDatesWallets))
-
             }
         }
     }

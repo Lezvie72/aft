@@ -305,7 +305,7 @@ class EmployeesAssigning : BaseTest() {
                 elementPresented(backToWallet)
                 elementPresented(controllerCheckbox)
             }
-            val newState = reverseCheckboxStatusForEmployee(employee.email, user)
+            val newState = reverseCheckboxStatusForEmployee(employee.email)
             e {
                 val code = if (OAuth.generateCode(user.oAuthSecret) == "123456") "123457" else "123456"
                 sendKeys(atmOtpConfirmationInput, code)

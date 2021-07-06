@@ -50,7 +50,7 @@ class FTPurchaseForCC : BaseTest() {
         val balanceBefore =
             openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForToken(FT, mainWallet.name)
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyToken(FT, mainWallet.publicKey, "1", user, mainWallet.secretKey)
+            buyOrReceiveToken(FT,"1",user, mainWallet)
             assert {
                 elementWithTextPresented(" Order completed successfully ")
             }
@@ -104,7 +104,7 @@ class FTPurchaseForCC : BaseTest() {
                 e {
                     chooseToken(FT)
                     click(newOrderButton)
-                    select(selectWallet, walletNum.publicKey.toString())
+                    select(selectWallet, walletNum.publicKey)
                     deleteData(tokenQuantity)
                     sendKeys(tokenQuantity, "#$%^&&*^&")
                     assert {
@@ -225,7 +225,7 @@ class FTPurchaseForCC : BaseTest() {
             e {
                 chooseToken(FT)
                 click(newOrderButton)
-                select(selectWallet, wallet.publicKey.toString())
+                select(selectWallet, wallet.publicKey)
                 deleteData(tokenQuantity)
                 sendKeys(tokenQuantity, "1")
                 click(privateKey)
@@ -254,7 +254,7 @@ class FTPurchaseForCC : BaseTest() {
             e {
                 chooseToken(FT)
                 click(newOrderButton)
-                select(selectWallet, wallet.publicKey.toString())
+                select(selectWallet, wallet.publicKey)
                 deleteData(tokenQuantity)
                 sendKeys(tokenQuantity, "1")
                 click(submitButton)
@@ -276,6 +276,6 @@ class FTPurchaseForCC : BaseTest() {
     private fun preset(user: DefaultUser, amount: String, wallet: SimpleWallet) {
         val alias = openPage<AtmWalletPage>(driver) { submit(user) }.getAliasForWallet(wallet.name)
         openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }.addPayment(alias, amount)
-        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(CC, amount, user, wallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(CC, amount, user, wallet)
     }
 }

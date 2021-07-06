@@ -34,8 +34,8 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         val alias = openPage<AtmWalletPage>(driver) { submit(user) }.getAliasForWallet(wallet.name)
         openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }.addPayment(alias, amount)
 
-        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(CC, amountCC, user, wallet)
-        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(VT, amountVT, user, wallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(CC, amountCC, user, wallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(VT, amountVT, user, wallet)
 
         openPage<AtmWalletPage>(driver) { submit(user) }.moveToOTFWalletNew(
             amountMoveCC,
@@ -69,8 +69,8 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
             Users.ATM_USER_2FA_OTF_OPERATION_THIRD
         )
 
-        openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken("CC", "CC", "0", "1", "1")
-        openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken("VT", "VT", "0", "1", "1")
+        openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken(CC, CC, "0", "1", "1")
+        openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken(VT, VT, "0", "1", "1")
 
         users.forEach { user ->
             try {
@@ -84,7 +84,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
     }
 
     fun prerequisitesRfq(tokenName: CoinType, secondTokenName: CoinType) {
-        openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.addTokenIfNotPresented(tokenName.tokenSymbol)
+        openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.addTokenIfNotPresented(tokenName)
         openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeSettingsForToken(
             tokenName,
             secondTokenName
@@ -92,8 +92,8 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
     }
 
     fun prerequisitesStreaming(
-        baseInputValue: String,
-        quoteValue: String,
+        baseInputValue: CoinType,
+        quoteValue: CoinType,
         availableAmountValue: String,
         feePlaceAmountValue: String,
         feeAcceptAmountValue: String,
@@ -102,12 +102,12 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         available: Boolean
     ) {
         openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.addTradingPairIfNotPresented(
-            baseInputValue, quoteValue,"", availableAmountValue, feePlaceAmountValue,
+            baseInputValue.tokenSymbol, quoteValue.tokenSymbol, "", availableAmountValue, feePlaceAmountValue,
             feeAcceptAmountValue, feePlaceModeValue, feeAcceptModeValue, available
         )
         openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeSettingsForTokenStreaming(
-            baseInputValue,
-            quoteValue,"1","1"
+            baseInputValue.tokenSymbol,
+            quoteValue.tokenSymbol, "1", "1"
         )
     }
 
@@ -144,7 +144,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         step("Precondition. Add balance to main wallet") {
             val alias = openPage<AtmWalletPage>(driver) { submit(user) }.getAliasForWallet(wallet.name)
             openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }.addPayment(alias, amount)
-            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(CC, amount, user, wallet)
+            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(CC, amount, user, wallet)
         }
     }
 
@@ -179,11 +179,10 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
     fun bankAccountsListShouldBeEmpty(user: User) {
         step("Precondition. Delete all bank account list if it's not empty") {
             with(openPage<AtmBankAccountsPage>(driver) { submit(user) }) {
-
-                if (check {
-                        isElementPresented(usdPanel)
-                    }) {
-                    e { click(usdPanel) }
+                if (usdPanel.getAttribute("aria-expanded") == "false") {
+                    e {
+                        click(usdPanel)
+                    }
                     if (bankAccountsList.isNotEmpty()) {
                         bankAccountsList.forEach { ba ->
                             ba.select()
@@ -245,7 +244,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         step("Accept incoming P2P offer") {
             with(openPage<AtmP2PPage>(driver) { submit(user) }) {
                 findIncomingP2P(amount)
-                val fee = wait(15L) {
+                wait(15L) {
                     until("Couldn't load fee") {
                         offerFee.text.isNotEmpty()
                     }
@@ -270,15 +269,15 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
     fun addITToken(
         user: DefaultUser,
         user1: DefaultUser,
-        amount: String,
         wallet: MainWallet,
         walletForAccept: MainWallet,
-        amountForIT: BigDecimal
+        amountForIT: BigDecimal,
+        maturityDate: String
     ) {
-        addCurrencyCoinToWallet(user, amount, wallet)
         placeAndProceedTokenRequest(
-            IT, wallet, walletForAccept, amountForIT,
-            APPROVE, user, user1
+            IT, wallet, walletForAccept,
+            amountForIT,
+            APPROVE, user, user1, maturityDate
         )
     }
 
@@ -292,10 +291,11 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         amount: BigDecimal,
         statusType: AtmIssuancesPage.StatusType,
         user: DefaultUser,
-        user1: DefaultUser
+        user1: DefaultUser,
+        maturityDate: String = ""
     ) {
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(coinType, amount.toString(), user, wallet)
+            buyOrReceiveToken(coinType, amount.toString(), user, wallet, maturityDate)
         }
         AtmProfilePage(driver).logout()
 

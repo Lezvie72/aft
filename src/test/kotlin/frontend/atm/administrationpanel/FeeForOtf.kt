@@ -166,7 +166,7 @@ class FeeForOtf : BaseTest() {
     @TmsLink("ATMCH-6101")
     @Test
     @DisplayName("RFQ settings. FIAT can't be used in the Secondary market")
-    fun RfqSettingsFiatCantBeUsedInTheSecondaryMarket() {
+    fun rfqSettingsFiatCantBeUsedInTheSecondaryMarket() {
         with(utils.helpers.openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 defaultAsset.delete()

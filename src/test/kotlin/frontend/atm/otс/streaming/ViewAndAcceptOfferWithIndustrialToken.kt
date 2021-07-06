@@ -17,6 +17,7 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
+import pages.atm.AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED
 import pages.atm.AtmWalletPage
 import utils.Constants
 import utils.TagNames
@@ -24,7 +25,7 @@ import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -37,12 +38,15 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
     private val baseAsset = CoinType.CC
     private val quoteAsset = CoinType.IT
     private val amountCount = OtfAmounts.AMOUNT_10.amount
-    private val maturityDateInnerDate = "22 September 2020"
+    private val maturityDateInnerDate = quoteAsset.date
     private val invalid2FaKey = "123456"
     private val invalidPrivateKey = "12345678bb4992acf09c9cba9e266c696aff77fca923db2a472b813e37f9e96f"
     private val wallet = "OTF 1"
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
+    @ResourceLocks(
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
+    )
     @TmsLink("ATMCH-3764")
     @Test
     @DisplayName("Accept sell offer. Wrong 2FA")
@@ -57,10 +61,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -138,10 +142,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -202,7 +206,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         )
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
+    @ResourceLocks(
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
+    )
     @TmsLink("ATMCH-3766")
     @Test
     @DisplayName("Accept buy offer. Wrong 2FA")
@@ -217,10 +224,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -298,10 +305,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPriceBuy.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -311,10 +318,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPriceSell.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -373,10 +380,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne,
                     maturityDateInnerDate
                 )
@@ -439,7 +446,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
         }
     }
 
-    @ResourceLocks(ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET), ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
+    @ResourceLocks(
+        ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
+        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
+    )
     @TmsLink("ATMCH-3711")
     @Test
     @DisplayName("Accept buy offer. User with 2FA")
@@ -454,10 +464,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -522,10 +532,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -600,10 +610,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }
@@ -674,10 +684,10 @@ class ViewAndAcceptOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
                 )
             }

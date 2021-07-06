@@ -37,9 +37,9 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
     private val baseAsset = CoinType.CC
     private val quoteAsset = CoinType.VT
     private val industrialToken = CoinType.IT
-    private val maturityDateInnerDate = "22 September 2020"
+    private val maturityDateInnerDate = industrialToken.date
 
-    @Tag(TagNames.Flow.DEBUG)
+
     @ResourceLocks(
         ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
         ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
@@ -50,7 +50,6 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
     fun selectionIndustrialTokensOnlyByParticipantsHavingIndustrialMarkInAdminPanel() {
         val amount = BigDecimal("10.0000${RandomStringUtils.randomNumeric(4)}")
         val checkedValue = "Maturity date"
-        var fee = BigDecimal("0.0000")
 
         val (walletID, companyName) = step("GIVEN $userTwo walletID is known") {
             val companyName = utils.helpers.openPage<AtmProfilePage>(driver) { submit(userTwo) }.getCompanyName()
@@ -96,17 +95,16 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
         step("Step 4-5. Create IT offer") {
             with(utils.helpers.openPage<AtmP2PPage>(driver)) {
                 e {
-                    fee =
-                        createP2P(
-                            walletID,
-                            companyName,
-                            industrialToken,
-                            amount.toString(),
-                            baseAsset,
-                            amount.toString(),
-                            AtmP2PPage.ExpireType.GOOD_TILL_CANCELLED,
-                            userOne, maturityDateInnerDate
-                        )
+                    createP2P(
+                        walletID,
+                        companyName,
+                        industrialToken,
+                        amount.toString(),
+                        baseAsset,
+                        amount.toString(),
+                        AtmP2PPage.ExpireType.GOOD_TILL_CANCELLED,
+                        userOne, maturityDateInnerDate
+                    )
                     alert { checkErrorAlert(5L) }
                     signAndSubmitMessage(userOne, userOne.otfWallet.secretKey)
 

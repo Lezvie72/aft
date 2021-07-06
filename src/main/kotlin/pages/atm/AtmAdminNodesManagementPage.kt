@@ -152,7 +152,7 @@ class AtmAdminNodesManagementPage(driver: WebDriver) : AtmAdminPage(driver) {
             sendKeys(createDateFrom, date)
         }
         val row = nodesManagementTable.find {
-            it[NODE_TYPE]?.text == nodeType.toString() && it[COMPANY_NAME]?.text == companyName && it[NODE_STATUS]?.text == nodeStatus
+            it[NODE_TYPE]?.text == nodeType.name && it[COMPANY_NAME]?.text == companyName && it[NODE_STATUS]?.text == nodeStatus
         }?.get(NODE_TYPE)?.to<Button>("Ticker symbol $nodeType")
             ?: error("Row with Ticker symbol $nodeType and $nodeStatus not found in table")
         e {

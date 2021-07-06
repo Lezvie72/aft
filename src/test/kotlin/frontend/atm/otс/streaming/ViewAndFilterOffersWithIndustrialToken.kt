@@ -19,6 +19,7 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
+import pages.atm.AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
@@ -26,7 +27,7 @@ import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -38,7 +39,7 @@ class ViewAndFilterOffersWithIndustrialToken : BaseTest() {
     private val baseAsset = CoinType.CC
     private val quoteAsset = CoinType.IT
     private val amountBuy = OtfAmounts.AMOUNT_10.amount
-    private val maturityDateInnerDate = "22 September 2020"
+    private val maturityDateInnerDate = quoteAsset.date
 
     @ResourceLocks(ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET))
     @TmsLink("ATMCH-4357")
@@ -53,10 +54,10 @@ class ViewAndFilterOffersWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
-                    AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                    GOOD_TILL_CANCELLED,
                     industrialUserOne
                 )
             }
@@ -100,7 +101,6 @@ class ViewAndFilterOffersWithIndustrialToken : BaseTest() {
         // preconditions
         val checkParameterOne = "Base asset"
         val checkParameterTwo = "Quote asset"
-        val pair = "IT/CC"
 
         with(openPage<AtmStreamingPage>(driver) { submit(industrialUserTwo) }) {
             e {
@@ -108,13 +108,13 @@ class ViewAndFilterOffersWithIndustrialToken : BaseTest() {
                 click(resetFilters)
                 click(showAllDialDirection)
                 select(sortBy, checkParameterOne)
-                select(tradingPair, pair)
+                select(tradingPair, "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}")
                 assert {
                     elementPresented(baseMaturityDate)
                 }
                 click(resetFilters)
                 select(sortBy, checkParameterTwo)
-                select(tradingPair, pair)
+                select(tradingPair, "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}")
                 assert {
                     elementPresented(baseMaturityDate)
                 }
@@ -142,7 +142,7 @@ class ViewAndFilterOffersWithIndustrialToken : BaseTest() {
                         "$quoteAsset/$baseAsset",
                         "$amountBuy $quoteAsset",
                         unitPriceBaseQuote.toString(),
-                        AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                        GOOD_TILL_CANCELLED,
                         industrialUserOne
                     )
                 }
@@ -155,7 +155,7 @@ class ViewAndFilterOffersWithIndustrialToken : BaseTest() {
                         "$baseAsset/$quoteAsset",
                         "$amountBuy $baseAsset",
                         unitPriceQuoteBase.toString(),
-                        AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
+                        GOOD_TILL_CANCELLED,
                         industrialUserOne
                     )
                 }

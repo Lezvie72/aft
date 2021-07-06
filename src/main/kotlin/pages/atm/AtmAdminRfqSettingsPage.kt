@@ -15,6 +15,7 @@ import pages.htmlelements.elements.SdexTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.CheckBox
+import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
 
 @PageUrl("/rfq-settings")
@@ -82,7 +83,7 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var yes: Button
 
     @Name("No button")
-    @FindBy(xpath="//mat-dialog-actions//span[contains(text(),'No')]")
+    @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'No')]")
     lateinit var no: Button
 //region Addtoken rate dialog
 
@@ -135,12 +136,28 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var feeAcceptingAssetSelect: AtmAdminSelect
 
     @Name("Confirm add token")
-    @FindBy(xpath = "//span[contains(text(),'CONFIRM')]")
+    @FindBy(xpath = "//span[contains(text(),'CONFIRM')]//ancestor::button")
     lateinit var confirmDialog: Button
 
     @Name("Cancel add token")
     @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CANCEL')]")
     lateinit var cancelDialog: Button
+
+    @Name("Clear button")
+    @FindBy(xpath = "//mat-icon[text()='clear']")
+    lateinit var clearButton: Button
+
+    @Name("Clear button fee accept")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']//mat-icon[text()='clear']")
+    lateinit var feeAcceptClearButton: Button
+
+    @Name("Clear button fee place")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='createFee.feeAsset']//mat-icon[text()='clear']")
+    lateinit var feePlaceClearButton: Button
+
+    @Name("Pop up token window ")
+    @FindBy(xpath = ".//mat-option//span[@class='mat-option-text']")
+    lateinit var popUpWindow: TextInput
 
 //endregion
 
@@ -203,13 +220,13 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Action("add token")
     @Step("add token")
     fun addTokenIfNotPresented(
-        tokenNameValue: String
+        tokenNameValue: CoinType
     ) {
         val row = rfqSettingsTable.find {
-            it[TOKEN]?.text == tokenNameValue
+            it[TOKEN]?.text == tokenNameValue.tokenSymbol
         }?.get(TOKEN)
         if (row == null) {
-            addToken(tokenNameValue, true, true)
+            addToken(tokenNameValue.tokenSymbol, true, true)
         }
     }
 
@@ -263,21 +280,21 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Step("Admin change fee for token in rfq")
     @Action("change fee for token in rfq")
     fun changeFeeSettingsForToken(firstToken: CoinType, secondToken: CoinType) {
-        chooseToken(firstToken.toString())
+        chooseToken(firstToken.tokenSymbol)
         e {
             click(edit)
 
             feeAcceptingAsset.delete()
             feeAcceptingAssetSelect.sendAndSelect(
-                secondToken.toString(),
-                secondToken.toString(),
+                secondToken.tokenSymbol,
+                secondToken.tokenSymbol,
                 this@AtmAdminRfqSettingsPage
             )
 
             feePlacingAsset.delete()
             feePlacingAssetSelect.sendAndSelect(
-                secondToken.toString(),
-                secondToken.toString(),
+                secondToken.tokenSymbol,
+                secondToken.tokenSymbol,
                 this@AtmAdminRfqSettingsPage
             )
 

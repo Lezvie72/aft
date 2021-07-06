@@ -35,7 +35,7 @@ class UserRequestsToShowWhatElementsAreSettleHisFT : BaseTest() {
         prerequisite {
             addCurrencyCoinToWallet(user, "1000", mainWallet)
         }
-        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(FT, "1", user, mainWallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(FT, "1", user, mainWallet)
 
         with(openPage<AtmWalletPage>(driver) { submit(user) }) {
             chooseWallet(mainWallet.name)

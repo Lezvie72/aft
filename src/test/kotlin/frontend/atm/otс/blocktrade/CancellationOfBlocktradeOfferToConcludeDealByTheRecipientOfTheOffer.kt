@@ -10,7 +10,6 @@ import models.CoinType.VT
 import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.notNullValue
-import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
@@ -32,7 +31,7 @@ import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.BLOCKTRADE.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("P2P Blocktrade")
@@ -110,14 +109,15 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheRecipientOfTheOffer : Base
         openPage<AtmWalletPage>(driver).logout()
 
         with(openPage<AtmP2PPage>(driver) { submit(user1) }) {
-            createP2P(walletID,companyName, CC, amount.toString(), VT, amount.toString(), ExpireType.TEMPORARY, user1)
+            createP2P(walletID, companyName, CC, amount.toString(), VT, amount.toString(), ExpireType.TEMPORARY, user1)
         }
         openPage<AtmWalletPage>(driver).logout()
 
         with(openPage<AtmP2PPage>(driver) { submit(user2) }) {
             findIncomingP2P(amount)
             e {
-                click(reject)}
+                click(reject)
+            }
             wait {
                 until("Button Yes from Reject dialog is displayed", 15) {
                     check {
@@ -125,7 +125,7 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheRecipientOfTheOffer : Base
                     }
                 }
             }
-            e{
+            e {
                 click(yesButton)
             }
         }
@@ -158,7 +158,7 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheRecipientOfTheOffer : Base
 
     }
 
-    @Tag(TagNames.Flow.DEBUG)
+
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
         ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
@@ -170,8 +170,7 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheRecipientOfTheOffer : Base
         val amount = BigDecimal("10.0000${RandomStringUtils.randomNumeric(4)}")
 
         val companyName = openPage<AtmProfilePage>(driver) { submit(user4) }.getCompanyName()
-        val walletID =
-            openPage<AtmWalletPage>(driver) { submit(user4) }.takeWalletID()
+        val walletID = openPage<AtmWalletPage>(driver).takeWalletID()
 
         openPage<AtmWalletPage>(driver).logout()
 
@@ -194,16 +193,15 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheRecipientOfTheOffer : Base
             e {
                 click(incomingP2PS)
             }
-            driver.navigate().refresh()
 
-            val cancelledOffer = incomingOffers.find {
-                it.amountToReceive == amount
+            wait {
+                until("Offer with amount $amount should have been be cancelled") {
+                    check {
+                        driver.navigate().refresh()
+                        incomingOffers.find { it.amountToReceive == amount } == null
+                    }
+                }
             }
-            assertThat(
-                "Offer with amount $amount should have been be cancelled",
-                cancelledOffer,
-                nullValue()
-            )
         }
     }
 }

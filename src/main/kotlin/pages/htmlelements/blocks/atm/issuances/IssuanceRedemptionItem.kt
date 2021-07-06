@@ -12,11 +12,11 @@ import ru.yandex.qatools.htmlelements.element.Button
 @FindBy(css = "atm-redeem-request-item")
 class IssuanceRedemptionItem : BaseBlock<AtmPage>() {
 
-    @FindBy(xpath = ".//div[contains(text(), 'Requested amount')]/ancestor::atm-amount-field//atm-amount")
+    @FindBy(xpath = ".//div[contains(text(), 'Requested amount')]/ancestor::atm-amount-field//atm-amount | .//span[contains(text(), 'Requested amount')]/ancestor::div//atm-ind-redemption-deal-base//atm-amount")
     @Name("Requested amount")
     lateinit var requestedAmount: AtmAmount
 
-    @FindBy(xpath = ".//span[contains(text(), 'Token quantity requested to redeem')]//ancestor::atm-redemption-deal-base//div//atm-amount")
+    @FindBy(xpath = ".//span[contains(text(), 'Requested amount')]//ancestor::atm-redemption-deal-base//div//atm-amount")
     @Name("Token quantity requested to redeem")
     lateinit var tokenQuantityRequestedToRedeem: AtmAmount
 

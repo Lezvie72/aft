@@ -81,7 +81,7 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
         }
     }
 
-    //    @Disabled("ATMCH-4285")
+
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET),
         ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
@@ -424,7 +424,7 @@ class CheckOfPossibilityOfTransactionPerformanceInRFQ : BaseTest() {
         with(openPage<AtmRFQPage>(driver) { submit(user1) }) {
             acceptOffer(amount, dealAmount, user1)
             assert {
-                elementWithTextPresented(" Insufficient balance ")
+                elementContainingTextPresented(" Insufficient funds on ${VT.tokenSymbol} ")
             }
         }
 

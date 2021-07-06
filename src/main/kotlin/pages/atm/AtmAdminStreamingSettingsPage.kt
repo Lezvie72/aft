@@ -2,6 +2,7 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
+import models.CoinType.IT
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -143,6 +144,14 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='quote']//mat-select//div)[3]")
     lateinit var maturityDateQuoteValue: Button
 
+    @Name("Maturity date place asset")
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='createFee.feeAsset']//mat-select//div)[3]")
+    lateinit var maturityDatePlaceAsset: Button
+
+    @Name("Maturity date accept asset")
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']//mat-select//div)[3]")
+    lateinit var maturityDateAcceptAsset: Button
+
     @Name("Pair available checkbox")
     @FindBy(xpath = "//mat-checkbox[@formcontrolname='available']//label")
     lateinit var pairAvailable: CheckBox
@@ -207,8 +216,7 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CANCEL')]")
     lateinit var cancelDialog: Button
 
-//endregion
-//TODO переписать метод под различный выбор токенов
+    //endregion
     @Action("add trading pair")
     @Step("add trading pair")
     fun addTradingPair(
@@ -225,29 +233,52 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         e {
             click(add)
 
-            if (baseInputValue.startsWith("IT")) {
-                chooseToken(baseInput, baseInputValue
-                    .replaceAfter("_","")
-                    .replace("_", ""))
+            if (baseInputValue.startsWith(IT.tokenSymbol)) {
+                chooseToken(
+                    baseInput, baseInputValue
+                        .replaceAfter("_", "")
+                        .replace("_", "")
+                )
 
-                chooseMaturityDate(maturityDateBaseValue,maturityDate)
+                chooseMaturityDate(maturityDateBaseValue, maturityDate)
+
+                chooseToken(
+                    feePlaceAsset, baseInputValue
+                        .replaceAfter("_", "")
+                        .replace("_", "")
+                )
+
+                chooseMaturityDate(maturityDatePlaceAsset, maturityDate)
+            } else {
+                chooseToken(baseInput, baseInputValue)
+                chooseToken(feePlaceAsset, baseInputValue)
+
             }
 
-            if (baseInputValue.startsWith("IT") and maturityDate.isNotBlank()) {
-                chooseToken(quoteInput, quoteValue
-                    .replaceAfter("_","")
-                    .replace("_", ""))
+            if (quoteValue.startsWith(IT.tokenSymbol)) {
+                chooseToken(
+                    quoteInput, quoteValue
+                        .replaceAfter("_", "")
+                        .replace("_", "")
+                )
                 chooseMaturityDate(maturityDateQuoteValue, maturityDate)
-            }
 
-            chooseToken(baseInput, baseInputValue)
-            chooseToken(quoteInput, quoteValue)
+                chooseToken(
+                    feeAcceptAsset, quoteValue
+                        .replaceAfter("_", "")
+                        .replace("_", "")
+                )
+                chooseMaturityDate(maturityDateAcceptAsset, maturityDate)
+
+            } else {
+                chooseToken(quoteInput, quoteValue)
+                chooseToken(feeAcceptAsset, quoteValue)
+
+            }
 
             sendKeys(availableAmounts, availableAmountValue)
-            chooseToken(feePlaceAsset, baseInputValue)
 
             sendKeys(feePlaceAmount, feePlaceAmountValue)
-            chooseToken(feeAcceptAsset, quoteValue)
 
             sendKeys(feeAcceptAmount, feeAcceptAmountValue)
             select(feePlaceMode, feePlaceModeValue)
@@ -272,8 +303,8 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     fun chooseTradingPair(base: String, quote: String) {
         val row = streamingSettingsTable.find {
             it[BASE]?.text == base && it[QUOTE]?.text == quote
-        }?.get(BASE)?.to<Button>("trading pair base: $base quote: $quote")
-            ?: error("Row with Ticker symbol $base not found in table")
+        }?.get(BASE)?.to<Button>("trading pair base: $base and quote: $quote")
+            ?: error("Row with Ticker symbol base: $base and quote: $quote not found in table")
         e {
             click(row)
         }
@@ -328,14 +359,14 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             click(input)
             sendKeys(input, tokenName)
             wait {
-                untilPresented<Button>(By.xpath("//mat-option//span[contains(text(),'$tokenName')]"))
+                untilPresented<Button>(By.xpath("//mat-option//span[text()=' $tokenName ']"))
             }.click()
         }
     }
 
     @Step("Admin choose maturityDate in popup window")
     @Action("choose maturityDate in popup window")
-    fun chooseMaturityDate(input: WebElement,maturityDate: String) {
+    fun chooseMaturityDate(input: WebElement, maturityDate: String) {
         e {
             click(input)
             wait {

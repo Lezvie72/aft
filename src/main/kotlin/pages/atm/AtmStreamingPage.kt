@@ -2,11 +2,13 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
+import models.CoinType.*
 import models.user.interfaces.HasOtfWallet
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
 import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
@@ -17,6 +19,7 @@ import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextBlock
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.attachScreenshot
+import utils.helpers.to
 import java.math.BigDecimal
 
 @PageUrl("/trading/streaming")
@@ -65,6 +68,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//span[contains(text(),' UNIT PRICE ')]")
     lateinit var unitPriceLabel: TextBlock
 
+    @Name("Unit price input")
+    @FindBy(xpath = "//atm-amount-input//input")
+    lateinit var unitPriceInput: TextInput
+
     @Name("Maturity date label")
     @FindBy(xpath = "//span[contains(text(),' Maturity date ')]")
     lateinit var maturityDateLabel: TextBlock
@@ -75,7 +82,7 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
 
     @Name("EXPIRATION label")
     @FindBy(xpath = "//span[contains(text(),' Expiration ')]")
-    lateinit var experationLabel: TextBlock
+    lateinit var expirationLabel: TextBlock
 
     //<editor-fold desc="ELEMENTS">
     @Name("Today button")
@@ -241,6 +248,10 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//span[contains(text(),'Show buy only')]")
     lateinit var showBuyOnly: AtmRadio
 
+    @Name("Counterparty")
+    @FindBy(xpath = "//span[contains(text(), 'Counterparty')]//ancestor::nz-form-item//atm-counterparty-autocomplete")
+    lateinit var counterparty: AtmSelectLazy
+
     @Name("Trading pair")
     @FindBy(xpath = "//span[contains(text(), 'Trading pair')]//ancestor::nz-form-item//atm-custom-select")
     lateinit var tradingPair: AtmSelectLazy
@@ -304,7 +315,7 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
                 OperationType.SELL -> click(iWantToSellAsset)
             }
             select(selectAssetPair, assetPair)
-            if (assetPair.startsWith("IT") and maturityDate.isNotBlank()) select(offerMaturityDate, maturityDate)
+            if (assetPair.startsWith(IT.tokenSymbol) and maturityDate.isNotBlank()) select(offerMaturityDate, maturityDate)
             selectAmount(amount)
             clear(unitPrice)
             sendKeys(unitPrice, amountUnitPrice)
@@ -412,10 +423,9 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     //</editor-fold>
     @Step("Overview. Find offer with unit price {unitPrice}")
     fun findOfferBy(unitPrice: BigDecimal, table: AtmTable<StreamingOfferItem>): StreamingOfferItem {
-        var item = table.find {
+        return table.find {
             it.unitPriceAmount == unitPrice
         } ?: error("Can't find offer with unit price '$unitPrice'")
-        return item
     }
 
     @Step("Overview. Find offer with unit price {unitPrice}")
@@ -447,8 +457,8 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
         e {
             click(resetFilters)
             click(showBuyOnly)
-            select(tradingPair, "$baseAsset/$quoteAsset")
-            if (baseAsset.tokenSymbol.startsWith("IT")
+            select(tradingPair, "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}")
+            if (baseAsset.tokenSymbol.startsWith(IT.tokenSymbol)
                 and maturityDate.isNotBlank()
             ) select(baseMaturityDate, maturityDate)
             click(dateFrom)
@@ -463,12 +473,33 @@ class AtmStreamingPage(driver: WebDriver) : AtmPage(driver) {
     ) {
         e {
             click(resetFilters)
-            select(tradingPair, "$baseAsset/$quoteAsset")
-            if (baseAsset.tokenSymbol.startsWith("IT")
+            select(tradingPair, "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}")
+            if (baseAsset.tokenSymbol.startsWith(IT.tokenSymbol)
                 and maturityDate.isNotBlank()
             ) select(baseMaturityDate, maturityDate)
             click(dateFrom)
             click(today)
         }
+    }
+
+    @Step("Check field Unit price")
+    fun setSumUnitPriceField(sum: String) {
+        e {
+            click(createOffer)
+            sendKeys(unitPriceInput, sum)
+        }
+    }
+
+
+    @Step("check counterparty value")
+    fun checkCounterparty(counterparty: String): Button {
+
+        val counterpartyItem = wait {
+            untilPresented<WebElement>(By.xpath(".//span[contains(text(), 'Counterparty')]/ancestor::atm-property-value//atm-counterparty//atm-span[contains(text(),'${counterparty}')]"))
+        }.to<Button>("Counterparty '$counterparty'")
+
+        assert { elementPresented(counterpartyItem) }
+
+        return counterpartyItem
     }
 }

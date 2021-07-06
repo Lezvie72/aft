@@ -1,7 +1,12 @@
 package pages.atm
 
+import io.qameta.allure.Step
+import models.CoinType
+import org.openqa.selenium.By
+import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.FindBy
+import pages.core.annotations.Action
 import pages.core.annotations.PageName
 import pages.core.annotations.PageUrl
 import pages.htmlelements.blocks.atm.blockchain.BlockchainBlockItem
@@ -555,6 +560,24 @@ class AtmBlockchainExplorerPage(driver: WebDriver) : AtmPage(driver) {
         e {
             sendKeys(searchInput, textForSearch)
             click(searchButton)
+        }
+    }
+
+    @Step("User choose token {coinType.tokenName}")
+    @Action("choose token")
+    fun chooseToken(coinType: CoinType) {
+        val tokenLocator =
+            By.xpath(".//atm-channel-item//atm-span[contains(text(),'${coinType}')]")
+
+        val tokenButton = try {
+            wait {
+                untilPresented<Button>(tokenLocator, "${coinType} button")
+            }
+        } catch (e: TimeoutException) {
+            error("Couldn't find token with name ${coinType}. Expected token name to be equal to name in Admin Token Panel")
+        }
+        e {
+            click(tokenButton)
         }
     }
     //endregion

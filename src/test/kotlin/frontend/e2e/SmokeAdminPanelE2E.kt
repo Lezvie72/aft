@@ -3,6 +3,7 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
+import models.CoinType.FIAT
 import models.CompanyDetails
 import models.user.classes.DefaultUser
 import org.apache.commons.lang.RandomStringUtils
@@ -141,7 +142,7 @@ class SmokeAdminPanelE2E : BaseTest() {
             with(openPage<AtmAdminLoginPage>(driver)) {
                 val href = GmailApi.getHrefPassRecoveryUserATM(user.email, since)
                 driver.navigate().to(href)
-                val sinceRec = LocalDateTime.now(ZoneOffset.UTC)
+                LocalDateTime.now(ZoneOffset.UTC)
                 enterNewPassword(password)
                 openPage<AtmAdminLoginPage>(driver)
                 submit(user.email, password)
@@ -166,7 +167,7 @@ class SmokeAdminPanelE2E : BaseTest() {
         }
         step("Admin edit USD equivalent in admin panel") {
             openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.editUsdEquivalent(
-                "FIAT",
+                FIAT,
                 FROM_MARKET,
                 "0.0001",
                 "Ag"
@@ -190,7 +191,7 @@ class SmokeAdminPanelE2E : BaseTest() {
         step("Admin edit USD equivalent in admin panel back") {
             with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 editUsdEquivalent(
-                    "FIAT",
+                    FIAT,
                     FIXED,
                     "1",
                     ""
@@ -216,7 +217,7 @@ class SmokeAdminPanelE2E : BaseTest() {
         }
         step("Admin edit USD equivalent in admin panel") {
             openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.editUsdEquivalent(
-                "FIAT",
+                FIAT,
                 FROM_MARKET,
                 "0.0001",
                 "Pt"
@@ -238,7 +239,7 @@ class SmokeAdminPanelE2E : BaseTest() {
         step("Admin edit USD equivalent in admin panel back") {
             with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 editUsdEquivalent(
-                    "FIAT",
+                    FIAT,
                     FIXED,
                     "1",
                     ""

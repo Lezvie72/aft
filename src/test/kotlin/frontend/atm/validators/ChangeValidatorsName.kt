@@ -20,11 +20,14 @@ import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import utils.helpers.step
+
 @Tags(Tag(TagNames.Epic.VALIDATORS.NUMBER), Tag(TagNames.Flow.MAIN))
 @Epic("Frontend")
 @Feature("Validator")
 @Story("Change Validators name")
 class ChangeValidatorsName : BaseTest() {
+
+    private val amountOrderer = "11000"
 
     @ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION)
     @TmsLink("ATMCH-5743")
@@ -43,13 +46,13 @@ class ChangeValidatorsName : BaseTest() {
                 changeLimitAmount(
                     CC,
                     SELL,
-                    MAX, "11000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     VT,
                     SELL,
-                    MAX, "11000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -57,8 +60,8 @@ class ChangeValidatorsName : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
                     "10000",
                     userBuyer,
@@ -135,13 +138,13 @@ class ChangeValidatorsName : BaseTest() {
                 changeLimitAmount(
                     CC,
                     SELL,
-                    MAX, "11000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     VT,
                     SELL,
-                    MAX, "11000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -150,8 +153,8 @@ class ChangeValidatorsName : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
                     "10000",
                     userBuyer,
@@ -168,7 +171,7 @@ class ChangeValidatorsName : BaseTest() {
             with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                 e {
                     click(addNode)
-                    select(nodeType, ORDERER.toString())
+                    select(nodeType, ORDERER.name)
                     click(submit)
                 }
             }

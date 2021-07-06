@@ -50,7 +50,7 @@ class StreamingCRTradeHistoryRenaming : BaseTest() {
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -61,8 +61,8 @@ class StreamingCRTradeHistoryRenaming : BaseTest() {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceBuy.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, maker
                 )

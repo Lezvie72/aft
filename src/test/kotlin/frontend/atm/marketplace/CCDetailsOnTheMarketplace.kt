@@ -6,6 +6,7 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType.CC
+import models.CoinType.FIAT
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
@@ -46,7 +47,7 @@ class CCDetailsOnTheMarketplace : BaseTest() {
                 elementContainingTextPresented("Issuer")
                 elementContainingTextPresented("Buy")
                 elementContainingTextPresented("Sell")
-                elementContainingTextPresented("FIAT")
+                elementContainingTextPresented(FIAT.tokenSymbol)
             }
             e {
                 chooseToken(CC)

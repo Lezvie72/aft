@@ -14,10 +14,11 @@ import ru.yandex.qatools.htmlelements.element.Button
 import utils.helpers.to
 
 @Name("Issuances Volume Receive Item")
-@FindBy(css = "atm-ind-dist-deal-base")
+@FindBy(css = "atm-volume-stat-item")
 class IssuanceVolumeReceiveItem : BaseBlock<AtmPage>() {
 
-    @FindBy(xpath = ".//div[contains(text(), 'Requested') or contains(text(), 'Total requested')]/ancestor::atm-amount-field//atm-amount")
+    //    @FindBy(xpath = ".//div[contains(text(), 'Requested') or contains(text(), 'Total requested')]/ancestor::atm-amount-field//atm-amount")
+    @FindBy(xpath = ".//span[contains(text(), 'Token quantity requested to redeem')]//ancestor::div//atm-amount | .//span[contains(text(), 'Requested amount')]//ancestor::div//atm-amount")
     @Name("Total requested")
     lateinit var totalRequested: AtmAmount
 

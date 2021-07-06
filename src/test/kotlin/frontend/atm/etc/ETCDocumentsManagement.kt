@@ -5,7 +5,9 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
+import models.CoinType
 import models.CoinType.ETC
+import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
@@ -126,6 +128,34 @@ class ETCDocumentsManagement : BaseTest() {
                 }
             }
         }
+    }
+
+    @TmsLink("ATMCH-5185")
+    @Test
+    @DisplayName("Documents for tokens. Edit descriptions of documents")
+    fun editDescriptionDocuments() {
+        val user = Users.ATM_USER_FOR_ACCEPT_ETC_TOKENS_2FA
+        val randomText = RandomStringUtils.randomAlphabetic(4)
+        with(openPage<AtmIssuancesPage>(driver) { submit(user) }) {
+            e {
+                chooseToken(ETC)
+                click(attachements)
+                click(editAttachmentsButton)
+                description.clear()
+                sendKeys(description, randomText)
+            }
+            assert {
+                elementPresented(submit)
+                elementPresented(cancel)
+            }
+            e{
+                click(submit)
+            }
+            assert {
+                elementContainingTextPresented(randomText)
+            }
+        }
+
     }
 }
 

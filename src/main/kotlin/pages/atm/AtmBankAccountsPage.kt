@@ -92,7 +92,7 @@ class AtmBankAccountsPage(driver: WebDriver) : AtmPage(driver) {
     lateinit var deleteEmployeeDialog: Button
 
     @Name("USD")
-    @FindBy(xpath = "//atm-collapse-panel")
+    @FindBy(xpath = "(//atm-collapse-panel//div)[1]")
     lateinit var usdPanel: Button
 
     @Name("Bank accounts list")

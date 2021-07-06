@@ -117,7 +117,7 @@ open class AtmAdminCustodianFeePage(driver: WebDriver) : AtmAdminPage(driver) {
     fun checkValuesOfColumns(
         tokenName: String,
         tokenDescription: String,
-        status: String
+        status: AtmAdminTokensPage.StatusToken
     ): AtmAdminCustodianFeePage {
         e {
             sendKeys(search, tokenName)
@@ -126,7 +126,7 @@ open class AtmAdminCustodianFeePage(driver: WebDriver) : AtmAdminPage(driver) {
         val row = custodianFeeTable.find {
             it[TOKEN_NAME]?.text == tokenName
         } ?: error("Row with Ticker symbol $tokenName not found in table")
-        val tokenStatusValue = row[TOKEN_STATUS]?.text
+        val tokenStatusValue = row[TOKEN_STATUS]?.text?.toUpperCase()
         val tokenDescriptionValue = row[TOKEN_DESCRIPTION]?.text
 
 
@@ -138,7 +138,7 @@ open class AtmAdminCustodianFeePage(driver: WebDriver) : AtmAdminPage(driver) {
         MatcherAssert.assertThat(
             "No row found with '$tokenStatusValue'",
             tokenStatusValue,
-            hasToString(status)
+            hasToString(status.name)
         )
 
         return AtmAdminCustodianFeePage(driver)

@@ -9,8 +9,8 @@ import io.qameta.allure.TmsLink
 import models.CoinType.CC
 import models.CoinType.VT
 import org.apache.commons.lang.RandomStringUtils
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.*
+import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
@@ -18,7 +18,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmP2PPage
-import pages.atm.AtmP2PPage.ExpireType.*
+import pages.atm.AtmP2PPage.ExpireType.GOOD_TILL_CANCELLED
+import pages.atm.AtmP2PPage.ExpireType.TEMPORARY
 import pages.atm.AtmProfilePage
 import pages.atm.AtmWalletPage
 import utils.Constants
@@ -46,24 +47,10 @@ class SmokeBlocktradeE2E : BaseTest() {
     @DisplayName("Accept and Cancel Blocktrade Offer")
     fun acceptAndCancelBlocktradeOffer() {
 
-        val amountTemporary = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
+        val amountTemporary = BigDecimal("3.0000${RandomStringUtils.randomNumeric(4)}")
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
         val user2 = Users.ATM_USER_2FA_OTF_OPERATION_FORTH
-
-        prerequisite {
-            prerequisitesBlocktrade(
-                baseAsset.tokenSymbol,
-                true,
-                "1",
-                baseAsset.tokenSymbol,
-                "FIXED",
-                baseAsset.tokenSymbol,
-                "1",
-                "FIXED",
-                baseAsset, quoteAsset
-            )
-        }
 
 
         val (walletID, companyName) = step("${user2.email} get company name and walletId") {
@@ -79,7 +66,7 @@ class SmokeBlocktradeE2E : BaseTest() {
         step("${user.email} create Blocktrade offer with $amountTemporary") {
             with(openPage<AtmP2PPage>(driver) { submit(user) }) {
                 createP2P(
-                    walletID,
+                    companyName,
                     companyName,
                     baseAsset,
                     amountTemporary.toString(),
@@ -121,7 +108,7 @@ class SmokeBlocktradeE2E : BaseTest() {
     @DisplayName("Cancel Blocktrade Offer")
     fun cancelBlocktradeOffer() {
 
-        val amountGoodTillCancel = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
+        val amountGoodTillCancel = BigDecimal("3.0000${RandomStringUtils.randomNumeric(4)}")
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION_SECOND
         val user2 = Users.ATM_USER_2FA_OTF_OPERATION_THIRD

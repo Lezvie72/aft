@@ -47,7 +47,7 @@ class OfferAcceptanceStreaming : BaseTest() {
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -65,8 +65,8 @@ class OfferAcceptanceStreaming : BaseTest() {
             }
             openPage<AtmStreamingPage>(driver) { submit(this@OfferAcceptanceStreaming.userTwo) }.createStreaming(
                 AtmStreamingPage.OperationType.SELL,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amount ${quoteAsset.tokenSymbol}",
                 unitPrice.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 this@OfferAcceptanceStreaming.userTwo
@@ -121,8 +121,8 @@ class OfferAcceptanceStreaming : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     userTwo

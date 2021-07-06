@@ -53,7 +53,7 @@ class ETCTransferFromIssuerWalletToETCclient : BaseTest() {
             openPage<AtmIssuancesPage>(driver) { submit(etcIssuer) }.getInCirculation(ETC)
         }
 
-        val (fee, _) = step("User go to Trading, check available operation") {
+        val (_, _) = step("User go to Trading, check available operation") {
             with(openPage<AtmWalletPage>(driver) { submit(etcIssuer) }) {
                 transferFromWalletToWallet(ETC, etcWallet, wallet, amountToTransfer.toString(), "", "etc", etcIssuer)
             }

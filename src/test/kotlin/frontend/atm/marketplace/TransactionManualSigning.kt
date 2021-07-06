@@ -53,7 +53,7 @@ class TransactionManualSigning : BaseTest() {
         val balanceBefore = openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, wallet.name)
         step("WHEN User create Currency Coin order") {
             with(openPage<AtmMarketplacePage>(driver)) {
-                buyToken(CC, wallet.publicKey, amount, user, wallet.secretKey)
+                buyOrReceiveToken(CC, amount, user, wallet)
                 assert {
                     elementWithTextPresented(" Order completed successfully ")
                 }
@@ -93,7 +93,7 @@ class TransactionManualSigning : BaseTest() {
         val balanceBefore = openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, wallet.name)
         step("WHEN User create Currency Coin order") {
             with(openPage<AtmMarketplacePage>(driver)) {
-                buyToken(CC, wallet.publicKey, amount, user, wallet.secretKey)
+                buyOrReceiveToken(CC, amount, user, wallet)
                 assert {
                     elementWithTextPresented(" Order completed successfully ")
                 }
@@ -134,6 +134,7 @@ class TransactionManualSigning : BaseTest() {
                     sendKeys(tokenQuantity, amount)
                     click(submitButton)
                     val code = if (OAuth.generateCode(user.oAuthSecret) == "123456") "123457" else "123456"
+                    click(privateKey)
                     sendKeys(privateKey, user.mainWallet.secretKey)
                     click(confirmPrivateKeyButton)
                     sendKeys(atmOtpConfirmationInput, code)

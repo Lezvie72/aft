@@ -153,7 +153,7 @@ class EnteringAuthenticationData : BaseTest() {
         }
     }
 
-    @Disabled("https://sdexnt.atlassian.net/browse/ATM-894")
+//    @Disabled("https://sdexnt.atlassian.net/browse/ATM-894")
     @TmsLink("ATMCH-716")
     @Test
     @DisplayName("Temporary blocking entering incorrect OTP code on Sign in page  with current 2FA setting 2FA App")

@@ -30,22 +30,24 @@ import java.math.BigDecimal
 @Story("Offer Cancellation Streaming")
 class OfferCancellationStreaming : BaseTest() {
 
+
+    private val baseAsset = CoinType.CC
+    private val quoteAsset = CoinType.VT
+    private val amountValue = OtfAmounts.AMOUNT_10.amount
+
     @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-615")
     @Test
     @DisplayName("Streaming. Cancel buy offer")
     fun streamingCancelBuyOffer() {
         val unitPrice = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-        val baseAsset = CoinType.CC
-        val quoteAsset = CoinType.VT
-        val amount = OtfAmounts.AMOUNT_10.amount
 
         val user =
              Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -55,8 +57,8 @@ class OfferCancellationStreaming : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$quoteAsset/$baseAsset",
-                "$amount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountValue ${quoteAsset.tokenSymbol}",
                 unitPrice.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 user
@@ -74,15 +76,13 @@ class OfferCancellationStreaming : BaseTest() {
     @DisplayName("Streaming. Cancel sell offer")
     fun streamingCancelSellOffer() {
         val unitPrice = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-        val baseAsset = CoinType.CC
-        val quoteAsset = CoinType.VT
-        val amount = OtfAmounts.AMOUNT_10.amount
+
         val user =
              Users.ATM_USER_2FA_OTF_OPERATION
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -92,8 +92,8 @@ class OfferCancellationStreaming : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.SELL,
-                "$quoteAsset/$baseAsset",
-                "$amount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountValue ${quoteAsset.tokenSymbol}",
                 unitPrice.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 user

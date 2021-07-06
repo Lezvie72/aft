@@ -29,6 +29,9 @@ import java.math.BigDecimal
 @Story("Display user orders for industrial tokens in orders section")
 class DisplayUserOrdersForIndustrialTokensInOrdersSection : BaseTest() {
 
+    private val maturityDate = IT.maturityDateMonthNumber
+
+
     @ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF)
     @TmsLink("ATMCH-3291")
     @Test
@@ -40,8 +43,13 @@ class DisplayUserOrdersForIndustrialTokensInOrdersSection : BaseTest() {
         val mainWallet = user.mainWallet
 
         step("User buy IT token") {
-            prerequisite { addCurrencyCoinToWallet(user, "10", mainWallet) }
-            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(IT, amount.toString(), user, mainWallet)
+            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(
+                IT,
+                amount.toString(),
+                user,
+                mainWallet,
+                maturityDate
+            )
         }
         step("User go to Orders page and  check for offer") {
             openPage<AtmOrdersPage>(driver) { submit(user) }.findOrderAndCheckStatus(
@@ -67,7 +75,7 @@ class DisplayUserOrdersForIndustrialTokensInOrdersSection : BaseTest() {
         val wallet = user1.walletList[0]
 
         step("User buy IT token") {
-            prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+            prerequisite { addITToken(user, user1,  mainWallet, wallet, amount, maturityDate) }
             AtmProfilePage(driver).logout()
         }
         step("User go to Orders page and  check for offer") {

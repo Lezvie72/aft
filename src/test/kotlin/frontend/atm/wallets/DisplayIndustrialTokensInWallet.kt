@@ -29,6 +29,9 @@ import java.math.BigDecimal
 @Story("Display Industrial Tokens In Wallet")
 class DisplayIndustrialTokensInWallet : BaseTest() {
 
+    private val maturityDate = IT.maturityDateMonthNumber
+
+
     @TmsLink("ATMCH-2780")
     @Test
     @DisplayName("Display industrial tokens in wallet. Interface.")
@@ -46,7 +49,7 @@ class DisplayIndustrialTokensInWallet : BaseTest() {
         }
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0") {
             if (balance == BigDecimal.ZERO) {
-                prerequisite { addITToken(user, user1, amount.toString(), mainWallet, wallet, amount) }
+                prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDate) }
                 AtmProfilePage(driver).logout()
             }
         }

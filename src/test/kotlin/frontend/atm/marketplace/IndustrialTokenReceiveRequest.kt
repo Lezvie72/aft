@@ -6,6 +6,7 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType
+import models.CoinType.*
 import org.apache.commons.lang.RandomStringUtils.randomAlphanumeric
 import org.apache.commons.lang.RandomStringUtils.randomNumeric
 import org.junit.jupiter.api.DisplayName
@@ -39,7 +40,7 @@ class IndustrialTokenReceiveRequest : BaseTest() {
         val manualSecretKey = randomAlphanumeric(128).toLowerCase()
 
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            chooseToken(CoinType.IT)
+            chooseToken(IT)
 
             assert {
                 elementPresented(newOrderButton)
@@ -90,7 +91,7 @@ class IndustrialTokenReceiveRequest : BaseTest() {
         val manual2FA = randomNumeric(6)
 
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            chooseToken(CoinType.IT)
+            chooseToken(IT)
 
             assert {
                 elementPresented(newOrderButton)
@@ -147,7 +148,7 @@ class IndustrialTokenReceiveRequest : BaseTest() {
         val manualSecretKey = user.mainWallet.secretKey
 
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            chooseToken(CoinType.IT)
+            chooseToken(IT)
 
             assert {
                 elementPresented(newOrderButton)
@@ -190,7 +191,7 @@ class IndustrialTokenReceiveRequest : BaseTest() {
 
         // TODO: Maturity Date bug min/max
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            chooseToken(CoinType.IT)
+            chooseToken(IT)
 
             assert {
                 elementPresented(newOrderButton)
@@ -245,7 +246,7 @@ class IndustrialTokenReceiveRequest : BaseTest() {
         val incorrectSmsCode = randomNumeric(6)
 
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            chooseToken(CoinType.IT)
+            chooseToken(IT)
 
             assert {
                 elementPresented(newOrderButton)

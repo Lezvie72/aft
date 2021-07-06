@@ -101,7 +101,7 @@ open class BaseTest {
         noinline auth: AuthorizationProvider<out BasePage>.() -> Unit = {
             submit(Users.USER)
         }
-    ): T = utils.helpers.openPage(driver, auth)
+    ): T = openPage(driver, auth)
 
     val driver by lazy {
         createDriver()
@@ -128,9 +128,14 @@ open class BaseTest {
     private val prerequisiteActions = PrerequisiteActions(BasePage(driver), driver)
     fun <T1> prerequisite(body: (PrerequisiteActions<WebDriver>).() -> T1) = prerequisiteActions.run(body)
 
-    private val assertActions = AssertActions(BasePage(driver), driver)
+    private var assertActions = AssertActions(BasePage(driver), driver)
     private var testPassed: Boolean = true
-    fun softAssert(body: AssertActions<WebDriver>.() -> Unit) {
+    fun softAssert(altDriver: WebDriver? = null, body: AssertActions<WebDriver>.() -> Unit) {
+        var driver = this.driver
+        altDriver?.let {
+            assertActions = AssertActions(BasePage(it), it)
+            driver = it
+        }
         try {
             assertActions.run(body)
         } catch (e: AssertionError) {

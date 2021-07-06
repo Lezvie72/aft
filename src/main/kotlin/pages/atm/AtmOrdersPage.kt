@@ -16,6 +16,7 @@ import pages.core.annotations.PageUrl
 import pages.htmlelements.blocks.atm.orders.OrdersItem
 import pages.htmlelements.elements.AtmAmount
 import pages.htmlelements.elements.AtmSelect
+import pages.htmlelements.elements.AtmSelectLazy
 import pages.htmlelements.elements.AtmTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
@@ -26,6 +27,26 @@ import java.math.BigDecimal
 
 @PageUrl("/orders")
 class AtmOrdersPage(driver: WebDriver) : AtmPage(driver) {
+
+    enum class FilterByDealType {
+        ALL, DISTRIBUTIONAL, REDEMPTION, URGENT
+    }
+
+    enum class FilterByStatus {
+        ALL, EXPIRED, ERROR, DECLINED, EXECUTED, SUBMITTED,
+    }
+
+    @Name("Filter By Deal Type")
+    @FindBy(xpath = "//atm-deal-type-select-control//nz-select")
+    lateinit var filterByDealType: AtmSelectLazy
+
+    @Name("Filter By Status")
+    @FindBy(xpath = "//atm-status-select-control//nz-select")
+    lateinit var filterByStatus: AtmSelectLazy
+
+    @Name("Signature details")
+    @FindBy(xpath = "//atm-order-signature-details//nz-collapse")
+    lateinit var signatureDetails: Button
 
     @Name("Currency coin")
     @FindBy(xpath = "//div[contains(text(), 'CC')]")
@@ -127,9 +148,10 @@ class AtmOrdersPage(driver: WebDriver) : AtmPage(driver) {
         }
     }
 
-    @Step("User choose token {coinType.tokenSymbol}")
+    @Step("User choose token")
     @Action("choose token")
     fun chooseToken(coinType: CoinType) {
+       Thread.sleep(5000)
         val tokenLocator = containsIgnoreCaseXpath("div", "text()", coinType.tokenSymbol)
         val tokenButton = try {
             wait {

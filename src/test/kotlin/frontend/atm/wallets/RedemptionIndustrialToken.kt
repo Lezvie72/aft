@@ -35,6 +35,9 @@ import java.math.BigDecimal
 @Story("Redemption industrial token")
 class RedemptionIndustrialToken : BaseTest() {
 
+    private val maturityDateForBuy = IT.maturityDateMonthNumber
+    private val maturityDateForRedemption = IT.maturityDateMonthString
+
     @ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA)
     @TmsLink("ATMCH-3382")
     @Test
@@ -62,7 +65,7 @@ class RedemptionIndustrialToken : BaseTest() {
         }
 
         step("User buy, accepted and get balance from wallet IT token") {
-            prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+            prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDateForBuy) }
             AtmProfilePage(driver).logout()
         }
 
@@ -134,8 +137,6 @@ class RedemptionIndustrialToken : BaseTest() {
     @DisplayName("Redemption industrial tokens in wallet.")
     fun redemptionIndustrialTokensInWallet() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
         val mainWallet = user.mainWallet
@@ -162,7 +163,7 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amount) {
-                prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+                prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDateForBuy) }
                 AtmProfilePage(driver).logout()
             }
         }
@@ -172,6 +173,11 @@ class RedemptionIndustrialToken : BaseTest() {
                 e {
                     chooseWallet(mainWallet.name)
                     chooseToken(IT)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                 }
                 assert {
@@ -186,7 +192,7 @@ class RedemptionIndustrialToken : BaseTest() {
                 e {
                     select(selectWallet, mainWallet.publicKey)
                     sendKeys(tokenQuantity, amount.toString())
-                    select(maturityDatesRedemption, maturityDate)
+                    select(maturityDatesRedemption, maturityDateForRedemption)
                     click(submitButton)
                 }
                 signAndSubmitMessage(user, mainWallet.secretKey)
@@ -227,8 +233,6 @@ class RedemptionIndustrialToken : BaseTest() {
     @DisplayName("Redemption industrial tokens in wallet. Wrong Signature")
     fun redemptionIndustrialTokensInWalletWrongSignature() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
         val wrongSignature = "MIIEpQIBAAKCAQEA3Tz2mr7SZiAMfQyuvBjM9Oi..Z1BjP5CE/Wm/Rr500P"
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION
@@ -256,7 +260,7 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amount) {
-                prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+                prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDateForBuy) }
                 AtmProfilePage(driver).logout()
             }
         }
@@ -266,10 +270,15 @@ class RedemptionIndustrialToken : BaseTest() {
                 e {
                     chooseWallet(mainWallet.name)
                     chooseToken(IT)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                     select(selectWallet, mainWallet.publicKey)
                     sendKeys(tokenQuantity, amount.toString())
-                    select(maturityDatesRedemption, maturityDate)
+                    select(maturityDatesRedemption, maturityDateForRedemption)
                     click(submitButton)
                     click(privateKey)
                     sendKeys(privateKey, wrongSignature)
@@ -299,8 +308,6 @@ class RedemptionIndustrialToken : BaseTest() {
     @DisplayName("Redemption industrial tokens in wallet. Wrong 2FA APP")
     fun redemptionIndustrialTokensInWalletWrong2FAAPP() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = user.mainWallet
@@ -327,7 +334,7 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amount) {
-                prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+                prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDateForBuy) }
                 AtmProfilePage(driver).logout()
             }
         }
@@ -337,10 +344,15 @@ class RedemptionIndustrialToken : BaseTest() {
                 e {
                     chooseWallet(mainWallet.name)
                     chooseToken(IT)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                     select(selectWallet, mainWallet.publicKey)
                     sendKeys(tokenQuantity, amount.toString())
-                    select(maturityDatesRedemption, maturityDate)
+                    select(maturityDatesRedemption, maturityDateForRedemption)
                     click(submitButton)
                     click(privateKey)
                     sendKeys(privateKey, mainWallet.secretKey)
@@ -375,8 +387,6 @@ class RedemptionIndustrialToken : BaseTest() {
     @DisplayName("IT redemption. Insufficient funds")
     fun itRedemptionInsufficientFunds() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = user.mainWallet
@@ -399,7 +409,7 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO) {
-                prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+                prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDateForBuy) }
                 AtmProfilePage(driver).logout()
             }
 
@@ -421,10 +431,15 @@ class RedemptionIndustrialToken : BaseTest() {
                 e {
                     chooseWallet(mainWallet.name)
                     chooseToken(IT)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                     select(selectWallet, mainWallet.publicKey)
                     sendKeys(tokenQuantity, (balanceFromWalletBefore + BigDecimal.ONE).toString())
-                    select(maturityDatesRedemption, maturityDate)
+                    select(maturityDatesRedemption, maturityDateForRedemption)
                     assert {
                         elementContainingTextPresented("Amount to redeem exceeds available balance")
                     }
@@ -448,8 +463,6 @@ class RedemptionIndustrialToken : BaseTest() {
     fun itRedemptionMinAmountOfRedemption() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
         val limitValue = BigDecimal("0.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = userBuyer.mainWallet
@@ -474,7 +487,7 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceITWalletBefore == BigDecimal.ZERO || balanceITWalletBefore < limitValue) {
-                prerequisite { addITToken(userBuyer, user1, "10", mainWallet, wallet, amount) }
+                prerequisite { addITToken(userBuyer, user1, mainWallet, wallet, amount, maturityDateForBuy) }
                 AtmProfilePage(driver).logout()
             }
 
@@ -490,7 +503,7 @@ class RedemptionIndustrialToken : BaseTest() {
                     IT,
                     mainWallet,
                     limitValue.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -530,8 +543,6 @@ class RedemptionIndustrialToken : BaseTest() {
     @DisplayName("IT redemption. Max amount of redemption")
     fun itRedemptionMaxAmountOfRedemption() {
         val limitValue = BigDecimal("1.${randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = userBuyer.mainWallet
@@ -556,7 +567,16 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceITWalletBefore == BigDecimal.ZERO || balanceITWalletBefore < limitValue) {
-                prerequisite { addITToken(userBuyer, user1, "10", mainWallet, wallet, limitValue + BigDecimal.ONE) }
+                prerequisite {
+                    addITToken(
+                        userBuyer,
+                        user1,
+                        mainWallet,
+                        wallet,
+                        limitValue + BigDecimal.ONE,
+                        maturityDateForBuy
+                    )
+                }
                 AtmProfilePage(driver).logout()
             }
 
@@ -572,7 +592,7 @@ class RedemptionIndustrialToken : BaseTest() {
                     IT,
                     mainWallet,
                     limitValue.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -651,7 +671,16 @@ class RedemptionIndustrialToken : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < limitValueMax) {
-                prerequisite { addITToken(user, user1, "10", mainWallet, wallet, limitValueMax + BigDecimal.ONE) }
+                prerequisite {
+                    addITToken(
+                        user,
+                        user1,
+                        mainWallet,
+                        wallet,
+                        limitValueMax + BigDecimal.ONE,
+                        maturityDateForBuy
+                    )
+                }
                 AtmProfilePage(driver).logout()
             }
         }
@@ -661,6 +690,11 @@ class RedemptionIndustrialToken : BaseTest() {
                 e {
                     chooseWallet(mainWallet.name)
                     chooseToken(IT)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                     select(selectWallet, mainWallet.publicKey)
                     sendKeys(tokenQuantity, (limitValueMin - BigDecimal("0.00000001")).toString())

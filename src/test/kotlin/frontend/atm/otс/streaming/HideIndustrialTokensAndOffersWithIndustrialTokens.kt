@@ -25,19 +25,20 @@ import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
 @Story("Hide industrial tokens and offers with industrial tokens from non-industrial participants")
 class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
-    // precondition
-    private val maturityDateInnerDate = "22 September 2020"
     private val industrialUserOne = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02
     private val industrialUserTwo = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04
     private val nonIndustrialUser = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE05
     private val baseAsset = CoinType.CC
     private val quoteAsset = CoinType.IT
+
+    // precondition
+    private val maturityDateInnerDate = quoteAsset.date
     private val amountSell = OtfAmounts.AMOUNT_10.amount
     private val amountBuy = OtfAmounts.AMOUNT_1.amount
 
@@ -46,15 +47,15 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
     @Test
     @DisplayName("Offers with industrial tokens by industrial participant")
     fun offersWithIndustrialTokensByIndustrialParticipant() {
-        val pair = "IT/CC"
+        val pair = "$quoteAsset/$baseAsset"
         val unitPriceOffer = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
         // create industrial token offer
         with(openPage<AtmStreamingPage>(driver) { submit(industrialUserOne) }) {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountSell $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountSell ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne,
@@ -64,7 +65,7 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
             }
         }
 
-        with(openPage<AtmStreamingPage>(driver){submit(industrialUserTwo)}) {
+        with(openPage<AtmStreamingPage>(driver) { submit(industrialUserTwo) }) {
             e {
                 click(overview)
                 select(tradingPair, pair)
@@ -87,8 +88,8 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountSell $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountSell ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne,
@@ -106,13 +107,14 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
         var tradingFormListValues: MutableSet<String> = mutableSetOf()
 
         with(openPage<AtmAdminTokensPage>(driver){submit(Users.ATM_ADMIN)}) {
-            var rowData = getColumnAsList(key, value)
+            val rowData = getColumnAsList(key, value)
             if (rowData.isNullOrEmpty()) throw Exception("Table is empty")
             for (num in 0..(rowData[key]?.size?.minus(1) ?: throw Exception("Table is empty")))
-                if (rowData[value]?.get(num)?.contains(filterValue) == true) rowData[key]?.get(num)?.let { industrialTokens.add(it) }
+                if (rowData[value]?.get(num)?.contains(filterValue) == true) rowData[key]?.get(num)
+                    ?.let { industrialTokens.add(it) }
         }
 
-        with(openPage<AtmStreamingPage>(driver){submit(nonIndustrialUser)}) {
+        with(openPage<AtmStreamingPage>(driver) { submit(nonIndustrialUser) }) {
             e {
                 //get actual token list from trading form
                 click(createOffer)
@@ -142,18 +144,19 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
         //generate actual token list and filter by condition
         val key = AtmAdminTokensPage.TICKER_SYMBOL
         val value = AtmAdminTokensPage.TOKEN_TYPE
-        var industrialTokens: MutableSet<String> = mutableSetOf()
+        val industrialTokens: MutableSet<String> = mutableSetOf()
         val filterValue = "Industrial Token"
-        var tradingFormListValues: MutableSet<String> = mutableSetOf()
+        var tradingFormListValues: MutableSet<String>
 
         with(openPage<AtmAdminTokensPage>(driver){submit(Users.ATM_ADMIN)}) {
-            var rowData = getColumnAsList(key, value)
+            val rowData = getColumnAsList(key, value)
             if (rowData.isNullOrEmpty()) throw Exception("Table is empty")
             for (num in 0..(rowData[key]?.size?.minus(1) ?: throw Exception("Table is empty")))
-                if (rowData[value]?.get(num)?.contains(filterValue) == true) rowData[key]?.get(num)?.let { industrialTokens.add(it) }
+                if (rowData[value]?.get(num)?.contains(filterValue) == true) rowData[key]?.get(num)
+                    ?.let { industrialTokens.add(it) }
         }
 
-        with(openPage<AtmStreamingPage>(driver){submit(industrialUserOne)}) {
+        with(openPage<AtmStreamingPage>(driver) { submit(industrialUserOne) }) {
             e {
                 //get actual token list from trading form
                 click(createOffer)
@@ -178,8 +181,8 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
 
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne,
@@ -194,8 +197,8 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
                 }
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountSell $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountSell ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne,
@@ -212,19 +215,20 @@ class HideIndustrialTokensAndOffersWithIndustrialTokens: BaseTest() {
     fun selectionIndustrialTokensByNonIndustrialParticipants() {
         val key = AtmAdminTokensPage.TICKER_SYMBOL
         val value = AtmAdminTokensPage.TOKEN_TYPE
-        var industrialTokens: MutableSet<String> = mutableSetOf()
+        val industrialTokens: MutableSet<String> = mutableSetOf()
         val filterValue = "Industrial Token"
-        var tradingFormListValues: MutableSet<String> = mutableSetOf()
+        var tradingFormListValues: MutableSet<String>
 
         //generate actual token list and filter by condition
         with(openPage<AtmAdminTokensPage>(driver){submit(Users.ATM_ADMIN)}) {
-            var rowData = getColumnAsList(key, value)
+            val rowData = getColumnAsList(key, value)
             if (rowData.isNullOrEmpty()) throw Exception("Table is empty")
             for (num in 0..(rowData[key]?.size?.minus(1) ?: throw Exception("Table is empty")))
-                if (rowData[value]?.get(num)?.contains(filterValue) == true) rowData[key]?.get(num)?.let { industrialTokens.add(it) }
+                if (rowData[value]?.get(num)?.contains(filterValue) == true) rowData[key]?.get(num)
+                    ?.let { industrialTokens.add(it) }
         }
 
-        with(openPage<AtmStreamingPage>(driver){submit(nonIndustrialUser)}) {
+        with(openPage<AtmStreamingPage>(driver) { submit(nonIndustrialUser) }) {
             e {
                 //get actual token list from trading form
                 click(createOffer)

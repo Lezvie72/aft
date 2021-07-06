@@ -15,8 +15,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.*
-import pages.atm.AtmIssuancesPage.StatusType.APPROVE
-import pages.atm.AtmIssuancesPage.StatusType.DECLINE
+import pages.atm.AtmIssuancesPage.StatusType.*
 import pages.atm.AtmWalletPage.RedemptionTypeETC.AUTO
 import pages.atm.AtmWalletPage.RedemptionTypeETC.MANUAL
 import utils.Constants
@@ -26,7 +25,7 @@ import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tag(TagNames.Flow.SMOKEE2E)
+@Tags(Tag(TagNames.Flow.SMOKEE2E))
 @Execution(ExecutionMode.SAME_THREAD)
 @TestMethodOrder(OrderAnnotation::class)
 @Epic("Frontend")
@@ -218,6 +217,11 @@ class SmokeETCE2E : BaseTest() {
                 chooseWallet(wallet.name)
                 chooseToken(ETC)
                 e {
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                 }
                 //todo проработать из селектед

@@ -21,6 +21,7 @@ import utils.Constants
 import utils.TagNames
 import utils.gmail.GmailApi
 import utils.helpers.Users
+import utils.helpers.attach
 import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
@@ -44,6 +45,9 @@ class SmokeE2EWallet : BaseTest() {
         }
         return user
     }
+
+    private val maturityDateForBuy = IT.maturityDateMonthNumber
+    private val maturityDateForRedemption = IT.maturityDateMonthString
 
     @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-5146")
@@ -73,6 +77,8 @@ class SmokeE2EWallet : BaseTest() {
             val (privateKeyMain, publicKeyMain) = openPage<AtmKeysPage>(driver) { submit(user) }.generatePublicAndPrivateKey()
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 registerWallet(MAIN, publicKeyMain, privateKeyMain, labelMain)
+            }
+            with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 Assertions.assertTrue(
                     isWalletWithLabelPresented(labelMain),
                     "Wallet with label $labelMain wasn't found"
@@ -82,12 +88,16 @@ class SmokeE2EWallet : BaseTest() {
             val (privateKeyOtf, publicKeyOtf) = openPage<AtmKeysPage>(driver) { submit(user) }.generatePublicAndPrivateKey()
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 registerWallet(OTF, publicKeyOtf, privateKeyOtf, labelOtf)
+            }
+            with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 Assertions.assertTrue(isWalletWithLabelPresented(labelOtf), "Wallet with label $labelOtf wasn't found")
             }
             openPage<AtmProfilePage>(driver)
             val (privateKeyIssuer, publicKeyIssuer) = openPage<AtmKeysPage>(driver) { submit(user) }.generatePublicAndPrivateKey()
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 registerWallet(ISSUER, publicKeyIssuer, privateKeyIssuer, labelIssuer)
+            }
+            with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 Assertions.assertTrue(
                     isWalletWithLabelPresented(labelIssuer),
                     "Wallet with label $labelIssuer wasn't found"
@@ -163,92 +173,123 @@ class SmokeE2EWallet : BaseTest() {
     }
 
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_MAIN_OTF_MOVE)
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("Move CC Token And Check Balance steps 14,15-18")
     fun moveCCTokenToOtfAndCheckBalance() {
         val amount = "10"
-        val user = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
-        val mainWallet = user.mainWallet
+
+        val user = Users.ATM_USER_MAIN_OTF_MOVE
+
         val otfWallet = user.otfWallet
+        val mainWallet = user.mainWallet
 
         prerequisite { addCurrencyCoinToWallet(user, amount, mainWallet) }
 
-        val (balanceMainBefore, balanceOtfBefore) = step("User check balance before operation") {
-            val mainBefore = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, mainWallet.name)
-            openPage<AtmWalletPage>(driver)
-            val otfBefore = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, otfWallet.name)
-            mainBefore to otfBefore
+        val mainBalance = step("AND User go to Wallet get balance") {
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, mainWallet.name).toBigDecimal()
         }
-        step("User Move CC token") {
-            openPage<AtmWalletPage>(driver) { submit(user) }.moveToOTFWallet(amount, user, mainWallet)
+
+        val otfBalance = step("AND User go to Wallet get balance") {
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, otfWallet.name).toBigDecimal()
         }
-        //TODO transaction history
-        val (balanceMainAfter, balanceOtfAfter) = step("User check balance before operation") {
-            val mainAfter = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, mainWallet.name)
-            openPage<AtmWalletPage>(driver)
-            val otfAfter = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, otfWallet.name)
-            mainAfter to otfAfter
+
+        with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+            moveToOTFWalletNew(amount, CC, user, mainWallet)
+        }
+
+        val mainBalanceAfterMove = step("AND User go to Wallet get balance") {
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, mainWallet.name).toBigDecimal()
+        }
+
+        val otfBalanceAfterMove = step("AND User go to Wallet get balance") {
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, otfWallet.name).toBigDecimal()
         }
 
         assertThat(
-            "Expected base balance: $balanceMainAfter, was: $balanceMainBefore",
-            balanceMainAfter,
-            Matchers.closeTo(balanceMainBefore - amount.toBigDecimal(), BigDecimal("0.01"))
+            mainBalanceAfterMove,
+            Matchers.equalTo(mainBalance - amount.toBigDecimal())
         )
 
         assertThat(
-            "Expected base balance: $balanceOtfAfter, was: $balanceOtfBefore",
-            balanceOtfAfter,
-            Matchers.closeTo(balanceOtfBefore + amount.toBigDecimal(), BigDecimal("0.01"))
+            otfBalanceAfterMove,
+            Matchers.equalTo(otfBalance + amount.toBigDecimal())
         )
     }
 
-    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
+    @ResourceLock(Constants.ROLE_USER_MAIN_OTF_MOVE)
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("Move CC Token From OTF to Main And Check Balance steps 14,19-23")
     fun moveCCTokenFromOtfToMainAndCheckBalance() {
+
         val amount = "10"
-        val user = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
-        val mainWallet = user.mainWallet
+
+        val user = Users.ATM_USER_MAIN_OTF_MOVE
+
         val otfWallet = user.otfWallet
+        val mainWallet = user.mainWallet
 
-        prerequisite {
-            addCurrencyCoinToWallet(user, amount, mainWallet)
-            moveCurrencyCoinFromMainToOTFWallet(user, "10", mainWallet)
+        step("Admin change fee for CC") {
+            openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken(
+                CC,
+                CC,
+                "0",
+                "1",
+                "1"
+            )
+
+        }
+        //region prerequisites
+//        presetForMovement(user, amount, mainWallet)
+        with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+            moveToOTFWallet(amount, user, mainWallet)
+        }
+        //endregion
+
+        val mainBalance = step("GIVEN user remembers balance on his Main wallet") {
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, mainWallet.name).also {
+                attach("Main wallet balance before", it)
+            }.toBigDecimal()
         }
 
-        val (balanceMainBefore, balanceOtfBefore) = step("User check balance before operation") {
-            val mainBefore = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, mainWallet.name)
-            openPage<AtmWalletPage>(driver)
-            val otfBefore = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, otfWallet.name)
-            mainBefore to otfBefore
+        val otfBalance = step("AND user remembers balance on his OTF wallet") {
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, otfWallet.name).also {
+                attach("OTF wallet balance before", it)
+            }.toBigDecimal()
         }
 
-        step("User Move CC token") {
-            openPage<AtmWalletPage>(driver) { submit(user) }.moveToMainWallet(CC, amount, user, mainWallet, otfWallet)
-        }
-        //TODO transaction history
-        val (balanceMainAfter, balanceOtfAfter) = step("User check balance before operation") {
-            val mainAfter = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, mainWallet.name)
-            openPage<AtmWalletPage>(driver)
-            val otfAfter = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, otfWallet.name)
-            mainAfter to otfAfter
+        step("WHEN user moves CC to his Main wallet") {
+            with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+                moveToMainWallet(CC, amount, user, mainWallet, otfWallet)
+            }
         }
 
-        assertThat(
-            "Expected base balance: $balanceMainAfter, was: $balanceMainBefore",
-            balanceMainAfter,
-            Matchers.closeTo(balanceMainBefore + amount.toBigDecimal(), BigDecimal("0.01"))
-        )
+        val (mainBalanceAfterMove, otfBalanceAfterMove) = step("AND checks his balances after movement") {
+            val mainBalanceAfterMove =
+                openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, mainWallet.name).toBigDecimal()
+            val otfBalanceAfterMove =
+                openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, otfWallet.name).toBigDecimal()
+            mainBalanceAfterMove to otfBalanceAfterMove
+        }
 
-        assertThat(
-            "Expected base balance: $balanceOtfAfter, was: $balanceOtfBefore",
-            balanceOtfAfter,
-            Matchers.closeTo(balanceOtfBefore - amount.toBigDecimal(), BigDecimal("0.01"))
-        )
+        step("THEN user's balance on Main wallet has decreased") {
+            assertThat(
+                "Main wallet balance check failed",
+                mainBalanceAfterMove,
+                Matchers.equalTo(mainBalance + amount.toBigDecimal())
+            )
+        }
+
+        step("AND user's balance on OTF wallet has increased") {
+            assertThat(
+                "Main wallet balance check failed",
+                otfBalanceAfterMove,
+                Matchers.equalTo(otfBalance - amount.toBigDecimal())
+            )
+        }
+
     }
 
     @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
@@ -270,10 +311,10 @@ class SmokeE2EWallet : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1.34", "1.432")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1.34", "1.432")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "2", user, firstMainWallet)
+            buyOrReceiveToken(CC, "2", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -320,7 +361,6 @@ class SmokeE2EWallet : BaseTest() {
     @DisplayName("Trade IT Token 29-32")
     fun tradeITToken() {
         val amount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-        val maturityDate = "122020"
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = user.mainWallet
@@ -332,7 +372,7 @@ class SmokeE2EWallet : BaseTest() {
             prerequisite {
                 placeAndProceedTokenRequest(
                     IT, mainWallet, wallet, amount,
-                    AtmIssuancesPage.StatusType.APPROVE, user, user1
+                    AtmIssuancesPage.StatusType.APPROVE, user, user1, maturityDateForBuy
                 )
             }
             AtmProfilePage(driver).logout()
@@ -341,7 +381,7 @@ class SmokeE2EWallet : BaseTest() {
         step("User Trade IT token") {
             with(openPage<AtmWalletPage>(driver) { submit(user) })
             {
-                tradeToken(mainWallet, IT, "1", maturityDate, user)
+                tradeToken(mainWallet, IT, "1", maturityDateForBuy, user)
                 assert {
                     elementContainingTextPresented("Order submitted successfully")
                 }
@@ -351,13 +391,13 @@ class SmokeE2EWallet : BaseTest() {
 
     }
 
+
     @TmsLink("ATMCH-5146")
     @Test
     @DisplayName("REDEEM (34-37)")
     fun redeem() {
         val amount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
+
         val user = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
         val mainWallet = user.mainWallet
 
@@ -370,7 +410,7 @@ class SmokeE2EWallet : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             prerequisite {
-                addITToken(user, user1, "10", mainWallet, wallet, amount)
+                addITToken(user, user1, mainWallet, wallet, amount, maturityDateForBuy)
                 AtmProfilePage(driver).logout()
             }
         }
@@ -380,7 +420,7 @@ class SmokeE2EWallet : BaseTest() {
                 IT,
                 mainWallet,
                 amount.toString(),
-                maturityDate,
+                maturityDateForRedemption,
                 user
             )
         }

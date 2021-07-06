@@ -42,7 +42,7 @@ class TransactionTransferWithFee : BaseTest() {
         val amount = "10"
         val user = Users.ATM_USER_2MAIN_WALLET
 
-        val firstMainWallet = user.walletList.get(0)
+        val firstMainWallet = user.walletList[0]
         val wrongWallet = "MIIEpQIBAAKCAQEA3Tz2mr7SZiAMfQyuvBjM9Oi..Z1BjP5CE/Wm/Rr500P"
 
         val alias = step("GIVEN User go to Wallet, get alias and add fiat in your wallet") {
@@ -52,10 +52,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1", "1.52")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1", "1.52")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         with(openPage<AtmWalletPage>(driver) { submit(user) }) {
             e {
@@ -104,10 +104,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1.34", "1.432")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1.34", "1.432")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "2", user, firstMainWallet)
+            buyOrReceiveToken(CC, "2", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -172,10 +172,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1", "1.52")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1", "1.52")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -243,10 +243,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1", "1.52")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1", "1.52")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -308,10 +308,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1.54", "1.52")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1.54", "1.52")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -376,10 +376,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1", "1.52")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1", "1.52")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -445,10 +445,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1.54", "1.52")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1.54", "1.52")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -501,10 +501,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "100", "1", "1.42")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "100", "1", "1.42")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()
@@ -556,10 +556,10 @@ class TransactionTransferWithFee : BaseTest() {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addPayment(alias, amount)
             }
-            openPage<AtmAdminTokensPage>(driver).changeFeeForToken("CC", "CC", "0", "0", "0")
+            openPage<AtmAdminTokensPage>(driver).changeFeeForToken(CC, CC, "0", "0", "0")
         }
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyTokenNew(CC, "1", user, firstMainWallet)
+            buyOrReceiveToken(CC, "1", user, firstMainWallet)
         }
         val balanceWalletFromBefore = step("AND User go to Wallet get balance") {
             openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, firstMainWallet.name).toBigDecimal()

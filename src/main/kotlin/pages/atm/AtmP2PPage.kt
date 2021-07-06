@@ -2,12 +2,14 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
+import models.CoinType.IT
 import models.user.classes.DefaultUser
 import models.user.interfaces.HasOtfWallet
 import models.user.interfaces.SimpleWallet
 import models.user.interfaces.User
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
+import org.junit.Assert
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -24,6 +26,7 @@ import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.Form
 import ru.yandex.qatools.htmlelements.element.TextBlock
 import ru.yandex.qatools.htmlelements.element.TextInput
+import utils.helpers.to
 import java.math.BigDecimal
 
 @PageUrl("/trading/p2p")
@@ -314,13 +317,16 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         manualCompleted: Boolean = false
     ): BigDecimal {
         return e {
-            click(viewMyP2P)
-            click(createFromMyBlockTrade)
-            waitSpinnerAlertDisappeared()
-            sendKeys(toWallet, walletID)
-            wait {
+            click(createBlockTrade)
+//            select(toWallet, toCounterparty)
+            click(toWallet)
+//            sendKeys(toWallet, walletID)
+
+            val button = wait {
                 untilPresented<Button>(By.xpath("//nz-auto-option//div[contains(text(),'$toCounterparty')]"))
-            }.clickJS()
+            }.to<Button>("toCounterparty")
+
+            click(button)
 
             if (check { isElementContainsText(assetToReceive, tokenToSend.tokenSymbol) }) {
                 assetToReceive.selectBeforeOther(tokenToSend.tokenSymbol, page)
@@ -337,7 +343,7 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
             sendKeys(amountToSend, amountSend)
             sendKeys(amountToReceive, ".")
             sendKeys(amountToReceive, amountReceive)
-            if ((tokenToSend.tokenSymbol.startsWith("IT") or tokenToReceive.tokenSymbol.startsWith("IT"))
+            if ((tokenToSend.tokenSymbol.startsWith(IT.tokenSymbol) or tokenToReceive.tokenSymbol.startsWith(IT.tokenSymbol))
                 and maturityDate.isNotBlank()
             ) select(offerMaturityDate, maturityDate)
             when (expiryType) {
@@ -457,8 +463,11 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         e {
             click(reject)
             click(yesButton)
+
+            signAndSubmitMessage(user, user.otfWallet.secretKey)
+            alert { checkErrorAlert() }
+            wait { until("Reject should be disappeared", 10L) { check { !isElementPresented(reject, 4L) } } }
         }
-        signAndSubmitMessage(user, user.otfWallet.secretKey)
         return AtmStreamingPage(driver)
     }
     //</editor-fold>
@@ -482,7 +491,7 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         e {
             click(resetFilters)
             select(tokenReceived, "$receivedToken")
-            if (receivedToken.tokenSymbol.startsWith("IT")
+            if (receivedToken.tokenSymbol.startsWith(IT.tokenSymbol)
                 and maturityDate.isNotBlank()
             ) select(maturityDateReceived, maturityDate)
             wait {
@@ -499,6 +508,52 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
     fun isOfferExist(amountReceive: BigDecimal, table: AtmTable<P2PItem>): Boolean {
         table.find { it.amountToSend == amountReceive } ?: return false
         return true
+    }
+
+    @Step("Check fields Amount to send and Amount to receive")
+    fun setSumSelectAmountFields(sum: String) {
+        e {
+            click(createBlockTrade)
+            sendKeys(amountToSend, sum)
+            sendKeys(amountToReceive, sum)
+        }
+    }
+
+    @Step("Checking field for decimal count")
+    fun checkTransferFieldEightDigitsDecimal() {
+        check {
+            Assert.assertTrue(
+                "Entered amount is not displayed!",
+                isElementPresented(By.xpath("//atm-amount-input[@formcontrolname=\"baseAmount\"]//span[contains(@class, 'decimal')]"))
+            )
+        }
+        val numberOfDigitsAfterDecimalPoint: Int =
+            findElement(By.xpath("//atm-amount-input[@formcontrolname=\"baseAmount\"]//span[contains(@class, 'decimal')]")).text.removePrefix(
+                "."
+            ).length
+        check {
+            Assert.assertTrue(
+                "Number of digits after decimal point is not equal 8!",
+                numberOfDigitsAfterDecimalPoint == 8
+            )
+        }
+
+        check {
+            Assert.assertTrue(
+                "Entered amount is not displayed!",
+                isElementPresented(By.xpath("//atm-amount-input[@formcontrolname=\"quoteAmount\"]//span[contains(@class, 'decimal')]"))
+            )
+        }
+        val numberOfDigitsAfterDecimalPoint1: Int =
+            findElement(By.xpath("//atm-amount-input[@formcontrolname=\"quoteAmount\"]//span[contains(@class, 'decimal')]")).text.removePrefix(
+                "."
+            ).length
+        check {
+            Assert.assertTrue(
+                "Number of digits after decimal point is not equal 8!",
+                numberOfDigitsAfterDecimalPoint1 == 8
+            )
+        }
     }
 
     @Step("Wait waiting spinner alert disappeared")

@@ -1,10 +1,8 @@
 package frontend.atm.administrationpanel
 
 import frontend.BaseTest
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Story
-import io.qameta.allure.TmsLink
+import io.qameta.allure.*
+import models.CoinType
 import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
@@ -14,12 +12,11 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
-import ru.yandex.qatools.htmlelements.element.Button
+import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.FIXED
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
-import utils.helpers.to
 import utils.isChecked
 
 @Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.OTCSETTINGS))
@@ -29,14 +26,22 @@ import utils.isChecked
 @Story("OTF management")
 class OtfManagement : BaseTest() {
 
+    private val token1 = CoinType.ETC1
+    private val token2 = CoinType.GF46ILN046B
+    private val baseToken = CoinType.CC
+    private val quoteToken = CoinType.VT
+    private val tokenFT = CoinType.FT
+    private val tokenIT = CoinType.IT
+
+    private val maturityDate = "202011"
+
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-5393")
     @Test
     @DisplayName("Administration panel. OTF management. Fields validation and mandatory")
     fun otfManagementFieldsValidation() {
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            val baseValueStreaming = "VT"
-            val quoteValueStreaming = "FT"
+
             val errorText = "This field can only use numbers"
             val errorText1 = "The field must be positive"
             assert {
@@ -90,15 +95,15 @@ class OtfManagement : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(baseInput, baseValueStreaming)
-                chooseToken(quoteInput, quoteValueStreaming)
+                chooseToken(baseInput, tokenFT.tokenSymbol)
+                chooseToken(quoteInput, quoteToken.tokenSymbol)
                 sendKeys(availableAmounts, "-123;qwe")
-                chooseToken(feePlaceAsset, baseValueStreaming)
+                chooseToken(feePlaceAsset, tokenFT.tokenSymbol)
                 sendKeys(feePlaceAmount, "-123;qwe")
-                chooseToken(feeAcceptAsset, quoteValueStreaming)
+                chooseToken(feeAcceptAsset, quoteToken.tokenSymbol)
                 sendKeys(feeAcceptAmount, "-123;qwe")
-                select(feePlaceMode, "FIXED")
-                select(feeAcceptMode, "FIXED")
+                select(feePlaceMode, FIXED.state)
+                select(feeAcceptMode, FIXED.state)
                 setCheckbox(pairAvailable, true)
                 click(confirmDialog)
             }
@@ -226,8 +231,7 @@ class OtfManagement : BaseTest() {
     @Test
     @DisplayName("Administration panel. OTF management. Cancelation scenarios")
     fun otfManagementCancelation() {
-        val token1 = "GF79IAF056E"
-        val token2 = "GF46ILN046B"
+
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             assert {
                 elementContainingTextPresented("Streaming settings")
@@ -264,15 +268,15 @@ class OtfManagement : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(baseInput, token1)
-                chooseToken(quoteInput, token2)
+                chooseToken(baseInput, token1.tokenSymbol)
+                chooseToken(quoteInput, token2.tokenSymbol)
                 sendKeys(availableAmounts, "1")
-                chooseToken(feePlaceAsset, token1)
+                chooseToken(feePlaceAsset, token1.tokenSymbol)
                 sendKeys(feePlaceAmount, "1")
-                chooseToken(feeAcceptAsset, token2)
+                chooseToken(feeAcceptAsset, token2.tokenSymbol)
                 sendKeys(feeAcceptAmount, "1")
-                select(feePlaceMode, "FIXED")
-                select(feeAcceptMode, "FIXED")
+                select(feePlaceMode, FIXED.state)
+                select(feeAcceptMode, FIXED.state)
                 setCheckbox(pairAvailable, true)
                 click(cancelDialog)
                 wait {
@@ -283,7 +287,7 @@ class OtfManagement : BaseTest() {
                     }
                 }
             }
-            assert { elementContainingTextNotPresented(token2) }
+            assert { elementContainingTextNotPresented(token2.tokenSymbol) }
             e {
                 click(firstRow)
                 click(edit)
@@ -313,20 +317,14 @@ class OtfManagement : BaseTest() {
                     }
                 }
             }
-            assert { elementContainingTextNotPresented(token2) }
+            assert { elementContainingTextNotPresented(token2.tokenSymbol) }
             e {
                 click(firstRow)
                 click(edit)
-                val baseValue = baseInput.value
-                val quoteValue = quoteInput.value
                 click(cancelDialog)
                 click(delete)
                 click(no)
-                val row = streamingSettingsTable.find {
-                    it[AtmAdminStreamingSettingsPage.BASE]?.text == baseValue && it[AtmAdminStreamingSettingsPage.QUOTE]?.text == quoteValue
-                }?.get(AtmAdminStreamingSettingsPage.BASE)
-                    ?.to<Button>("trading pair base: $baseValue quote: $quoteValue")
-                    ?: error("Row with Ticker symbol $baseValue not found in table")
+
                 driver.navigate().refresh()
                 wait {
                     until("wait for loading page after refresh", 15) {
@@ -336,7 +334,7 @@ class OtfManagement : BaseTest() {
                     }
                 }
                 assert {
-                    elementContainingTextNotPresented(token2)
+                    elementContainingTextNotPresented(token2.tokenSymbol)
                 }
             }
         }
@@ -370,22 +368,22 @@ class OtfManagement : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(tokenInput, token1)
+                chooseToken(tokenInput, token1.tokenSymbol)
                 setCheckbox(availableBase, true)
                 setCheckbox(availableQuote, true)
                 sendKeys(feePlacingAmount, "10")
-                chooseToken(feePlacingAsset, token1)
-                select(feePlacingMode, "FIXED")
-                chooseToken(feeAcceptingAsset, token2)
+                chooseToken(feePlacingAsset, token1.tokenSymbol)
+                select(feePlacingMode, FIXED.state)
+                chooseToken(feeAcceptingAsset, token2.tokenSymbol)
                 sendKeys(feeAcceptingAmount, "10")
-                select(feeAcceptingMode, "FIXED")
+                select(feeAcceptingMode, FIXED.state)
                 click(cancelDialog)
             }
             assert {
-                elementContainingTextNotPresented(token1)
+                elementContainingTextNotPresented(token1.tokenSymbol)
             }
             e {
-                chooseToken("CC")
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
             }
             assert {
@@ -402,24 +400,26 @@ class OtfManagement : BaseTest() {
                 setCheckbox(availableBase, true)
                 setCheckbox(availableQuote, true)
                 sendKeys(feePlacingAmount, "10")
-                chooseToken(feePlacingAsset, token1)
-                select(feePlacingMode, "FIXED")
-                chooseToken(feeAcceptingAsset, token2)
+
+                click(feePlaceClearButton)
+                chooseToken(feePlacingAsset, token1.tokenSymbol)
+                select(feePlacingMode, FIXED.state)
+
+                click(feeAcceptClearButton)
+                chooseToken(feeAcceptingAsset, token2.tokenSymbol)
                 sendKeys(feeAcceptingAmount, "10")
-                select(feeAcceptingMode, "FIXED")
+                select(feeAcceptingMode, FIXED.state)
+
                 click(cancelDialog)
             }
             assert {
-                elementContainingTextNotPresented(token2)
+                elementContainingTextNotPresented(token2.tokenSymbol)
             }
             e {
-                chooseToken("CC")
+                chooseToken(baseToken.tokenSymbol)
                 click(delete)
                 click(no)
-                val row1 = rfqSettingsTable.find {
-                    it[AtmAdminRfqSettingsPage.TOKEN]?.text == "CC"
-                }?.get(AtmAdminRfqSettingsPage.TOKEN)?.to<Button>("token name: CC")
-                    ?: error("Row with Ticker symbol CC not found in table")
+
                 driver.navigate().refresh()
                 wait {
                     until("wait until data presented", 15) {
@@ -429,8 +429,8 @@ class OtfManagement : BaseTest() {
                     }
                 }
                 assert {
-                    elementContainingTextNotPresented(token2)
-                    elementContainingTextNotPresented(token1)
+                    elementContainingTextNotPresented(token2.tokenSymbol)
+                    elementContainingTextNotPresented(token1.tokenSymbol)
                 }
             }
         }
@@ -461,14 +461,14 @@ class OtfManagement : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(tokenInput, token2)
+                chooseToken(tokenInput, token2.tokenSymbol)
                 setCheckbox(available, true)
                 sendKeys(feePlacingAmount, "1")
-                chooseToken(feePlacingAsset, token2)
-                select(feePlacingMode, "FIXED")
-                chooseToken(feeAcceptingAsset, token1)
+                chooseToken(feePlacingAsset, token2.tokenSymbol)
+                select(feePlacingMode, FIXED.state)
+                chooseToken(feeAcceptingAsset, token1.tokenSymbol)
                 sendKeys(feeAcceptingAmount, "2")
-                select(feeAcceptingMode, "FIXED")
+                select(feeAcceptingMode, FIXED.state)
                 click(cancelDialog)
                 wait {
                     until("dialog add trading pair is gone", 15) {
@@ -479,7 +479,7 @@ class OtfManagement : BaseTest() {
                 }
             }
             assert {
-                elementContainingTextNotPresented(token2)
+                elementContainingTextNotPresented(token2.tokenSymbol)
             }
             e {
                 click(firstRow)
@@ -494,14 +494,15 @@ class OtfManagement : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(tokenInput, token2)
+                click(tokenClearButton)
+                chooseToken(tokenInput, token2.tokenSymbol)
                 setCheckbox(available, true)
                 sendKeys(feePlacingAmount, "1")
-                chooseToken(feePlacingAsset, token2)
-                select(feePlacingMode, "FIXED")
-                chooseToken(feeAcceptingAsset, token1)
+                chooseToken(feePlacingAsset, token2.tokenSymbol)
+                select(feePlacingMode, FIXED.state)
+                chooseToken(feeAcceptingAsset, token1.tokenSymbol)
                 sendKeys(feeAcceptingAmount, "2")
-                select(feeAcceptingMode, "FIXED")
+                select(feeAcceptingMode, FIXED.state)
                 click(cancelDialog)
                 wait {
                     until("dialog add trading pair is gone", 15) {
@@ -512,24 +513,22 @@ class OtfManagement : BaseTest() {
                 }
             }
             assert {
-                elementContainingTextNotPresented(token2)
+                elementContainingTextNotPresented(token2.tokenSymbol)
             }
             e {
-                chooseToken("CC")
+                chooseToken(baseToken.tokenSymbol)
                 click(delete)
                 click(no)
-                val row = blocktradeSettingsTable.find {
-                    it[AtmAdminBlocktradeSettingsPage.TOKEN]?.text == "CC"
-                }?.get(AtmAdminBlocktradeSettingsPage.TOKEN)?.to<Button>("token name CC")
-                    ?: error("Row with Ticker symbol CC not found in table")
+
                 driver.navigate().refresh()
                 assert {
-                    elementContainingTextNotPresented(token2)
+                    elementContainingTextNotPresented(token2.tokenSymbol)
                 }
             }
         }
     }
 
+    @Issue("https://sdexnt.atlassian.net/browse/ATMCH-6611")
     @TmsLink("ATMCH-4978")
     @Test
     @DisplayName("Administration panel. OTF management. General settings")
@@ -591,8 +590,7 @@ class OtfManagement : BaseTest() {
     @DisplayName("Administration panel. OTF management. Streaming. Delete trading pair")
     fun streamingDeleteTradingPair() {
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            val baseValue = "CC"
-            val quoteValue = "IT"
+
             val fieldValue = "0.${RandomStringUtils.randomNumeric(3) + 1}"
             assert {
                 elementContainingTextPresented("Streaming settings")
@@ -611,18 +609,18 @@ class OtfManagement : BaseTest() {
                 elementPresented(streamingSettingsTable)
             }
             addTradingPair(
-                baseValue,
-                quoteValue,
-                "",
+                baseToken.tokenSymbol,
+                tokenIT.tokenSymbol,
+                maturityDate,
                 fieldValue,
 
                 fieldValue,
 
                 fieldValue,
-                "FIXED",
-                "FIXED", true
+                FIXED.state,
+                FIXED.state, true
             )
-            chooseTradingPair(baseValue, quoteValue)
+            chooseTradingPair(baseToken.tokenSymbol, tokenIT.tokenSymbol+"_${maturityDate}")
             e {
                 click(delete)
                 click(yes)

@@ -48,8 +48,8 @@ class ImplementationOfAnonymousMode : BaseTest() {
     private val user3 = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
     private val shortNameCompany = "TestCompany01"
 
-    private val baseAsset = CoinType.CC
-    private val quoteAsset = CoinType.VT
+    private val baseAsset = CoinType.CC.tokenSymbol
+    private val quoteAsset = CoinType.VT.tokenSymbol
     private val amountValue = OtfAmounts.AMOUNT_10.amount
 
     private val SHOW = "Show"

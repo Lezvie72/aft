@@ -9,20 +9,44 @@ import pages.htmlelements.blocks.BaseBlock
 import pages.htmlelements.elements.AtmAmount
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.TextBlock
 
 
 @Name("RFQ Incoming Item")
 @FindBy(css = "atm-rfq-item-incoming")
 class RFQIncomingItem : BaseBlock<AtmPage>() {
 
+    @Name("Label sell")
+    @FindBy(xpath = ".//nz-tag[contains(text(), 'SELL')]")
+    lateinit var labelSell: TextBlock
 
-    @FindBy(xpath = ".//span[contains(text(), 'BASE ASSET/AMOUNT')]/ancestor::atm-property-value//atm-amount")
+    @Name("Label buy")
+    @FindBy(xpath = ".//nz-tag[contains(text(), 'BUY')]")
+    lateinit var labelBuy: TextBlock
+
+    @Name("Expiration")
+    @FindBy(xpath = ".//span[contains(text(), 'Expiration')]/ancestor::atm-property-value//atm-span")
+    lateinit var expirationDate: TextBlock
+
+    @Name("Maturity date")
+    @FindBy(xpath = ".//span[contains(text(), 'Maturity date')]/ancestor::atm-property-value//span[contains(@class, 'date-property')]")
+    lateinit var maturityDate: TextBlock
+
+    @Name("Show button")
+    @FindBy(xpath = ".//atm-span[contains(text(), 'Show')]")
+    lateinit var showCounterparty: Button
+
+    @Name("Counterparty")
+    @FindBy(xpath = ".//span[contains(text(), 'Counterparty')]/ancestor::atm-property-value//atm-counterparty")
+    lateinit var counterpartyValue: Button
+
+    @FindBy(xpath = ".//span[contains(text(), 'BASE ASSET/AMOUNT') or contains(text(),'BASE ASSET')]/ancestor::atm-property-value//atm-amount")
     @Name("To receive amount")
-    private lateinit var baseLocator: AtmAmount
+    lateinit var baseLocator: AtmAmount
 
-    @FindBy(xpath = ".//span[contains(text(), 'QUOTE ASSET/AMOUNT')]/ancestor::atm-property-value//atm-amount")
+    @FindBy(xpath = ".//span[contains(text(), 'QUOTE ASSET/AMOUNT') or contains(text(),'QUOTE ASSET')]/ancestor::atm-property-value//atm-amount")
     @Name("To send amount")
-    private lateinit var quoteLocator: AtmAmount
+    lateinit var quoteLocator: AtmAmount
 
     @FindBy(xpath = ".//span[contains(text(), 'TO SEND')]/following-sibling::atm-amount")
     @Name("To send amount")

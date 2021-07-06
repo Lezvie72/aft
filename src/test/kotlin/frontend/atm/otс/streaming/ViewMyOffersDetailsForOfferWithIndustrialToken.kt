@@ -37,7 +37,7 @@ ViewMyOffersDetailsForOfferWithIndustrialToken : BaseTest() {
     private val baseAsset = CoinType.CC
     private val quoteAsset = CoinType.IT
     private val amountCount = OtfAmounts.AMOUNT_10.amount
-    private val maturityDateInnerDate = "22 September 2020"
+    private val maturityDateInnerDate = quoteAsset.date
     private val invalid2FaKey = "123456"
     private val invalidPrivateKey = "12345678bb4992acf09c9cba9e266c696aff77fca923db2a472b813e37f9e96f"
     private val wallet = "OTF 1"
@@ -55,8 +55,8 @@ ViewMyOffersDetailsForOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPriceBuy.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
@@ -68,8 +68,8 @@ ViewMyOffersDetailsForOfferWithIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPriceSell.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDateInnerDate
@@ -95,7 +95,7 @@ ViewMyOffersDetailsForOfferWithIndustrialToken : BaseTest() {
                 softAssert { elementPresented(maturityDateLabel) }
                 softAssert { elementPresented(baseMaturityDate) }
                 softAssert { elementPresented(counterpartyLabel) }
-                softAssert { elementPresented(experationLabel) }
+                softAssert { elementPresented(expirationLabel) }
                 softAssert { elementPresented(cancelOffer) }
 
                 findAndOpenOfferInOfferList(unitPriceBuy)

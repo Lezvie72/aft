@@ -24,6 +24,20 @@ import utils.helpers.openPage
 @Story("Tokens")
 class FinancialManagementTokens : BaseTest() {
 
+
+    @TmsLink("ATMCH-4259")
+    @Test
+    @DisplayName("Adm.platform.Tokens. Transfer fee distribution. Checking the section by NOT finance manager.")
+    fun checkingTheSectionByNotFinanceManager() {
+        with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_USER_VIEWER_ROLE) }) {
+            assert {
+                elementNotPresented(addToken)
+                elementNotPresented(editToken)
+                elementNotPresented(transferFeeDistribution)
+            }
+        }
+    }
+
     @TmsLink("ATMCH-4256")
     @Test
     @DisplayName("Adm.platform.Tokens. Transfer fee distribution. Check the interface.")
@@ -32,10 +46,10 @@ class FinancialManagementTokens : BaseTest() {
             assert {
                 elementPresented(addToken)
                 elementPresented(editToken)
-                elementPresented(transferFee)
+                elementPresented(transferFeeDistribution)
             }
             e {
-                click(transferFee)
+                click(transferFeeDistribution)
             }
             assert {
                 elementPresented(save)
@@ -60,10 +74,10 @@ class FinancialManagementTokens : BaseTest() {
             assert {
                 elementPresented(addToken)
                 elementPresented(editToken)
-                elementPresented(transferFee)
+                elementPresented(transferFeeDistribution)
             }
             e {
-                click(transferFee)
+                click(transferFeeDistribution)
                 sendKeys(validatorShare, "150")
             }
             assertThat(

@@ -89,5 +89,11 @@ object TagNames {
 
         }
 
+        object EXTERNALINTEGRATION {
+
+            const val NUMBER = "123"
+
+        }
+
     }
 }

@@ -2,19 +2,23 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
+import models.user.interfaces.User
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.hasToString
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.FindBy
-import pages.atm.AtmAdminTokensPage.EquivalentType.*
+import pages.atm.AtmAdminTokensPage.EquivalentType.FIXED
+import pages.atm.AtmAdminTokensPage.EquivalentType.FROM_MARKET
 import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
 import pages.htmlelements.blocks.atm.marketplace.SdexTableTokens
 import pages.htmlelements.elements.*
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.CheckBox
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
+import utils.isChecked
 
 @PageUrl("/tokens")
 class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
@@ -27,10 +31,18 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
         const val FEE_RATE = "Fee rate (%)"
         const val CAP = "Cap"
         const val TOKEN_TYPE = "Token Type"
+        const val COMPANY = "Company"
+        const val VISIBLE = "Visible"
+        const val USER = "User"
+        const val DATE_OF_CHANGE = "Date of change"
     }
 
     enum class EquivalentType {
         FIXED, FROM_MARKET;
+    }
+
+    enum class StatusToken {
+        AVAILABLE, UNAVAILABLE, ARCHIVED;
     }
 
     @Name("Search")
@@ -57,6 +69,10 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//sdex-tokens//span[contains(text(), 'Transfer fee')]")
     lateinit var transferFee: Button
 
+    @Name("Transfer fee distribution")
+    @FindBy(xpath = "//sdex-tokens//span[contains(text(), 'Transfer fee distribution')]")
+    lateinit var transferFeeDistribution: Button
+
     @Name("Add token")
     @FindBy(xpath = "//sdex-tokens//span[contains(text(), 'ADD')]")
     lateinit var addToken: Button
@@ -78,7 +94,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var close: Button
 
     @Name("Tokens table")
-    @FindBy(xpath = "//sdex-tokens")
+    @FindBy(xpath = "//sdex-tokens//sdex-grid | //sdex-tokens")
     lateinit var tokensTable: SdexTableTokens
 
     @Name("History table")
@@ -170,7 +186,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//button//span[contains(text(), 'SAVE')]")
     lateinit var save: Button
 
-//    region TRANSFER FEE DISTRIBUTION POPUP
+    //    region TRANSFER FEE DISTRIBUTION POPUP
     @Name("Close transfer fee distribution popup")
     @FindBy(xpath = "//button//span[contains(text(), 'Close')]")
     lateinit var closeTransferFeeDistPopup: Button
@@ -179,8 +195,51 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//input[@formcontrolname='validatorsShare']/ancestor::mat-form-field")
     lateinit var validatorShare: AtmInput
 
-//    endregion
+    @Name(" Availability rules ")
+    @FindBy(xpath = "//sdex-tokens//button//span[contains(text(), 'Visibility rules')]")
+    lateinit var visibilityRules: Button
 
+    @Name("Symbol")
+    @FindBy(xpath = "//input[@formcontrolname='symbol']/ancestor::mat-form-field")
+    lateinit var symbol: TextInput
+
+    @Name("Standard visibility rules")
+    @FindBy(xpath = "//mat-radio-button//span[contains(text(), 'Standard visibility rules')]")
+    lateinit var standardVisibilityRules: AtmRadio
+
+    @Name("Custom visibility rules")
+    @FindBy(xpath = "//mat-radio-button//span[contains(text(), 'Custom visibility rules')]")
+    lateinit var customVisibilityRules: AtmRadio
+
+    @Name("Company name")
+    @FindBy(xpath = "//div//input[@formcontrolname='companyName']")
+    lateinit var companyName: AtmAdminSelect
+
+    @Name("Delete")
+    @FindBy(xpath = "//span[contains(text(),'DELETE')]/ancestor::button")
+    lateinit var delete: Button
+
+    @Name("Add")
+    @FindBy(xpath = "//sdex-visibility-rule-add//button//span[contains(text(), 'ADD')]")
+    lateinit var add: Button
+
+    @Name("Visibility rules table")
+    @FindBy(xpath = ".//mat-dialog-container")
+    lateinit var visibilityRulesTable: SdexTable
+
+    @Name("Table grid")
+    @FindBy(xpath = ".//sdex-grid")
+    lateinit var tableGrid: TextInput
+
+    @Name("Table grid")
+    @FindBy(xpath = "//sdex-visibility-rules-dialog")
+    lateinit var visibilityRulesDialog: TextInput
+
+    @Name("Clear button")
+    @FindBy(xpath = "//mat-icon[text()='clear']")
+    lateinit var clearButton: Button
+
+//    endregion
 
 
     // TODO: Данный метод в связи с отстутствием кнопки "save" работает неправильно
@@ -188,17 +247,17 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Step("Change fee for token")
     @Action("Change fee for token")
     fun changeFeeForToken(
-        token: String,
-        chargeInToken: String,
+        token: CoinType,
+        chargeInToken: CoinType,
         feeRate: String,
         floorAmount: String,
         capAmount: String
     ): AtmAdminTokensPage {
-        e {
-            sendKeys(search, token)
-        }
+//        e {
+//            sendKeys(search, token.tokenSymbol)
+//        }
         val row = tokensTable.find {
-            it[TICKER_SYMBOL]?.text == token
+            it[TICKER_SYMBOL]?.text == token.tokenSymbol
         }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol $token")
             ?: error("Row with Ticker symbol $token not found in table")
         e {
@@ -214,8 +273,8 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
         }
 
         e {
-            deleteData(chargeInInput)
-            chargeIn.sendAndSelect(chargeInToken, chargeInToken, this@AtmAdminTokensPage)
+            click(clearButton)
+            chargeIn.sendAndSelect(chargeInToken.tokenSymbol, chargeInToken.tokenSymbol, this@AtmAdminTokensPage)
             sendKeys(rate, feeRate)
             sendKeys(floor, floorAmount)
             sendKeys(cap, capAmount)
@@ -242,18 +301,19 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Step("edit usd equivalent")
     @Action("User edit usd equivalent")
     fun editUsdEquivalent(
-        token: String,
+        token: CoinType,
         equivalentType: EquivalentType,
         value: String,
         id: String
     ): AtmAdminTokensPage {
         e {
-            sendKeys(search, token)
+            sendKeys(search, token.tokenSymbol)
         }
+
         val row = tokensTable.find {
-            it[TICKER_SYMBOL]?.text == token
-        }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol $token")
-            ?: error("Row with Ticker symbol $token not found in table")
+            it[TICKER_SYMBOL]?.text == token.tokenSymbol
+        }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${token.tokenSymbol}")
+            ?: error("Row with Ticker symbol ${token.tokenSymbol} not found in table")
         e {
             click(row)
             click(usdEquivalentSettings)
@@ -283,12 +343,15 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("edit token status")
     @Action("Admin edit status of token")
-    fun editTokenStatus(tokenButton: Button, status: String): AtmAdminTokensPage {
+    fun editTokenStatus(tokenButton: Button, status: StatusToken): AtmAdminTokensPage {
         e {
             click(tokenButton)
             click(editToken)
-
-            select(tokenStatus, status.toLowerCase())
+            when (status) {
+                StatusToken.AVAILABLE -> select(tokenStatus, "available")
+                StatusToken.UNAVAILABLE -> select(tokenStatus, "unavailable")
+                StatusToken.ARCHIVED -> select(tokenStatus, "archived")
+            }
             click(confirm)
         }
 
@@ -298,7 +361,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     data class TokenMainInfo(
         val tokenName: String,
         val tokenDescription: String,
-        val status: String
+        val status: StatusToken
     )
 
     @Step("get token main information")
@@ -310,8 +373,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
 
             val tokenName = tokenName.text
             val tokenDescription = tokenDescription.text
-            val status = tokenStatus.text
-
+            val status = tokenStatus.text.toUpperCase()
             e {
                 click(cancel)
             }
@@ -319,7 +381,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
             return@e TokenMainInfo(
                 tokenName,
                 tokenDescription,
-                status
+                StatusToken.valueOf(status)
             )
         }
 
@@ -363,11 +425,11 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("get token main information")
     @Action("Admin get token main information")
-    fun getTokenMainInformation(tokenSymbol: CoinType, tokenName: String): TokenMainInfo {
+    fun getTokenMainInformation(tokenSymbol: CoinType): TokenMainInfo {
         val tokenButton = tokensTable.find {
             it[TICKER_SYMBOL]?.text == tokenSymbol.tokenSymbol
-        }?.get(TICKER_SYMBOL)?.to<Button>(tokenName)
-            ?: error("Row with $tokenSymbol not found in table")
+        }?.get(TICKER_SYMBOL)?.to<Button>(tokenSymbol.tokenName)
+            ?: error("Row with ${tokenSymbol.tokenSymbol} not found in table")
 
         return this.getTokenMainInformation(tokenButton)
     }
@@ -432,4 +494,93 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     fun getColumnAsList(vararg columnNames: String): HashMap<String, MutableList<String>>? {
         return tokensTable.getColumnsByNamesForAllPages(*columnNames)
     }
+
+    @Step("delete company from rules")
+    fun deleteCompanyFromRules(token: CoinType, companyName: String): AtmAdminTokensPage {
+        tokensTable.waitUntilReady()
+
+        val tokenRow = tokensTable.find {
+            it[TICKER_SYMBOL]?.text == token.tokenSymbol
+        }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${token.tokenSymbol}")
+            ?: error("Row with Ticker symbol $token not found in table")
+
+        e {
+            click(tokenRow)
+            click(visibilityRules)
+        }
+
+        val companyRow = visibilityRulesTable.find {
+            it[COMPANY]?.text == companyName
+        }?.get(COMPANY)?.to<Button>("Company $companyName")
+            ?: error("Row with Ticker symbol $companyName not found in table")
+
+        e {
+            click(companyRow)
+            click(delete)
+            click(close)
+        }
+
+        return AtmAdminTokensPage(driver)
+    }
+
+    @Step("add new rules")
+    fun addNewRules(token: CoinType, companyNameValue: String): AtmAdminTokensPage {
+        tokensTable.waitUntilReady()
+
+        val tokenRow = tokensTable.find {
+            it[TICKER_SYMBOL]?.text == token.tokenSymbol
+        }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${token.tokenSymbol}")
+            ?: error("Row with Ticker symbol $token not found in table")
+
+        e {
+            click(tokenRow)
+            click(visibilityRules)
+            click(customVisibilityRules)
+            wait {
+                untilPresented(companyName)
+            }
+            companyName.sendAndSelect(companyNameValue, companyNameValue, this@AtmAdminTokensPage)
+            click(add)
+            click(close)
+        }
+        return AtmAdminTokensPage(driver)
+
+    }
+
+    @Step("check data for rules")
+    fun checkDataForRules(
+        token: CoinType,
+        companyNameValue: String,
+        visibleStatus: String,
+        userMaker: User
+    ): AtmAdminTokensPage {
+        tokensTable.waitUntilReady()
+
+        val tokenRow = tokensTable.find {
+            it[TICKER_SYMBOL]?.text == token.tokenSymbol
+        }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${token.tokenSymbol}")
+            ?: error("Row with Ticker symbol $token not found in table")
+        e {
+            click(tokenRow)
+            click(visibilityRules)
+        }
+
+        val companyRow = visibilityRulesTable.find {
+            it[COMPANY]?.text == companyNameValue
+        } ?: error("Row with Ticker symbol $companyNameValue not found in table")
+
+        val company = companyRow[COMPANY]?.text
+//            val dateOfChange = companyRow[DATE_OF_CHANGE]?.text
+        val visible = companyRow[VISIBLE]?.to<CheckBox>()?.isChecked().toString()
+        val user = companyRow[USER]?.text
+
+
+        assertThat("No row found with '$company'", company, hasToString(companyNameValue))
+//            assertThat("No row found with '$dateOfChange'", dateOfChange, hasToString(LocalDateTime.now().toString()))
+        assertThat("No row found with '$visible'", visible, hasToString(visibleStatus))
+        assertThat("No row found with '$user'", user, hasToString(userMaker.email))
+
+        return AtmAdminTokensPage(driver)
+    }
+
 }

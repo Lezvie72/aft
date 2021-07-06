@@ -64,7 +64,6 @@ class AtmAdminEmployeesPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("Approve user {email}")
     fun approveUserWithEmail(email: String): LocalDateTime {
-        applyFilterSearchByEmail(email)
         val row = inviteTable.find(findApprovalWithEmailAndStatus(email, "submitted"))
             ?.get(EMP_EMAIL)?.to<Button>("Employee $email") ?: error("Row with email '$email' not found in table")
 
@@ -81,7 +80,6 @@ class AtmAdminEmployeesPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("Reject user {email}")
     fun rejectUserWithEmail(email: String): LocalDateTime {
-        applyFilterSearchByEmail(email)
         val row = inviteTable.find(findApprovalWithEmailAndStatus(email, "submitted"))
             ?.get(EMP_EMAIL)?.to<Button>("Employee $email") ?: error("Row with email '$email' not found in table")
 
@@ -98,7 +96,6 @@ class AtmAdminEmployeesPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("Find approval with {email} and {status}")
     fun findApprovalWithEmailAndStatus(email: String, status: String): (Map<String, WebElement>) -> Boolean {
-        //TODO: is it possible without previously filtering?
         applyFilterSearchByEmail(email)
         return {
             it[EMP_EMAIL]?.text?.toLowerCase()?.contains(email.toLowerCase()) ?: false

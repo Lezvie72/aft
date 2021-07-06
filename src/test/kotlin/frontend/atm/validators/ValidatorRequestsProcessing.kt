@@ -26,6 +26,8 @@ import utils.helpers.step
 @Feature("Validator")
 class ValidatorRequestsProcessing : BaseTest() {
 
+    private val amountEndorser = "1000"
+
     @ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
     @TmsLink("ATMCH-4155")
     @Test
@@ -37,10 +39,10 @@ class ValidatorRequestsProcessing : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "1000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountEndorser, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
-                    "1000",
+                    amountEndorser,
                     userBuyer,
                     mainWallet
                 )

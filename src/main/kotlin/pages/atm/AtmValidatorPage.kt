@@ -133,7 +133,7 @@ class AtmValidatorPage(driver: WebDriver) : AtmPage(driver) {
     fun addNodeValidator(typeNode: NodeType, user: DefaultUser, wallet: SimpleWallet) {
         e {
             click(addNode)
-            select(nodeType, typeNode.toString())
+            select(nodeType, typeNode.name)
             click(submit)
             select(stakingWallet, wallet.name)
             click(submit)

@@ -162,7 +162,7 @@ class FinancialManagementRegisterOfIssuers : BaseTest() {
     @DisplayName("Financial management. Register of issuers. Searching")
     fun searchingValidation() {
         with(openPage<AtmAdminRegisterOfIssuersPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            val randomText = RandomStringUtils.random(30, true, false)
+//            val randomText = RandomStringUtils.random(30, true, false)
             val firstRowId = e { firstRowInGrid.text }
             e {
                 search.delete()

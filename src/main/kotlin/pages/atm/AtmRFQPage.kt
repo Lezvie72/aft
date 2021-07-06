@@ -2,6 +2,7 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
+import models.CoinType.IT
 import models.user.interfaces.HasOtfWallet
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -17,6 +18,7 @@ import pages.htmlelements.blocks.atm.rfq.*
 import pages.htmlelements.elements.*
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.TextBlock
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
 import java.math.BigDecimal
@@ -27,6 +29,18 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     enum class OperationType {
         BUY, SELL;
     }
+
+    @Name("Maturity date")
+    @FindBy(xpath = ".//span[contains(text(), 'Maturity date')]/ancestor::atm-property-value//span[contains(@class, 'date-property')]")
+    lateinit var maturityDate: TextBlock
+
+    @Name("Input field for select participant company")
+    @FindBy(xpath = "//nz-form-item//h3[contains(@class, 'rfq-selected-companies__title')]/../input")
+    lateinit var companyForRequest: TextInput
+
+    @Name("Only selected counterparties will receive the request")
+    @FindBy(xpath = "//nz-radio-group//span[contains(text(), 'Only selected counterparties will receive the request')]")
+    lateinit var onlySelectedCounterparties: Button
 
     @Name("Create request")
     @FindBy(xpath = "//a[@href='/trading/rfq/requests/create']")
@@ -48,9 +62,13 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//nz-radio-group[@formcontrolname='direction']//span[contains(text(), 'I want to sell asset')]")
     lateinit var iWantToSellAsset: AtmRadio
 
+    @Name("Counterparty input")
+    @FindBy(xpath = "//nz-form-item//atm-rfq-selected-companies//input")
+    lateinit var counterpartyInput: TextInput
+
     @Name("Amount to send")
     @FindBy(xpath = "//atm-amount-input[@formcontrolname='baseAmount']//input")
-    lateinit var amountToSend: Button
+    lateinit var amountToSend: TextInput
 
     @Name("Total offer amount")
     @FindBy(xpath = "//atm-amount-input[@formcontrolname='quoteAmount']//input")
@@ -71,6 +89,10 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Create request from form")
     @FindBy(xpath = "//button//span[contains(text(), 'CREATE REQUEST')]")
     lateinit var createRequestFromForm: Button
+
+    @Name("Create request from form")
+    @FindBy(xpath = "//span[contains(text(), 'CREATE REQUEST')]//ancestor::button")
+    lateinit var createRequestFromForm1: Button
 
     @Name("Create an offer")
     @FindBy(xpath = "//button//span[contains(text(), 'CREATE AN OFFER')]")
@@ -106,15 +128,15 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
 
     @Name("Save changes")
     @FindBy(xpath = "//span[contains(text(),'SAVE CHANGES')]/ancestor::button")
-    lateinit var  saveChanges: Button
+    lateinit var saveChanges: Button
 
     @Name("Change offer")
     @FindBy(xpath = "//span[contains(text(),'CHANGE OFFER')]/ancestor::button")
-    lateinit var  changeOffer: Button
+    lateinit var changeOffer: Button
 
     @Name("Go to chat")
     @FindBy(xpath = "//a//span[contains(text(),'GO TO CHAT')]")
-    lateinit var  goToChat: Button
+    lateinit var goToChat: Button
 
     @Name("Reset filters")
     @FindBy(xpath = "//button[contains(text(),'RESET')]")
@@ -204,6 +226,14 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-chat//button")
     lateinit var chatSendButton: Button
 
+    @Name("Available balance")
+    @FindBy(xpath = "//span[contains(text(), 'AVAILABLE BALANCE')]/ancestor::atm-property-value//atm-amount")
+    lateinit var availableBalance: AtmAmount
+
+    @Name("Offer maturity date")
+    @FindBy(xpath = "//nz-form-item//span[.='Maturity date']//ancestor::nz-form-item//nz-select")
+    lateinit var offerMaturityDate: AtmSelectLazy
+
     @Action("Fill field Expires in for the Limited Time Offer")
     fun limitedTimeOffer() {
         e {
@@ -211,6 +241,7 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
             sendKeys(expiresIn, "1")
         }
     }
+
 
     @Step("User create RFQ")
     @Action("User create RFQ")
@@ -220,7 +251,11 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
         assetReceive: CoinType,
         amount: BigDecimal,
         time: String,
-        user: HasOtfWallet
+        userSender: HasOtfWallet,
+        userRecipient: HasOtfWallet? = null,
+        companyName: String? = null,
+        maturityDate: String? = null,
+        manualCompleted: Boolean = false
     ) {
         e {
             click(createRequest)
@@ -228,23 +263,55 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
                 BUY -> click(iWantToBuyAsset)
                 SELL -> click(iWantToSellAsset)
             }
+            if (check { isElementContainsText(assetToReceive, assetSend.tokenSymbol) }) {
+                assetToReceive.selectBeforeOther(assetSend.tokenSymbol, page)
+            }
             select(assetToSend, assetSend.tokenSymbol)
             select(assetToReceive, assetReceive.tokenSymbol)
+            if ((assetSend.tokenSymbol.startsWith(IT.tokenSymbol) || assetReceive.tokenSymbol.startsWith(IT.tokenSymbol)) && !maturityDate.isNullOrBlank()) select(
+                offerMaturityDate,
+                maturityDate
+            )
             sendKeys(amountToSend, amount.toString())
             deleteData(expiresIn)
             sendKeys(expiresIn, time)
-            click(createRequestFromForm)
+            if (userRecipient != null && companyName != null) {
+                click(onlySelectedCounterparties)
+                sendKeys(companyForRequest, companyName)
+                wait {
+                    untilPresentedAnyWithText<Button>(
+                        companyName,
+                        "Row with company name $companyName"
+                    ).let {
+                        click(
+                            it
+                        )
+                    }
+                }
+                Thread.sleep(1000)
+            }
+            if (!manualCompleted) {
+                click(createRequestFromForm)
+                alert { checkErrorAlert() }
+                signAndSubmitMessage(userSender, userSender.otfWallet.secretKey)
+                alert { checkErrorAlert() }
+            }
         }
-        signAndSubmitMessage(user, user.otfWallet.secretKey)
     }
 
     @Step("User cancel RFQ")
     @Action("User cancel RFQ")
     fun cancelRFQ(
+        amount: BigDecimal,
         user: HasOtfWallet
     ) {
         e {
-            click(cancelRequestButton)
+            click(viewRequest)
+            click(myRequest)
+            val myOffer = outgoingOffers.find {
+                it.baseAmount == amount
+            } ?: error("Can't find offer with base amount '$amount'")
+            myOffer.clickCancelButtonRfq()
         }
         signAndSubmitMessage(user, user.otfWallet.secretKey)
     }
@@ -330,6 +397,7 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
             it.baseAmount == amount
         } ?: error("Can't find offer with unit price '$amount'")
         myOffer.open()
+        wait { untilPresented(makeOffer) }
         return AtmRFQPage(driver)
     }
 
@@ -357,16 +425,25 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
 
     @Step("User accept RFQ offer")
     @Action("User accept RFQ offer")
-    fun acceptOffer(amount: BigDecimal, dealAmount: BigDecimal, user: HasOtfWallet): BigDecimal {
+    fun acceptOffer(
+        amount: BigDecimal,
+        dealAmount: BigDecimal,
+        user: HasOtfWallet,
+        fromSeveralDeals: Boolean = false
+    ): BigDecimal {
         e {
             click(myRequest)
         }
 //        setDisplayRequestsWithOffers(true)
         findOutgoingRFQ(amount)
-        val myOfferDeal = outgoingDealOffers.find {
-            it.offerAmount == dealAmount
-        } ?: error("Can't find offer with offer amount'$dealAmount'")
-        myOfferDeal.openChat()
+        if (!fromSeveralDeals) {
+            val myOfferDeal = outgoingDealOffers.find {
+                it.offerAmount == dealAmount
+            } ?: error("Can't find offer with offer amount'$dealAmount'")
+            myOfferDeal.openChat()
+        } else {
+            openAltAmountDeal(dealAmount.toString().split(".").last())
+        }
         val fee = wait(15L) {
             until("Couldn't load fee") {
                 offerFee.text.isNotEmpty()
@@ -378,6 +455,15 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
         }
         signAndSubmitMessage(user, user.otfWallet.secretKey)
         return fee
+    }
+
+
+    fun openAltAmountDeal(dealAmount: String) {
+        e {
+            wait {
+                untilPresented<Button>(By.xpath("//span[contains(text(), '$dealAmount')]//ancestor::atm-rfq-item-outgoing-offer//a"))
+            }.to<Button>("Open chat button for deal amount $dealAmount").let { click(it) }
+        }
     }
 
     @Step("User find RFQ offer in history")
@@ -418,7 +504,7 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
             click(showBuyOnly)
             select(baseAssetButton, baseAsset.tokenSymbol)
             select(quoteAssetButton, quoteAsset.tokenSymbol)
-            if ((baseAsset.tokenSymbol.startsWith("IT") or quoteAsset.tokenSymbol.startsWith("IT"))
+            if ((baseAsset.tokenSymbol.startsWith(IT.tokenSymbol) or quoteAsset.tokenSymbol.startsWith(IT.tokenSymbol))
                 and maturityDate.isNotBlank()
             ) select(baseMaturityDate, maturityDate)
             click(dateFrom)
@@ -427,8 +513,14 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     }
 
     @Step("Overview. Find offer with amount {amount}")
-    fun isOfferExist(amount: BigDecimal, table: AtmTable<RFQOutgoingItem>): Boolean {
-        table.find { it.baseAmount == amount } ?: return false
+    fun isOfferExistOutgoing(amount: BigDecimal): Boolean {
+        outgoingOffers.find { it.baseAmount == amount } ?: return false
+        return true
+    }
+
+    @Step("Overview. Find offer with amount {amount}")
+    fun isOfferExistIncoming(amount: BigDecimal): Boolean {
+        incomingOffers.find { it.baseAmount == amount } ?: return false
         return true
     }
 
@@ -439,5 +531,24 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
         }.to<Button>("Card '$message'")
         assert { elementPresented(textMessage) }
         assertThat("Order", textMessage.text, Matchers.`is`(message))
+    }
+
+    @Step("Fill field Select amount")
+    fun setSumSelectAmountField(sum: String) {
+        e {
+            click(createRequest)
+            sendKeys(amountToSend, sum)
+        }
+    }
+
+    @Step("check counterparty value")
+    fun checkCounterparty(counterparty: String) {
+
+         val counterpartyItem = wait {
+            untilPresented<WebElement>(By.xpath(".//span[contains(text(), 'Counterparty')]/ancestor::atm-property-value//atm-counterparty//atm-span[contains(text(),'${counterparty}')]"))
+        }.to<Button>("Counterparty '$counterparty'")
+
+        assert { elementPresented(counterpartyItem) }
+
     }
 }

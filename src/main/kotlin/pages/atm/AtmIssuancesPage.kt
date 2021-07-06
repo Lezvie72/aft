@@ -47,7 +47,7 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     }
 
     @Name("Current queue")
-    @FindBy(xpath = "//atm-dist-deal//div[contains(text(),'Current queue')]/ancestor::div[2]//button[1]")
+    @FindBy(xpath = ".//atm-dist-deal//div[contains(text(),'Current queue')]/ancestor::div[2]//button[1]")
     lateinit var requestCurrentQueue: Button
 
     @Name("Current queue redemption")
@@ -55,11 +55,11 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     lateinit var redemptionCurrentQueue: Button
 
     @Name("Volume ( 24h ) for Redemption")
-    @FindBy(xpath = "//atm-redemption-deal//div[contains(text(),'Volume ( 24h )')]/ancestor::div[2]//button[1]")
+    @FindBy(xpath = ".//atm-redemption-deal//div[contains(text(),'Volume ( 24h )')]/ancestor::div[2]//button[1]")
     lateinit var volumeStatisticsButtonForRedemption: Button
 
     @Name("Volume ( 24h ) for Receive")
-    @FindBy(xpath = "//atm-dist-deal//div[contains(text(),'Volume ( 24h )')]/ancestor::div[2]//button[1]")
+    @FindBy(xpath = ".//atm-dist-deal//div[contains(text(),'Volume ( 24h )')]/ancestor::div[2]//button[1]")
     lateinit var volumeStatisticsButtonForReceive: Button
 
     @Name("Manage volume")
@@ -99,7 +99,7 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     lateinit var redemptionCCLimits: Button
 
     @Name("Sell FT limits")
-    @FindBy(xpath = "//h3[contains(text(),'Sell')]/ancestor::div[1]//atm-min-max-field//button")
+    @FindBy(xpath = ".//h3[contains(text(),'Sell')]/ancestor::div[1]//atm-min-max-field//button")
     lateinit var sellFTLimits: Button
 
     @Name("Min limit amount redemption")
@@ -251,6 +251,10 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-token-files//span[contains(text(), 'Edit')]")
     lateinit var editAttachmentsButton: Button
 
+    @Name("Attachment description")
+    @FindBy(xpath = "//input[@formcontrolname='description']")
+    lateinit var description: TextInput
+
     @Name("Edit issuance info")
     @FindBy(xpath = "//atm-ind-detail//span[contains(text(), 'Edit')]")
     lateinit var editIssuanceInfoButton: Button
@@ -288,9 +292,9 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//a[@href='wallets/new']")
     lateinit var linkRegisterWallet: Button
 
-    @Name("Attachements list")
+    @Name("Attachments list")
     @FindBy(xpath = ".//a[contains(@class,'attachments')]")
-    lateinit var attachementsList: Button
+    lateinit var attachmentsList: Button
 
     fun <T> retry(repeatCount: Int, body: () -> T): T {
         repeat(repeatCount) {
@@ -363,7 +367,12 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     ) {
         e {
             chooseToken(coinType)
-            click(requestCurrentQueue)
+//            click(requestCurrentQueue)
+            val currentQueue = wait {
+                untilPresented<WebElement>(By.xpath(".//atm-dist-deal//div[contains(text(),'Current queue')]/ancestor::div[2]//button[1]"))
+            }.to<Button>("requestCurrentQueue")
+
+            click(currentQueue)
         }
         val myOffer = requestOffers.find {
             it.totalRequestedAmount == amount
@@ -389,7 +398,12 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     ) {
         e {
             chooseToken(coinType)
-            click(redemptionCurrentQueue)
+
+            val currentQueue = wait {
+                untilPresented<WebElement>(By.xpath(".//atm-redemption-deal//div[contains(text(),'Current queue')]/ancestor::div[2]//button[1]"))
+            }.to<Button>("requestCurrentQueue")
+
+            click(currentQueue)
         }
         val myOffer = redemptionOffers.find {
             it.requestAmount == amount
@@ -421,6 +435,7 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
         e {
             chooseToken(ETC)
             click(redemptionCurrentQueue)
+            Thread.sleep(10000)
         }
         val myOffer = redemptionOffers.find {
             it.tokenQuantityRequestToRedeem == amount
@@ -546,7 +561,12 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     ) {
         e {
             chooseToken(coinType)
-            click(volumeStatisticsButtonForRedemption)
+
+            val volumeRedemption = wait {
+                untilPresented<WebElement>(By.xpath(".//atm-redemption-deal//div[contains(text(),'Volume ( 24h )')]/ancestor::div[2]//button[1]"))
+            }.to<Button>("volumeRedemption")
+
+            click(volumeRedemption)
         }
         val order = issuanceVolumeStatistics.find {
             it.tokenQuantityRequestToRedeem == amount
@@ -565,7 +585,19 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     ) {
         e {
             chooseToken(coinType)
-            click(volumeStatisticsButtonForReceive)
+
+            val volumeReceive = wait {
+                untilPresented<WebElement>(By.xpath(".//atm-dist-deal//div[contains(text(),'Volume ( 24h )')]/ancestor::div[2]//button[1]"))
+            }.to<Button>("volumeReceive")
+
+            click(volumeReceive)
+        }
+        wait {
+            until("wait for loading page after refresh", 30) {
+                check {
+                    isElementPresented(issuanceVolumeReceiveStatistics)
+                }
+            }
         }
         val order = issuanceVolumeReceiveStatistics.find {
             it.tokenQuantityRequestToReceive == amount
@@ -630,16 +662,19 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
         user: DefaultUser,
         wallet: MainWallet
     ): Pair<BigDecimal, BigDecimal> {
+
+        chooseToken(coinType)
+        //TODO проработать более удобную и понятное
         e {
-            chooseToken(coinType)
-            //TODO проработать более удобную и понятное
             when (operationType to coinType) {
+
                 REDEMPTION to CC -> click(redemptionCCLimits)
                 REDEMPTION to IT -> click(redemptionItLimits)
                 RECEIVE to IT -> click(receiveItLimits)
                 SELL to FT -> click(sellFTLimits)
                 SELL to CC -> click(sellFTLimits)
                 SELL to VT -> click(sellFTLimits)
+
             }
         }
         val minBefore = minLimitValue.amount

@@ -6,8 +6,8 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import models.CoinType.CC
+import models.user.classes.DefaultUser
 import models.user.interfaces.SimpleWallet
-import models.user.interfaces.User
 import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -205,33 +205,33 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
         presetForMovement(user, amount, mainWallet)
 
         val mainBalance = step("AND User go to Wallet get balance") {
-            openPage<AtmWalletPage>().getBalanceFromWallet(mainWallet.name).toBigDecimal()
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, mainWallet.name).toBigDecimal()
         }
 
         val otfBalance = step("AND User go to Wallet get balance") {
-            openPage<AtmWalletPage>().getBalanceFromOTFWallet(otfWallet.name).toBigDecimal()
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, otfWallet.name).toBigDecimal()
         }
 
         with(openPage<AtmWalletPage>(driver) { submit(user) }) {
-            moveToOTFWallet(amount, user, mainWallet)
+            moveToOTFWalletNew(amount, CC, user, mainWallet)
         }
 
         val mainBalanceAfterMove = step("AND User go to Wallet get balance") {
-            openPage<AtmWalletPage>().getBalanceFromWallet(mainWallet.name).toBigDecimal()
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, mainWallet.name).toBigDecimal()
         }
 
         val otfBalanceAfterMove = step("AND User go to Wallet get balance") {
-            openPage<AtmWalletPage>().getBalanceFromOTFWallet(otfWallet.name).toBigDecimal()
+            openPage<AtmWalletPage>().getBalanceFromWalletForToken(CC, otfWallet.name).toBigDecimal()
         }
 
         assertThat(
-            mainBalance,
-            equalTo(mainBalanceAfterMove + amount.toBigDecimal())
+            mainBalanceAfterMove,
+            equalTo(mainBalance - amount.toBigDecimal())
         )
 
         assertThat(
-            otfBalance,
-            equalTo(otfBalanceAfterMove - amount.toBigDecimal())
+            otfBalanceAfterMove,
+            equalTo(otfBalance + amount.toBigDecimal())
         )
 
         // TODO: Steps from 10 to 12 are missing cause of transactions part
@@ -242,7 +242,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
     @Test
     @DisplayName("Movement from OTF to Main wallet")
     fun movementFromOTFtoMainWallet() {
-        val amount = "100"
+        val amount = "10"
 
         val user = Users.ATM_USER_MAIN_OTF_MOVE
 
@@ -251,8 +251,8 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
 
         step("Admin change fee for CC") {
             openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken(
-                "CC",
-                "CC",
+                CC,
+                CC,
                 "0",
                 "1",
                 "1"
@@ -311,7 +311,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
         // TODO: Steps from 10 to 12 are missing cause of transactions parts
     }
 
-    private fun presetForMovement(user: User, amount: String, wallet: SimpleWallet) {
+    private fun presetForMovement(user: DefaultUser, amount: String, wallet: SimpleWallet) {
         val alias = step("GIVEN User go to Wallet, get alias and add fiat to wallet") {
             openPage<AtmWalletPage>(driver) { submit(user) }
             openPage<AtmWalletPage>().getAlias()
@@ -325,7 +325,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
 
         step("WHEN User get fiat he want to trade coins") {
             with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-                buyCurrencyCoin(user, amount, wallet)
+                buyOrReceiveToken(CC, amount, user, wallet)
             }
         }
     }
@@ -468,7 +468,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
         }
 
         val balance = with(openPage<AtmWalletPage>(driver) { submit(user) }) {
-            getBalance(CC, mainWallet.name)
+            getBalanceFromWalletForToken(CC, mainWallet.name).toBigDecimal()
         }
         step("Go into СС token in MAIN wallet and check validation messages") {
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
@@ -499,7 +499,7 @@ class MovementFromMainToOTFAndFromOTFToMainWallets : BaseTest() {
                     deleteData(moveTokenQuantity)
                     sendKeys(moveTokenQuantity, (balance + BigDecimal("1")).toString())
                     assert {
-                        elementWithTextPresented(" Not enough CC to transfer ")
+                        elementWithTextPresented(" Not enough ${CC.tokenSymbol} to transfer ")
                     }
 
                     deleteData(moveTokenQuantity)

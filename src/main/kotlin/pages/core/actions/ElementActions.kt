@@ -180,6 +180,15 @@ class ElementActions<T : WebDriver>(page: BasePage, driver: T) : BaseActions<Bas
         }
     }
 
+    fun getStateCheckbox(e: CheckBox, forLocalAttributeBoxState: String): Boolean {
+        return e.getAttribute(forLocalAttributeBoxState) == "true"
+    }
+
+    fun setCheckbox(e: CheckBox, state: Boolean, forLocalAttributeBoxState: String): Boolean {
+        if (getStateCheckbox(e, forLocalAttributeBoxState) != state) click(e)
+        return getStateCheckbox(e, forLocalAttributeBoxState)
+    }
+
     @Step("Check '{text}' in '{e.name}'")
     fun checkText(e: WebElement, text: String) {
         e.getAttribute(text)

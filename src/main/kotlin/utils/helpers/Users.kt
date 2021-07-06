@@ -14,6 +14,7 @@ class Users {
             PROD -> DefaultUser("aft.uat.sdex+0_keys@gmail.com")
             SHARED -> DefaultUser("aft.uat.sdex+0_keys@gmail.com")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+0_keys@gmail.com")
         }
 
         val ATM_USER_FOR_RECOVERY = when (Environment.stand) {
@@ -23,6 +24,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+recovery1@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+recovery@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+recovery@gmail.com")
         }
 
         val ATM_USER_FOR_CHANGE_PASSWORD = when (Environment.stand) {
@@ -32,6 +34,7 @@ class Users {
             PROD -> DefaultUser("aft.uat.sdex+change_password@gmail.com")
             SHARED -> DefaultUser("aft.uat.sdex+change_password@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+change_password@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+change_password@gmail.com")
         }
 
         val ATM_USER_WITH_BLOCK_WALLET = when (Environment.stand) {
@@ -67,6 +70,14 @@ class Users {
                 mainWallet = MainWallet(),
                 oAuthSecret = ""
             )
+            UAT_TOKEN_TRUST -> UserWithMainWallet2FA(
+                "aft.uat.sdex+block_wallet@gmail.com",//todo заблокировать кошелек
+                "Y2XS4KTWRNVHPR6T",
+                MainWallet(
+                    publicKey = "6a73008a377ba4e9987a8b3399a0ba193be39a3cf3be27f781c2ed8ce1b76ba7",
+                    secretKey = "edb7ddc4cf311b1766fa818c6a6671dedbaf947eae5f11af9a4d28abe289c6f26a73008a377ba4e9987a8b3399a0ba193be39a3cf3be27f781c2ed8ce1b76ba7"
+                )
+            )
         }
 
         // Atm user: OAuth, register_wallet_autottest (registerWalletAutotest)
@@ -94,6 +105,10 @@ class Users {
                 "aft.uat.sdex+for_register_wallet_1@gmail.com",
                 "Q74MDMRIQI5Z667X"
             )
+            UAT_TOKEN_TRUST -> DefaultUserWith2FA(
+                "aft.uat.sdex+for_register_wallet@gmail.com",
+                "Q74MDMRIQI5Z667X"
+            )
         }
 
         // atm_user_for_employees
@@ -104,6 +119,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+for_employees@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_employees@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_employees@gmail.com")
         }
 
         // atm_user_for_employees_kyc1 (netrogatEmpAutotest)
@@ -114,6 +130,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+for_employees_kyc1@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_employees_kyc1@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_employees_kyc1@gmail.com")
         }
 
         // USER_FOR_BANK_ACC, autotestBankAcc
@@ -124,6 +141,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+for_bank_acc@gmail.com")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_bank_acc@gmail.com")
         }
 
         // USER_FOR_BANK_ACC_ONE,autotestBankAccOne
@@ -134,6 +152,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+for_bank_acc_one@gmail.com")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_bank_acc_one@gmail.com")
         }
 
         val ATM_USER_FOR_BANK_ACC_TWO = when (Environment.stand) {
@@ -143,6 +162,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+for_bank_acc_two@gmail.com")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+for_bank_acc_two@gmail.com")
         }
 
         // atm_user_kyc0
@@ -153,6 +173,47 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+0_aftuser@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+0_aftuser@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+0_aftuser@gmail.com")
+        }
+
+        val ATM_USER_FINANCE_MANAGER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
+        }
+
+        val ATM_USER_VIEWER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
+        }
+
+        val AML_KYC_MANAGER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+amlkycmanageruser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+amlkycmanageruser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+amlkycmanageruser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+amlkycmanageruser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+amlkycmanageruser888@gmail.com")
+        }
+
+        val PLATFORM_ADMIN_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+platformadminuser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+platformadminuser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+platformadminuser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+platformadminuser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+platformadminuser888@gmail.com")
         }
 
         // Atm user: KYC0, no 2FA, Autotest
@@ -163,17 +224,27 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+atm_ver0_2fa_none_1@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+atm_ver0_2fa_none_1@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+atm_ver0_2fa_none@gmail.com")
         }
 
         val ATM_USER_ADD_2FA_APP = when (Environment.stand) {
             DEVELOP -> DefaultUser()
-            RELEASE -> DefaultUser("aft.uat.sdex+atm_add_2fa@gmail.com")
+            RELEASE -> DefaultUser("aft.uat.sdex+atm_add_2fa1@gmail.com")
             PREPROD -> DefaultUser("aft.uat.sdex+atm_add_2fa2@gmail.com")
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+atm_add_2fa@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+atm_add_2fa@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+atm_add_2fa@gmail.com")
         }
-
+        val ATM_USER_FINANCIAL_MANAGER = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+atm_financial_manager@gmail.com")
+            PREPROD -> DefaultUser("")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("")
+            TOKEN_TRUST -> DefaultUser("")
+            UAT_TOKEN_TRUST -> DefaultUser("")
+        }
         val ATM_USER_2FA_OAUTH = when (Environment.stand) {
             DEVELOP -> DefaultUserWith2FA(oAuthSecret = "")
             RELEASE -> DefaultUserWith2FA(
@@ -192,6 +263,10 @@ class Users {
             TOKEN_TRUST -> DefaultUserWith2FA(
                 "aft.uat.sdex+atm_ver1@gmail.com",
                 oAuthSecret = "B5LHZPYVWDNDDC37"
+            )
+            UAT_TOKEN_TRUST -> DefaultUserWith2FA(
+                "aft.uat.sdex+atm_ver1@gmail.com",
+                oAuthSecret = "NUOFK6P2Y66DHDOO"
             )
         }
 
@@ -215,6 +290,10 @@ class Users {
                 "aft.uat.sdex+atm_oauth_nowallets_1@gmail.com",
                 "PQLGTKVSC7QMWZ5V"
             )
+            UAT_TOKEN_TRUST -> DefaultUserWith2FA(
+                "aft.uat.sdex+atm_oauth_nowallets@gmail.com",
+                "OLJGRL37DFJHZAXD"
+            )
         }
 
         // Atm user: OAauth, KYC, reserved for 2FA Block check
@@ -234,6 +313,10 @@ class Users {
                 oAuthSecret = "7HBANXI3DESUFNJ6"
             )
             TOKEN_TRUST -> DefaultUserWith2FA(
+                "aft.uat.sdex+atm_ver1_blocked@gmail.com",
+                oAuthSecret = "VHCZJORLXN3FFANS"
+            )
+            UAT_TOKEN_TRUST -> DefaultUserWith2FA(
                 "aft.uat.sdex+atm_ver1_blocked@gmail.com",
                 oAuthSecret = "VHCZJORLXN3FFANS"
             )
@@ -287,6 +370,15 @@ class Users {
                     name = "Main 3",
                     secretKey = "fbd4672aecf2f1097e590475658926270714b1f3de10353a0876a914e5bdac0f93a346c5c60d357da7b2b11c6f27b1b9e658cd86901cef88960ae14f59011d67",
                     publicKey = "93a346c5c60d357da7b2b11c6f27b1b9e658cd86901cef88960ae14f59011d67"
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWallet2FA(
+                "aft.uat.sdex+atm_oauth_main_1@gmail.com",
+                "AEX4RWAFTHZBRP7N",
+                MainWallet(
+                    name = "Main 1",
+                    secretKey = "0569b838b4c346cbd58ed06ab8595dac53a1f4ff2a2c1144f4a9222322ea574ee8573eb0eacc8f511bbdd86c8e902ea8af8fd532318adf5b1205e14626e50bdd",
+                    publicKey = "e8573eb0eacc8f511bbdd86c8e902ea8af8fd532318adf5b1205e14626e50bdd"
                 )
             )
         }
@@ -364,6 +456,19 @@ class Users {
                     secretKey = "58a7885bc8e89d8d057641c6d929999a5b6d3f8abcd0b19474ed3f744d340d701b2d1d57717b7838c30078cf24bcb2e2a310abd3bce9a57beb890e4d6bcd5d82"
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_1@gmail.com",
+                "YFZXGVG4YWDQIAHY",
+                otfWallet = OtfWallet(
+                    publicKey = "6c9409244aed6291df3d58de280a2cd38e43df7f2efc3d41a1e6cf279e3a544c",
+                    secretKey = "6d15de561c8809d182c09be61fc73a435b5d5512758e748970195f5f9cb208646c9409244aed6291df3d58de280a2cd38e43df7f2efc3d41a1e6cf279e3a544c"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "1b2d1d57717b7838c30078cf24bcb2e2a310abd3bce9a57beb890e4d6bcd5d82",
+                    secretKey = "58a7885bc8e89d8d057641c6d929999a5b6d3f8abcd0b19474ed3f744d340d701b2d1d57717b7838c30078cf24bcb2e2a310abd3bce9a57beb890e4d6bcd5d82"
+                )
+            )
         }
 
         // Atm user: WITHOUT OAuth and OTF, OTFWITHOUTOAUTH_AUTOTEST
@@ -422,6 +527,18 @@ class Users {
                 )
             )
             TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+atm_otf_withoutoauth@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "119385401500fc1a9c665f4436ce68110078b97475c9162b633a5f7008be4591",
+                    secretKey = "d4c734bae1f65bc6d1a850db63db8cf1376c1d77c7f114862fded0fd76b8dc45119385401500fc1a9c665f4436ce68110078b97475c9162b633a5f7008be4591"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "2bf957beb0e1eea4452d6078d9ea78112a2b0981ce92ff1904ff98a98317659b",
+                    secretKey = "f462d044ca247df4fc1c3071e313c58de1cf81d63df7cd24e333c4731a75fda42bf957beb0e1eea4452d6078d9ea78112a2b0981ce92ff1904ff98a98317659b"
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
                 "aft.uat.sdex+atm_otf_withoutoauth@gmail.com",
                 otfWallet = OtfWallet(
                     publicKey = "119385401500fc1a9c665f4436ce68110078b97475c9162b633a5f7008be4591",
@@ -510,6 +627,19 @@ class Users {
                     secretKey = "f33aafc21c1a1d13bddbe8d8e8635f3d7c84b031daeab61c72a4213b79f56d293db27831be766e3aa43eac0bc1c04ae36c7d00a44c2b841d88c8a7d5adcc8281"
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_for_otf@gmail.com",
+                "EWBE463ETCIDMGMS",
+                otfWallet = OtfWallet(
+                    publicKey = "9a822b3a8fa313ce4bb9fdd8aaad37358679be72e877eb451d7dcb1b5a54b665",
+                    secretKey = "928e2e7cccc022d21be2eec9c8fc1f5127cac1f0130a8e4bf9346fc7d8a1a6509a822b3a8fa313ce4bb9fdd8aaad37358679be72e877eb451d7dcb1b5a54b665"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "c242ea9cc01e123778fc320310c6ac14b2639f342c19dd12558fb09cfd3df374",
+                    secretKey = "ba7ecf63dc2258ab8cb8d40ffb177b1702303240239e2b2ff837b555aa614941c242ea9cc01e123778fc320310c6ac14b2639f342c19dd12558fb09cfd3df374"
+                )
+            )
         }
 
         val ATM_USER_2FA_MANUAL_SIG_OTF2_WALLET = when (Environment.stand) {
@@ -579,6 +709,22 @@ class Users {
                     ),
                     MainWallet(
                         name = "Main 4",
+                        publicKey = "cad44687a47ed7d74c9b1bd652305ca4b7b243669970217cf2a196cfd2b27eb3",
+                        secretKey = "7c829afa458cfcaf8fdb212fc44b9903754af35f073ed01a8765cf9b442a067dcad44687a47ed7d74c9b1bd652305ca4b7b243669970217cf2a196cfd2b27eb3"
+                    )
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+atm_otf2@gmail.com",
+                "QIXBU5JRRASTUXKB",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "788248e42cc5f5056c1e9c0a683781529ec790b3609d8783027ac9cc5827cf4b",
+                        secretKey = "80be24e014e5a3582f731a5b9e8fa070337f6b4e6032539cab1a9abf9ceecf45788248e42cc5f5056c1e9c0a683781529ec790b3609d8783027ac9cc5827cf4b"
+                    ),
+                    MainWallet(
+                        name = "Main 2",
                         publicKey = "cad44687a47ed7d74c9b1bd652305ca4b7b243669970217cf2a196cfd2b27eb3",
                         secretKey = "7c829afa458cfcaf8fdb212fc44b9903754af35f073ed01a8765cf9b442a067dcad44687a47ed7d74c9b1bd652305ca4b7b243669970217cf2a196cfd2b27eb3"
                     )
@@ -663,6 +809,22 @@ class Users {
                     )
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+atm_user_2mainwallet@gmail.com",
+                "DGPJW5JKSJVJXYE4",
+                listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "53f15e3f5d17cc2509afa30d1cdff505a705f0ce7d9e1d9940e9a898050a783a",
+                        secretKey = "010390c3da294d546bb7d8b14cc10704a5b04f4d8f1078d3e461cbb2fea4a50653f15e3f5d17cc2509afa30d1cdff505a705f0ce7d9e1d9940e9a898050a783a"
+                    ),
+                    MainWallet(
+                        name = "Main 2",
+                        publicKey = "798825780f0dcfef0bb35e5ca26d50dfdd59281abefa6174bfcec3b387d5e753",
+                        secretKey = "22259718be3fc1eb0643edd31f8471bca60eaf21eb8164c8e3bc496a39951328798825780f0dcfef0bb35e5ca26d50dfdd59281abefa6174bfcec3b387d5e753"
+                    )
+                )
+            )
         }
 
         // Main, OTF, autotest Move
@@ -706,6 +868,18 @@ class Users {
                 OtfWallet()
             )
             TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+atm_main_otf_transfer@gmail.com",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "7739cb50ee309f767a90c151d75150ab73fdb155760172cefd2775d5cfbda48a",
+                    secretKey = "08e255688e87fe108a6ab4f2dc20f7028e59e5bb3675856eefa651a62fa4b0b17739cb50ee309f767a90c151d75150ab73fdb155760172cefd2775d5cfbda48a"
+                ),
+                OtfWallet(
+                    publicKey = "18c60f468408b1bb09b50a0b1073cc7411f8ed5f41469ea8fadd874f6069dfd9",
+                    secretKey = "e106704d64da08d7a3ba5e87c22fc16e097b7514c959e0958fddb89a5114e9db18c60f468408b1bb09b50a0b1073cc7411f8ed5f41469ea8fadd874f6069dfd9"
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
                 "aft.uat.sdex+atm_main_otf_transfer@gmail.com",
                 MainWallet(
                     name = "Main 1",
@@ -777,6 +951,20 @@ class Users {
                 )
 
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_oauth_main_otf_transfer@gmail.com",
+                "KT3SM7T25RSKZFGZ",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "a35e6b0e3f83782eda7689bf8993934cab195e5c363350b7a2a213803214393b",
+                    secretKey = "37993824d38ff707a559ac7ccbafbde1c6967aa1bbaeb319c17c44b24e8b98ada35e6b0e3f83782eda7689bf8993934cab195e5c363350b7a2a213803214393b"
+                ),
+                OtfWallet(
+                    publicKey = "497ea57a9416b5c34041aed2496ef4154b078cfeacddb430212ddca646be0cbb",
+                    secretKey = "1962e76a1892f92e52eec2f2fc61533f8fad3b1ea524d1571b32b5e0b1dfd8e0497ea57a9416b5c34041aed2496ef4154b078cfeacddb430212ddca646be0cbb"
+                )
+
+            )
         }
 
         // Atm user: OAuth, Main, OTF, autotestTransfer
@@ -815,6 +1003,10 @@ class Users {
                 mainWallet = MainWallet(),
                 oAuthSecret = ""
             )
+            UAT_TOKEN_TRUST -> UserWithMainWallet2FA(
+                mainWallet = MainWallet(),
+                oAuthSecret = ""
+            )
         }
 
         // Atm user: OAuth, Main, OTF, autotestTransfer
@@ -848,6 +1040,10 @@ class Users {
                 otfWallet = OtfWallet()
             )
             TOKEN_TRUST -> UserWithOtfWallet2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet()
+            )
+            UAT_TOKEN_TRUST -> UserWithOtfWallet2FA(
                 oAuthSecret = "",
                 otfWallet = OtfWallet()
             )
@@ -896,13 +1092,26 @@ class Users {
             TOKEN_TRUST -> UserWithMainWalletAndOtf(
                 "aft.uat.sdex+atm_main_otf_transfer@gmail.com",
                 MainWallet(
-                    name = "Main 1",
-                    publicKey = "7739cb50ee309f767a90c151d75150ab73fdb155760172cefd2775d5cfbda48a",
-                    secretKey = "08e255688e87fe108a6ab4f2dc20f7028e59e5bb3675856eefa651a62fa4b0b17739cb50ee309f767a90c151d75150ab73fdb155760172cefd2775d5cfbda48a"
+                    name = "",
+                    publicKey = "",
+                    secretKey = ""
                 ),
                 OtfWallet(
-                    publicKey = "18c60f468408b1bb09b50a0b1073cc7411f8ed5f41469ea8fadd874f6069dfd9",
-                    secretKey = "e106704d64da08d7a3ba5e87c22fc16e097b7514c959e0958fddb89a5114e9db18c60f468408b1bb09b50a0b1073cc7411f8ed5f41469ea8fadd874f6069dfd9"
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+atm_main_for_it_one@gmail.com",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "47d8d24e9e486b5d297191ac47efb5b03a5c1794327107d9456c8c0e81ad4fce",
+                    secretKey = "e1084bda3d862d58e2e8e9391d91a7a8940705ee1bfd51fcce6940d5bd1fb9ba47d8d24e9e486b5d297191ac47efb5b03a5c1794327107d9456c8c0e81ad4fce"
+                ),
+                OtfWallet(
+                    name = "",
+                    publicKey = "",
+                    secretKey = ""
                 )
             )
         }
@@ -959,6 +1168,19 @@ class Users {
                     secretKey = ""
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+atm_main_for_it_second@gmail.com",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "5d2ada3c1966ad35d446c3030f2e526285d9ca2a662cd76a0be8bb0de73e3209",
+                    secretKey = "5dd3a9ac98d4166f565a493dc5b03e2e13051fb028ebe19468fad07485cecf2d5d2ada3c1966ad35d446c3030f2e526285d9ca2a662cd76a0be8bb0de73e3209"
+                ),
+                OtfWallet(
+                    name = "OTF 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
         }
 
         val ATM_USER_MAIN_FOR_IT_THIRD = when (Environment.stand) {
@@ -1009,6 +1231,19 @@ class Users {
                     secretKey = ""
                 ),
                 OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+atm_main_for_it_third@gmail.com",
+                MainWallet(
+                    name = "Main 1",
+                    publicKey = "b36b1fab7ed764131717935bf4ce61e7fd9d3861b515d81bed05523a9a5bc088",
+                    secretKey = "2cdc97630f5b74a03b48cb7fc003ee8867c1e617a20d5e9391aa8ce491ee418bb36b1fab7ed764131717935bf4ce61e7fd9d3861b515d81bed05523a9a5bc088"
+                ),
+                OtfWallet(
+                    name = "",
                     publicKey = "",
                     secretKey = ""
                 )
@@ -1085,6 +1320,26 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_token1@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "IT",
+                        publicKey = "",
+                        secretKey = "c16b993897700d71b4848e35befc920b2c54a5b09b446d0a4e777ea846bea0bec94dcf2cdf95f0d607fbe81c906adbc658c3dde6e31bea541f2843dc422f29d8"
+                    ),
+                    MainWallet(
+                        name = "AT99USD",
+                        publicKey = "",
+                        secretKey = "9caa6d4264fb13ef53cec3075269482c57287b19e12c26d595eb7bf717bcfe7b96e73f5bc9f24121dd0c1dcccbc68af83431bc539c5a262d60feea3322e1028f"
+                    ), MainWallet(
+                        name = "AT00VAL",
+                        publicKey = "",
+                        secretKey = "39c5d8cce733c89a29ba8a686d548cdab1483ec970e1cfe274914e774b8d0378eb07c4181f526743e64b6dc77a370cdb44ed505ffecedf7e0b08326138c9eba3"
+                    )
+                )
+            )
         }
 
         //for work with IT token
@@ -1137,6 +1392,17 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_tokens_one@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "c16b993897700d71b4848e35befc920b2c54a5b09b446d0a4e777ea846bea0bec94dcf2cdf95f0d607fbe81c906adbc658c3dde6e31bea541f2843dc422f29d8"
+                    )
+                )
+            )
         }
 
         //for work with IT token
@@ -1174,7 +1440,7 @@ class Users {
                 listOf()
             )
             SHARED -> UserWithMultipleMainWallet2FA(
-                "",
+                "aft.uat.sdex+for_accept_token_second@gmail.com",
                 "",
                 listOf(
                     MainWallet(
@@ -1188,6 +1454,17 @@ class Users {
                 "",
                 "",
                 listOf()
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_token_second@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "c16b993897700d71b4848e35befc920b2c54a5b09b446d0a4e777ea846bea0bec94dcf2cdf95f0d607fbe81c906adbc658c3dde6e31bea541f2843dc422f29d8"
+                    )
+                )
             )
         }
 
@@ -1241,6 +1518,17 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_token_third@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "c16b993897700d71b4848e35befc920b2c54a5b09b446d0a4e777ea846bea0bec94dcf2cdf95f0d607fbe81c906adbc658c3dde6e31bea541f2843dc422f29d8"
+                    )
+                )
+            )
         }
 
         //for work with FT token
@@ -1289,6 +1577,11 @@ class Users {
                 )
             )
             TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "",
+                "",
+                listOf()
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
                 "",
                 "",
                 listOf()
@@ -1357,6 +1650,22 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_etc_tokens1@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Issuer Wallet",
+                        publicKey = "068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9",
+                        secretKey = "80cff1fcd4631be2ddd415dec6471a70f52d63de75065c72f617e901b36b50ea068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9"
+                    ),
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Redeemer Wallet",
+                        publicKey = "7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7",
+                        secretKey = "ef2d0c55559bfb2b8598b070cc7fabd7a28eede65e7ba87870442b8d524c7ebc7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7"
+                    )
+                )
+            )
         }
 
         //for work with ETC token
@@ -1422,6 +1731,22 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_etc_tokens_three@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Issuer Wallet",
+                        publicKey = "068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9",
+                        secretKey = "80cff1fcd4631be2ddd415dec6471a70f52d63de75065c72f617e901b36b50ea068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9"
+                    ),
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Redeemer Wallet",
+                        publicKey = "7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7",
+                        secretKey = "ef2d0c55559bfb2b8598b070cc7fabd7a28eede65e7ba87870442b8d524c7ebc7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7"
+                    )
+                )
+            )
         }
 
         //for work with ETC token
@@ -1470,7 +1795,7 @@ class Users {
             )
             //TODO создать
             SHARED -> UserWithMultipleMainWallet2FA(
-                "aft.uat.sdex+for_accept_etc_tokens@gmail.com",
+                "aft.uat.sdex+for_accept_etc_tokens1@gmail.com",
                 "",
                 listOf(
                     MainWallet(
@@ -1485,6 +1810,22 @@ class Users {
                 "",
                 "",
                 listOf()
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_etc_tokens_two@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Issuer Wallet",
+                        publicKey = "068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9",
+                        secretKey = "80cff1fcd4631be2ddd415dec6471a70f52d63de75065c72f617e901b36b50ea068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9"
+                    ),
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Redeemer Wallet",
+                        publicKey = "7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7",
+                        secretKey = "ef2d0c55559bfb2b8598b070cc7fabd7a28eede65e7ba87870442b8d524c7ebc7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7"
+                    )
+                )
             )
         }
 
@@ -1549,6 +1890,22 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_etc_tokens_2fa@gmail.com",
+                "22UFHLVIRR4FLU3V",
+                listOf(
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Issuer Wallet",
+                        publicKey = "068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9",
+                        secretKey = "80cff1fcd4631be2ddd415dec6471a70f52d63de75065c72f617e901b36b50ea068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9"
+                    ),
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Redeemer Wallet",
+                        publicKey = "7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7",
+                        secretKey = "ef2d0c55559bfb2b8598b070cc7fabd7a28eede65e7ba87870442b8d524c7ebc7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7"
+                    )
+                )
+            )
         }
 
         //for work with ETC token не контроллер будь внимательнее
@@ -1606,6 +1963,22 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_accept_etc_tokens_not_controller@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Issuer Wallet",
+                        publicKey = "068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9",
+                        secretKey = "80cff1fcd4631be2ddd415dec6471a70f52d63de75065c72f617e901b36b50ea068d2f5c4269d68585b0dd6d25543fb5ed3a28cb31276bf0a7a51feb8e0236f9"
+                    ),
+                    MainWallet(
+                        name = "ETC - GF46IAF055E - Redeemer Wallet",
+                        publicKey = "7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7",
+                        secretKey = "ef2d0c55559bfb2b8598b070cc7fabd7a28eede65e7ba87870442b8d524c7ebc7da4817e03f8903b5dd67506fba44627630fc1b63da4ea22f56b84d1406695b7"
+                    )
+                )
+            )
         }
 
         //ETC company исключительно для работы с ЕТС токенами не является ISSUER
@@ -1660,6 +2033,18 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+etc_tokens@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "b964efabca34b3a57770851d8fbb2450b5c04182d63a1d052940d1cdee5a9591",
+                        secretKey = "9c4dd244ad3106ab004e47bf2dd92060e3491103b76f6fbccd8120d3d4764dc2b964efabca34b3a57770851d8fbb2450b5c04182d63a1d052940d1cdee5a9591",
+                        walletId = "zU2eG6acTyZ5UfMLP6HrrAWLakgNYTHyQdQkV9osG4s5Y5tDe"
+                    )
+                )
+            )
         }
 
         //ETC company исключительно для работы с ЕТС токенами не является ISSUER
@@ -1708,6 +2093,18 @@ class Users {
                 "",
                 "",
                 listOf()
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+etc_tokens_one@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "14bef5a75fec908c2537280b4d66f1ef8a5b98885a33b7539c22c1e49b41f28b",
+                        secretKey = "00f0bb7709d57515fe3a6eb34570df409e112d4a83a01d4941000994f0b810dc14bef5a75fec908c2537280b4d66f1ef8a5b98885a33b7539c22c1e49b41f28b",
+                        walletId = "GBy6gDTRPuKV24GMR19R5UcUiWGSeRWoVPaykz8SfrQv6uXmK"
+                    )
+                )
             )
         }
 
@@ -1758,6 +2155,18 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+etc_tokens_second@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "88caae2cfffb86c6a9a258e770b497b03691bca983eb29ce4c3b337a5f902c1e",
+                        secretKey = "e81de9b8803f790b1cb3d12d39b21411a0c1345d2f3b985b09e1ce8a2bf6a40f88caae2cfffb86c6a9a258e770b497b03691bca983eb29ce4c3b337a5f902c1e",
+                        walletId = "hLB7oTTiohm5FCk65bTBALDe7Qbx4s4TvNNiiyHksCrkn9KuH"
+                    )
+                )
+            )
         }
 
         //ETC company исключительно для работы с ЕТС токенами не является ISSUER
@@ -1807,6 +2216,18 @@ class Users {
                 "",
                 listOf()
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+etc_tokens_third@gmail.com",
+                "",
+                listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "a0cc692a59834e5c65573c9bf3122697dde7c553c879401ed6a871b758034afc",
+                        secretKey = "1a5c4a414597763990604288bfdfb6f58c4ee3376cc98872ee84bfe23446e95fa0cc692a59834e5c65573c9bf3122697dde7c553c879401ed6a871b758034afc",
+                        walletId = "2LvSXNbnae37FwysCcoj5tTJ5JiKFodnohXHu4opdbxQrjwLDa"
+                    )
+                )
+            )
         }
 
         // Atm user, inviteToCompany, dumbCompany
@@ -1817,16 +2238,18 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+invite_to_company@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+invite_to_company@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+invite_to_company@gmail.com")
         }
 
         // Atm user, inviteToCompany
-        val ATM_USER_DUMB_INVATED_TO_COMPANY = when (Environment.stand) {
+        val ATM_USER_DUMB_INVITED_TO_COMPANY = when (Environment.stand) {
             DEVELOP -> DefaultUser()
             RELEASE -> DefaultUser("aft.uat.sdex+dumb_invited_to_company@gmail.com")
             PREPROD -> DefaultUser("aft.uat.sdex+dumb_invited_to_company@gmail.com")
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+dumb_invited_to_company@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+dumb_invited_to_company@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+dumb_invited_to_company@gmail.com")
         }
 
         // OTF_OPERATION
@@ -1904,6 +2327,19 @@ class Users {
                     secretKey = "8e95bd57dfd5c0c67f192a1b82aeaed47f090bf50aa5a900d89cca604a20e0397167a0b3ca3c4390d6c9e376a212062cc5d4ade52200aba1fa814373b2364065"
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation@gmail.com",
+                "H7RA4CVTHQU26GN6",
+                otfWallet = OtfWallet(
+                    publicKey = "0cacbc3f592444d770581d301fc6351c84c321ba287e40b2f342f56438963ff4",
+                    secretKey = "74637e912c08909144fac30b55a1234a7127eca7947946bbdd0025a20462be0c0cacbc3f592444d770581d301fc6351c84c321ba287e40b2f342f56438963ff4"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "2d5245eaaea0f6d1347b9ecf02bff5738f1c939a1c2eb12883e52eb40b150c18",
+                    secretKey = "b9d254aa37e12a0a871a6f7fab2b8447084cdaa6e88d7237bca55924617acd062d5245eaaea0f6d1347b9ecf02bff5738f1c939a1c2eb12883e52eb40b150c18"
+                )
+            )
         }
 
         // OTF_OPERATION_WITHOUT2FA
@@ -1973,6 +2409,18 @@ class Users {
                     name = "Main 3",
                     publicKey = "bebaea23e9273cbbdb583d0e5a8f758d9925297bafbb2d4654cf5f2e2dd8091f",
                     secretKey = "a1d88036941248dbd8d04ea7fb7ce18f08b938e77f2b709cfb60510918061860bebaea23e9273cbbdb583d0e5a8f758d9925297bafbb2d4654cf5f2e2dd8091f"
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+atm_otf_operation_without_oauth@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "b060ad15db762967773e53df7d0bf1f5ee2249ac5b582049d7acde66bb7146f8",
+                    secretKey = "41a254967d21209d2a0652856a2055af5834492536e265408f2fc034d73e2495b060ad15db762967773e53df7d0bf1f5ee2249ac5b582049d7acde66bb7146f8"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "66b0402c4016f7d9fe2758274bd145ec002c2ae60a2815c39416647d68cfe7fb",
+                    secretKey = "bdc7d719309d03b506c77a5c8b16f9088136adbf57102c05e4f47791e566340f66b0402c4016f7d9fe2758274bd145ec002c2ae60a2815c39416647d68cfe7fb"
                 )
             )
         }
@@ -2052,6 +2500,19 @@ class Users {
                     secretKey = "e9d6593a65a839672266146557cb4247c92697747e43cca20d054fc256e37e4d2ddb52c8149e6478387084835a8e89f3074b307ceadec2a999e46a31a343ee90"
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_second@gmail.com",
+                "SOM5J4HKDNNKID6S",
+                otfWallet = OtfWallet(
+                    publicKey = "67cb463f359974527511ba701887a56a41149182a86c92608fa892d71584c80b",
+                    secretKey = "953c36e6c78b031c6619d23e01247029998f15a4a12b044f2e1ad2fe52c0a74667cb463f359974527511ba701887a56a41149182a86c92608fa892d71584c80b"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "40a394de79bb31be4fba424316eae667fd8b38d175d72f0b0248e65427b1235e",
+                    secretKey = "a80cbd0e3c898b56e0eb13adf80ffd14029af49a009a706146bda4e7551d981840a394de79bb31be4fba424316eae667fd8b38d175d72f0b0248e65427b1235e"
+                )
+            )
         }
 
         val ATM_USER_2FA_OTF_OPERATION_THIRD = when (Environment.stand) {
@@ -2126,6 +2587,19 @@ class Users {
                     name = "Main 1",
                     publicKey = "",
                     secretKey = ""
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_third@gmail.com",
+                "KUEAGBY5C4FBQ6X3",
+                otfWallet = OtfWallet(
+                    publicKey = "465d78eb38788278456738bf9848d34b9cf63ceb7f596544c4a576e56e30c4a9",
+                    secretKey = "afe2d80e8d039497d87c04418e6b7f519bad2593dd8299bed329e3094a5de1d0465d78eb38788278456738bf9848d34b9cf63ceb7f596544c4a576e56e30c4a9"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "e1b10344fe6bf327311422959622d866ece62e307fc7d65a697b60727bce4cc8",
+                    secretKey = "9f29d1c370b975103b585ccfbf3fb98e64d4a2f39d9b69d0f01ff98ca869a658e1b10344fe6bf327311422959622d866ece62e307fc7d65a697b60727bce4cc8"
                 )
             )
         }
@@ -2205,6 +2679,19 @@ class Users {
                     secretKey = ""
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_forth@gmail.com",
+                "636CNLB6QK65Q3D4",
+                otfWallet = OtfWallet(
+                    publicKey = "e93bc9f14c5fcdbcff91284ff57470e01bfdfc6b8fe8563ece73e28264acb0dd",
+                    secretKey = "f7a41d7f610f603c4e4b40a4ad05403aa58f0b7e4bf390010a5856c53749b4a4e93bc9f14c5fcdbcff91284ff57470e01bfdfc6b8fe8563ece73e28264acb0dd"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "bc8661684c13bdb37def39ca93cec9a532233cd1f2555293f9319e623a535b95",
+                    secretKey = "adafc326bbf6859056a7c9e569b9225ef99078f6d1c6c18efd3810048d70bc04bc8661684c13bdb37def39ca93cec9a532233cd1f2555293f9319e623a535b95"
+                )
+            )
         }
 
         val ATM_USER_2FA_OTF_OPERATION_FIFTH = when (Environment.stand) {
@@ -2279,6 +2766,19 @@ class Users {
                     name = "Main 1",
                     publicKey = "",
                     secretKey = ""
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_fifth@gmail.com",
+                "HR2XM5YCEABO4GT4",
+                otfWallet = OtfWallet(
+                    publicKey = "b120e1630988fbfd69616440cf10f864903b971a87537cdd0c27c036ed1b3954",
+                    secretKey = "0ae2f5046df27c68a4db680331bddcc71c868d471d034ebff34e3d430e474d67b120e1630988fbfd69616440cf10f864903b971a87537cdd0c27c036ed1b3954"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "e2deee7605f5ac447bf8e872ba3a2f0bf128add814eb8772683ef54036976970",
+                    secretKey = "f781ff5925bbcd997d6c5f7a0acc23741d23451987e00d89f0383c27f9775b37e2deee7605f5ac447bf8e872ba3a2f0bf128add814eb8772683ef54036976970"
                 )
             )
         }
@@ -2358,6 +2858,19 @@ class Users {
                     secretKey = ""
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_sixth@gmail.com",
+                "Q6WBXZQG4RB6XUU4",
+                otfWallet = OtfWallet(
+                    publicKey = "940dcfb29cee02e7aa085dbf6d141dac415b011ff619f5dce3ecd3f8e1b3accb",
+                    secretKey = "7d361fb85037b303f9929ab88bda6ba414eb6177522be9b6b39a8d6662eb8ed1940dcfb29cee02e7aa085dbf6d141dac415b011ff619f5dce3ecd3f8e1b3accb"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "65375abfe2285d894ab4fc42bc8cf4af3c55fdbe53df0d4c9c2e1ea98c9ee645",
+                    secretKey = "0d902c7ec96935490722bb4b8019de37e3d3c65f9e0e6b2953988d09b269dd4e65375abfe2285d894ab4fc42bc8cf4af3c55fdbe53df0d4c9c2e1ea98c9ee645"
+                )
+            )
         }
 
         val ATM_USER_2FA_OTF_OPERATION_SEVENTH = when (Environment.stand) {
@@ -2434,6 +2947,19 @@ class Users {
                     secretKey = ""
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_seventh@gmail.com",
+                "CPOUQEQUENVW54P7",
+                otfWallet = OtfWallet(
+                    publicKey = "f2a22c4788858c20a2cb196adeba044d6624d585ac0370ca9a7733bc8b747415",
+                    secretKey = "5f76c84253ac6caf740c2fad7482994c240d40bd92e5617e6997a894ebb626cff2a22c4788858c20a2cb196adeba044d6624d585ac0370ca9a7733bc8b747415"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "bab017771a2d275d3c70a39a920f17ead3cbea2b014e93a3b36de9f19b9710d5",
+                    secretKey = "9d1fb9b893fa1ffd69cae16df4cbe9de8ef3fb35e8ab9f2f97471251350a61ebbab017771a2d275d3c70a39a920f17ead3cbea2b014e93a3b36de9f19b9710d5"
+                )
+            )
         }
 
         val ATM_USER_2FA_OTF_OPERATION_EIGHTH = when (Environment.stand) {
@@ -2499,16 +3025,29 @@ class Users {
                 )
             )
             TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
-                "",
-                "",
+                "aft.uat.sdex+atm_otf_operation_eighth@gmail.com",
+                "2MIPQYUVRYOACHCG",
                 otfWallet = OtfWallet(
-                    publicKey = "",
-                    secretKey = ""
+                    publicKey = "0691fcd271b4a3b2be9b064cdb2d756f5cdc4157a7724f892084d80666d7d327",
+                    secretKey = "b437aedb72440869bcc80ed1031a8ba489a470c64b2910d0414c7fbc3a9476220691fcd271b4a3b2be9b064cdb2d756f5cdc4157a7724f892084d80666d7d327"
                 ),
                 mainWallet = MainWallet(
                     name = "Main 1",
-                    publicKey = "",
-                    secretKey = ""
+                    publicKey = "1ab41e7a998ffeb071009b433091050f089cd14797fdcf7365abe9720e401136",
+                    secretKey = "f532809b83d8867e7fe23380f086927c444620352e2e8370e2ec0db7937d3d171ab41e7a998ffeb071009b433091050f089cd14797fdcf7365abe9720e401136"
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+atm_otf_operation_eighth@gmail.com",
+                "26U3FSQPLGMJ2MT4",
+                otfWallet = OtfWallet(
+                    publicKey = "0691fcd271b4a3b2be9b064cdb2d756f5cdc4157a7724f892084d80666d7d327",
+                    secretKey = "b437aedb72440869bcc80ed1031a8ba489a470c64b2910d0414c7fbc3a9476220691fcd271b4a3b2be9b064cdb2d756f5cdc4157a7724f892084d80666d7d327"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "1ab41e7a998ffeb071009b433091050f089cd14797fdcf7365abe9720e401136",
+                    secretKey = "f532809b83d8867e7fe23380f086927c444620352e2e8370e2ec0db7937d3d171ab41e7a998ffeb071009b433091050f089cd14797fdcf7365abe9720e401136"
                 )
             )
         }
@@ -2563,6 +3102,18 @@ class Users {
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+universe_02@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "514cdc8e17ffbf30eb0edadf6883c4bbf3fdccf3c79794fb4eb459ee902a9c8e",
+                    secretKey = "25fbe1f666454a0fb23183c238f9582ab11967832164ac2df4e0ad135584783f514cdc8e17ffbf30eb0edadf6883c4bbf3fdccf3c79794fb4eb459ee902a9c8e"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "ca5a0218afbf724dce5471f42d2ded521916ea24ff96c40ed725a9b9e6a022de",
+                    secretKey = "d7a68dd24a783deb5e3fe313ed6db8b862333c86695cde035fb25a3b5debcd2aca5a0218afbf724dce5471f42d2ded521916ea24ff96c40ed725a9b9e6a022de"
+                )
+            )
         }
 
         // Atm user: WITHOUT OAuth WITH WALLET. Company: TestCompany01. Industrial
@@ -2606,6 +3157,18 @@ class Users {
             TOKEN_TRUST -> UserWithMainWalletAndOtf(
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+universe_03@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "514cdc8e17ffbf30eb0edadf6883c4bbf3fdccf3c79794fb4eb459ee902a9c8e",
+                    secretKey = "25fbe1f666454a0fb23183c238f9582ab11967832164ac2df4e0ad135584783f514cdc8e17ffbf30eb0edadf6883c4bbf3fdccf3c79794fb4eb459ee902a9c8e"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "ca5a0218afbf724dce5471f42d2ded521916ea24ff96c40ed725a9b9e6a022de",
+                    secretKey = "d7a68dd24a783deb5e3fe313ed6db8b862333c86695cde035fb25a3b5debcd2aca5a0218afbf724dce5471f42d2ded521916ea24ff96c40ed725a9b9e6a022de"
+                )
             )
         }
 
@@ -2651,6 +3214,18 @@ class Users {
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+universe_04@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "6e7fe427c11ba4a540d90a35d415507423661b927ff5eaba240ba1e98c92c949",
+                    secretKey = "6794e4df41e820003f84bbb599ad19031e9d0a00c331a4e89c4ac680343fa8bd6e7fe427c11ba4a540d90a35d415507423661b927ff5eaba240ba1e98c92c949"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "3b8acb5865f50a4fa84a333ba23cee025ef41f878d2ee71c7dedb697805a07de",
+                    secretKey = "be61dbf843a011e73791cced7fb87a8ccac011fab1a4c2aefbd2c59202fc504f3b8acb5865f50a4fa84a333ba23cee025ef41f878d2ee71c7dedb697805a07de"
+                )
+            )
         }
 
         // Atm user: WITHOUT OAuth WITH WALLET. Company: TestCompany03. Non Industrial
@@ -2694,6 +3269,18 @@ class Users {
             TOKEN_TRUST -> UserWithMainWalletAndOtf(
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+universe_05@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "fe7a90d718e85bef5e8f646193e02d8834521bcae8cbda84789a0bd0f12c6fe3",
+                    secretKey = "d66e06d011dfdd4e6c48268d826ab76c3132f2f7b383851868d5e18e34cd903efe7a90d718e85bef5e8f646193e02d8834521bcae8cbda84789a0bd0f12c6fe3"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "5bb6e3795f4f3cd93a46f85ab89f3f3bfb8d9ae143db15573024edd747380410",
+                    secretKey = "5d83e4ecfc90aef4fb9445fab8afd9f40d21b9f080142b762b5b46d70bde87435bb6e3795f4f3cd93a46f85ab89f3f3bfb8d9ae143db15573024edd747380410"
+                )
             )
         }
 
@@ -2755,6 +3342,85 @@ class Users {
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+mtest01@gmail.com",
+                "SF3LPT6CPEKWE3MD",
+                otfWallet = OtfWallet(
+                    publicKey = "d871211ec0d72086841ed641776a7ad6093edf5c9f43017fb98f464431098017",
+                    secretKey = "16e9d59cf0c80c41a8403cc4a45c82c56302d13f456a6dfa9a007eb037cce3add871211ec0d72086841ed641776a7ad6093edf5c9f43017fb98f464431098017"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "9423444cefb660374c70e5c776498e281dd619e00e2386fd3bb1e5d064392252",
+                    secretKey = "eebfe35b02fc0f4f9cba15cb1882d53bac9d7a4b05c5cf11e7a9884d632758419423444cefb660374c70e5c776498e281dd619e00e2386fd3bb1e5d064392252"
+                ),
+                castodian = ""
+            )
+        }
+
+        val ATM_USER_2FA_WITH_WALLET_MTEST06 = when (Environment.stand) {
+            DEVELOP -> UserWithMainWalletAndOtf2FA(
+                "",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+//            RELEASE -> UserWithMainWalletAndOtf(
+            RELEASE -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+mtest06@gmail.com",
+                "Q4KAWKBYCQT2ETEG",
+                otfWallet = OtfWallet(
+                    publicKey = "36ab7f62169f11de1d2cd9824ac41eadde3f4d23569d04fae8f50dffdffcc559",
+                    secretKey = "9a016cee06d31242f1dfad7c7e25593f5dd41aaa476e583592dd5853702638ab36ab7f62169f11de1d2cd9824ac41eadde3f4d23569d04fae8f50dffdffcc559"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "c4815bc7d92721fd31eacb059202b12fa2ea43718efd157d07fc847ec892deab",
+                    secretKey = "fb0d82090c18e64114f38563a4e754e99b6b066e24e3863a0f7cc22266b34846c4815bc7d92721fd31eacb059202b12fa2ea43718efd157d07fc847ec892deab"
+                ),
+                castodian = ""
+            )
+            PREPROD -> UserWithMainWalletAndOtf2FA(
+                "",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+            PROD -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            SHARED -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
         }
 
         val ATM_USER_2FA_WITHOUT_WALLET_MTEST02 = when (Environment.stand) {
@@ -2767,9 +3433,9 @@ class Users {
 
                 ),
                 mainWallet = MainWallet(
-                    name = "Main 1",
-                    publicKey = "",
-                    secretKey = ""
+                    name = "Main 2",
+                    publicKey = "0e913400b9464cfd6f450f2f99d785a68e1f668d99b58a6db229060020cf3a05",
+                    secretKey = "e68e51cf6e0b94391d874c40b00db6d01c2166b575f70c8461ca07717ad7f91e0e913400b9464cfd6f450f2f99d785a68e1f668d99b58a6db229060020cf3a05"
                 )
             )
 //            RELEASE -> UserWithMainWalletAndOtf(
@@ -2808,6 +3474,18 @@ class Users {
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                "aft.uat.sdex+mtest02@gmail.com",
+                otfWallet = OtfWallet(
+                    publicKey = "65847dc83139a107f54c09cd3363fcaa7e4b44f0b4e17cb081a1be31dbc29cf6",
+                    secretKey = "6e83a79f5296c9c3bb959f637a9b27ddc38d221c0938d4aa65942bff916206bf65847dc83139a107f54c09cd3363fcaa7e4b44f0b4e17cb081a1be31dbc29cf6"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "13107bff177f0651f6d9fff70063f667495c938e2914b97a096943a0e10f09be",
+                    secretKey = "24f02b7b38a421976dbff60a2bb3a322e35a9ffb1be0f59d7af3f1a3c446f34113107bff177f0651f6d9fff70063f667495c938e2914b97a096943a0e10f09be"
+                )
+            )
         }
 
 
@@ -2835,6 +3513,10 @@ class Users {
             TOKEN_TRUST -> DefaultUserWithCustomPassword(
                 "krasnikov.k@n-t.io",
                 password = "DerParol789!ABC"
+            )
+            UAT_TOKEN_TRUST -> DefaultUserWithCustomPassword(
+                "skavinsky.k@n-t.io",
+                password = "13AtomyzE37"
             )
         }
 
@@ -2897,6 +3579,20 @@ class Users {
                 oAuthSecret = "",
                 mainWallet = MainWallet(),
                 otfWallet = OtfWallet()
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                email = "aft.uat.sdex+atm_employee_admin@gmail.com",
+                oAuthSecret = "CPN5PV5SDMDBM35U",
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "d56708db5d1d71b10ccd5d8846b8628ac9fe9085e7db11a7aab4d549e21dc142",
+                    secretKey = "cee32cf125e5a92d7059bc4cae1cbd3a31a8d2dea175c319b8e766603c450411d56708db5d1d71b10ccd5d8846b8628ac9fe9085e7db11a7aab4d549e21dc142"
+                ),
+                otfWallet = OtfWallet(
+                    name = "OTF 1",
+                    publicKey = "1325167059a0839ed02818eaeccf7d661945eed470edc4f739b2d8868b528523",
+                    secretKey = "0034c2ab03cfbda4ff62bf00ab15089e0c347ed9170c0c779b35803856e494661325167059a0839ed02818eaeccf7d661945eed470edc4f739b2d8868b528523"
+                )
             )
         }
 
@@ -2963,6 +3659,17 @@ class Users {
                         name = "",
                         publicKey = "",
                         secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+validator_without_funds@gmail.com", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "5e130513e46b0a2a04d376b09b5e3b61d47dcb617cbe3d60e40ccd4472e33afc",
+                        secretKey = "47d27abcbfbb20af6317de31063fabcce09bfad08bd435b2b012206fdae70f175e130513e46b0a2a04d376b09b5e3b61d47dcb617cbe3d60e40ccd4472e33afc",
                         walletId = ""
                     )
                 )
@@ -3037,6 +3744,18 @@ class Users {
                     )
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+validator_without_2fa@gmail.com",
+                "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "cfd217173da4595435e6c77e2849ba9e5fe7a040282d34364d2cab11a00ec6ed",
+                        secretKey = "7ec606f9d6de6c2ac62ad0d06772e90c92f26f4d18b46b9ae51175a9bb7f4d28cfd217173da4595435e6c77e2849ba9e5fe7a040282d34364d2cab11a00ec6ed",
+                        walletId = "2mNSFggVZCWAoyhY4QgSptujb5u9vXzW43XoJvkJqWrQmcpGFX"
+                    )
+                )
+            )
         }
 
         //
@@ -3108,6 +3827,261 @@ class Users {
                     )
                 )
             )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+validator_2fa1@gmail.com",
+                "ZX6JRY5B3MEU7OTT",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "5f2c7a0615194a7f7579801396e7023d66a95bed7ca5144dd6a499e3d6076376",
+                        secretKey = "034ba5c34df92e968999482b40e8bbaf8daf8807b47ba67e314735cc297c9ac85f2c7a0615194a7f7579801396e7023d66a95bed7ca5144dd6a499e3d6076376",
+                        walletId = ""
+                    )
+                )
+            )
+        }
+
+        val ATM_USER_FOR_RULES_OF_TOKEN = when (Environment.stand) {
+            DEVELOP -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_rules_of_token@gmail.com", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "ccb6019d1bab307aaffb4482a3c5d995a53bfe2335329cfcb5f26c5c69c6a285",
+                        secretKey = "88f6c5520afe7791f51f90dbea8c91a3d4a52f77c91880061208b9823e28981fccb6019d1bab307aaffb4482a3c5d995a53bfe2335329cfcb5f26c5c69c6a285",
+                        walletId = ""
+                    )
+                )
+            )
+            RELEASE -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_rules_of_token@gmail.com",
+                "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "c75bfd4381d9afe7d29734b8a4a1cb283e847d9ee096eb8655a020cacf422513",
+                        secretKey = "ce7e9934808409d848b60a4ce5b1a6553dbc13b9c21c4448445c306d665043b1c75bfd4381d9afe7d29734b8a4a1cb283e847d9ee096eb8655a020cacf422513",
+                        walletId = ""
+                    )
+                )
+            )
+            PREPROD -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            PROD -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            SHARED -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+        }
+
+        val ATM_USER_FOR_RULES_OF_TOKEN_SECOND = when (Environment.stand) {
+            DEVELOP -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_rules_of_token_second@gmail.com", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "ccb6019d1bab307aaffb4482a3c5d995a53bfe2335329cfcb5f26c5c69c6a285",
+                        secretKey = "88f6c5520afe7791f51f90dbea8c91a3d4a52f77c91880061208b9823e28981fccb6019d1bab307aaffb4482a3c5d995a53bfe2335329cfcb5f26c5c69c6a285",
+                        walletId = ""
+                    )
+                )
+            )
+            RELEASE -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_rules_of_token_second@gmail.com",
+                "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "4a8da536542db20e98ba843bda4d1275566c63bd30a4ea26bf041ceb5b84e7a7",
+                        secretKey = "db04aa4f03b125d4d49049863d5ba9d08626a51af994903236b5419f1ddc56bb4a8da536542db20e98ba843bda4d1275566c63bd30a4ea26bf041ceb5b84e7a7",
+                        walletId = ""
+                    )
+                )
+            )
+            PREPROD -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            PROD -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            SHARED -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+        }
+
+        val ATM_USER_FOR_RULES_OF_TOKEN_NON_INDUSTRIAL = when (Environment.stand) {
+            DEVELOP -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_rules_of_token_not_industrial@gmail.com", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "ccb6019d1bab307aaffb4482a3c5d995a53bfe2335329cfcb5f26c5c69c6a285",
+                        secretKey = "88f6c5520afe7791f51f90dbea8c91a3d4a52f77c91880061208b9823e28981fccb6019d1bab307aaffb4482a3c5d995a53bfe2335329cfcb5f26c5c69c6a285",
+                        walletId = ""
+                    )
+                )
+            )
+            RELEASE -> UserWithMultipleMainWallet2FA(
+                "aft.uat.sdex+for_rules_of_token_not_industrial@gmail.com",
+                "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "99e39c93013f6ae74245711c92ad2ad28fa41af6e0a72e5278d4dcd8a1cfbd0f",
+                        secretKey = "7cf44473c48b94d015f23d29432b09a8e330782beb57c58ed9129207c9c8abf399e39c93013f6ae74245711c92ad2ad28fa41af6e0a72e5278d4dcd8a1cfbd0f",
+                        walletId = ""
+                    )
+                )
+            )
+            PREPROD -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "Main 1",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            PROD -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            SHARED -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
+            UAT_TOKEN_TRUST -> UserWithMultipleMainWallet2FA(
+                "", "",
+                walletList = listOf(
+                    MainWallet(
+                        name = "",
+                        publicKey = "",
+                        secretKey = "",
+                        walletId = ""
+                    )
+                )
+            )
         }
 
         val ATM_USER_NOT_VALIDATOR = when (Environment.stand) {
@@ -3117,6 +4091,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+not_validator@gmail.com")
         }
 
 
@@ -3128,6 +4103,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("aft.uat.sdex+atm_employeemanager@gmail.com")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+atm_employeemanager@gmail.com")
         }
 
         //Atm user: Employee user(Participant) with ETC company and ETC tokens
@@ -3138,6 +4114,7 @@ class Users {
             PROD -> DefaultUser()
             SHARED -> DefaultUser("")
             TOKEN_TRUST -> DefaultUser()
+            UAT_TOKEN_TRUST -> DefaultUser()
         }
 
         //Atm user: Employee user(Participant) for Industrial Tokens request
@@ -3184,11 +4161,15 @@ class Users {
                 otfWallet = OtfWallet(),
                 mainWallet = MainWallet()
             )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf(
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
         }
 
     }
 
     enum class Stand {
-        DEVELOP, RELEASE, PREPROD, PROD, SHARED, TOKEN_TRUST
+        DEVELOP, RELEASE, PREPROD, PROD, SHARED, TOKEN_TRUST, UAT_TOKEN_TRUST
     }
 }

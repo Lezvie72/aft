@@ -8,11 +8,24 @@ import pages.htmlelements.blocks.BaseBlock
 import pages.htmlelements.elements.AtmAmount
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.TextBlock
 
 
 @Name("RFQ Outgoing Item")
 @FindBy(css = "atm-rfq-item-outgoing")
 class RFQOutgoingItem : BaseBlock<AtmPage>() {
+
+    @Name("Label sell")
+    @FindBy(xpath = ".//nz-tag[contains(text(), 'SELL')]")
+    lateinit var labelSell: TextBlock
+
+    @Name("Label buy")
+    @FindBy(xpath = ".//nz-tag[contains(text(), 'BUY')]")
+    lateinit var labelBuy: TextBlock
+
+    @Name("Expiration")
+    @FindBy(xpath = ".//span[contains(text(), 'Expiration')]/ancestor::atm-property-value//atm-span")
+    lateinit var expirationDate: TextBlock
 
     @FindBy(xpath = ".//span[contains(text(), 'BASE ASSET/AMOUNT')]/ancestor::atm-property-value//atm-amount")
     @Name("To receive amount")

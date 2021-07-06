@@ -220,6 +220,10 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
 //    @FindBy(xpath = "//a[contains(text(), 'Industrial Token')]")
     lateinit var industrialTokenButton: Button
 
+    @Name("Industrial token")
+    @FindBy(xpath = "//a[contains(text(), 'IDT')]")
+    lateinit var industrialTokenButtonAlt: Button
+
     @Name("Fiat token")
     @FindBy(xpath = "//a[contains(@href, 'FIAT')]")
 //    @FindBy(xpath = "//a[contains(text(), 'Fiat Token')]")
@@ -342,6 +346,10 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-amount-input[@formcontrolname='amount']//input")
     lateinit var amountTransfer: TextInput
 
+    @Name("AmountRedeem")
+    @FindBy(xpath = "//atm-amount-input//input")
+    lateinit var amountRedeem: TextInput
+
     @Name("Add bank details")
     @FindBy(xpath = "//a[@href='/profile/bank-accounts']")
     lateinit var addBankDetails: TextInput
@@ -452,7 +460,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     lateinit var tokenQuantity: TextInput
 
     @Name("Redemption")
-    @FindBy(xpath = "//span[contains(text(),'Redeem')]")
+    @FindBy(xpath = "//span[contains(text(),'Redeem')]//ancestor::button")
     lateinit var redemption: Button
 
     @Name("Withdraw")
@@ -470,6 +478,14 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Limit amount")
     @FindBy(xpath = "//span[contains(@class, 'text-grey')]")
     lateinit var amountLimit: AtmAmount
+
+    @Name("Token quantity to buy")
+    @FindBy(xpath = "//atm-amount-input//input")
+    lateinit var tokenQuantityToBuy: AtmAmount
+
+    @Name("Token quantity to receive")
+    @FindBy(xpath = "//atm-amount-input//input")
+    lateinit var tokenQuantityToReceive: AtmAmount
 
     @Name("Token quantity requested to redeem")
     @FindBy(xpath = ".//atm-etc-redemption//span[contains(text(),'Token quantity requested to redeem')]/ancestor::atm-property-value//atm-amount")
@@ -546,7 +562,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     lateinit var autoRedeemEtc: AtmRadio
 
     @Name("Manual redeem ETC")
-    @FindBy(xpath = "//span[contains(text(),'Manual')]/ancestor::label")
+    @FindBy(xpath = "//*[contains(text(),'Manual')]/ancestor::label")
     lateinit var manualRedeemEtc: AtmRadio
 
     @Name("Bar selection for ETC")
@@ -626,7 +642,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     fun isWalletWithLabelPresented(label: String): Boolean {
         waitWalletsAreDisplayed()
         return check {
-            isElementPresented(By.xpath("//atm-wallet-item//div[contains(text(), '$label')]"))
+            isElementPresented(By.xpath(".//atm-wallet-item//div[contains(text(), '$label')]"))
         }
     }
 
@@ -729,6 +745,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     @Step("Get user balance")
     @Action("Get user balance")
     fun getBalanceFromWalletForToken(coinType: CoinType, wallet: String): String {
+        driver.navigate().refresh()
         return e {
             waitWalletsAreDisplayed()
             chooseWallet(wallet)
@@ -827,8 +844,50 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     fun clickRedemptionButtonAndCancel() {
         e {
             click(fiatTokenButton)
+            wait {
+                until("Button 'Redeem' should be enabled") {
+                    redemption.getAttribute("disabled") == null
+                }
+            }
             click(redemption)
             click(cancelButton)
+        }
+    }
+
+    @Step("Go to transfer field of selected token and set required sum")
+    @Action("Go to transfer field of selected token and set required sum")
+    fun setSumTransferFieldIT(sum: String) {
+        e {
+            click(industrialTokenButtonAlt)
+            Thread.sleep(5000)
+            click(transfer)
+            sendKeys(amountTransfer, sum)
+        }
+    }
+
+    @Step("Go to Redeem field of selected token and set required sum")
+    @Action("Go to Redeem field of selected token and set required sum")
+    fun setSumRedeemFieldIT(sum: String) {
+        e {
+            click(currencyCoinButton)
+            Thread.sleep(5000)
+            click(redemption)
+            sendKeys(amountRedeem, sum)
+        }
+    }
+
+    @Step("Checking field for decimal count")
+    fun checkInputFieldEightDigitsDecimal() {
+        check {
+            assertTrue(
+                "Entered amount is not displayed!",
+                isElementPresented(By.xpath("//atm-amount-input//span[contains(@class, 'decimal')]"))
+            )
+        }
+        val numberOfDigitsAfterDecimalPoint: Int =
+            findElement(By.xpath("//atm-amount-input//span[contains(@class, 'decimal')]")).text.removePrefix(".").length
+        check {
+            assertTrue("Number of digits after decimal point is not equal 8!", numberOfDigitsAfterDecimalPoint == 8)
         }
     }
 
@@ -891,8 +950,8 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
                 else -> sendKeys(toWallet, walletTo.publicKey)
             }
             sendKeys(amountTransfer, amount)
-            when (coinType) {
-                IT -> select(maturityDatesTransfer, maturityDate!!)
+            if (coinType == IT) {
+                select(maturityDatesTransfer, maturityDate!!.replace(IT.tokenName + "_", ""))
             }
             sendKeys(transferNote, note)
         }
@@ -947,11 +1006,18 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
         e {
             chooseWallet(wallet.name)
             chooseToken(coinType)
+//            Thread.sleep(3000)
+            wait {
+                until("Button 'Redeem' should be enabled") {
+                    redemption.getAttribute("disabled") == null
+                }
+            }
+
             click(redemption)
             select(selectWallet, wallet.publicKey)
             sendKeys(tokenQuantity, amount)
-            when (coinType) {
-                IT -> select(maturityDatesRedemption, maturityDate)
+            if (coinType == IT) {
+                select(maturityDatesRedemption, maturityDate)
             }
             click(submitButton)
         }
@@ -971,6 +1037,11 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
         e {
             chooseWallet(wallet.name)
             chooseToken(coinType)
+            wait {
+                until("Button 'Redeem' should be enabled") {
+                    redemption.getAttribute("disabled") == null
+                }
+            }
             click(redemption)
             when (redemptionTypeETC) {
                 AUTO -> {
@@ -983,7 +1054,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
 
                     deleteData(usdAmount).also {
                         sendKeys(usdAmount, "0")
-                        sendKeys(usdAmount, amount)
+                        sendKeys(usdAmount, ((amount + "00000").toBigDecimal() * BigDecimal(1000)).toString())
                         Thread.sleep(1000)
                     }
                     deleteData(amountToken).also {
@@ -994,10 +1065,10 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
                     retry(3) {
                         click(proceedButton)
                     }
-                    val barNoButton = wait {
+                    val proceedButton = wait {
                         untilPresented<WebElement>(By.xpath(".//atm-etc-redemption//span[contains(text(),'Proceed')]"))
-                    }.to<Button>("Wallet '$walletName'")
-                    click(barNoButton)
+                    }.to<Button>("Proceed'")
+                    click(proceedButton)
                 }
                 MANUAL -> {
                     click(manualRedeemEtc)
@@ -1094,6 +1165,11 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     fun checkWalletName(operationType: OperationType, coinType: CoinType, walletName: String, walletNum: String) {
         val regex = "[.()\\r\\n]".toRegex()
         chooseToken(coinType)
+        wait {
+            until("Button 'Redeem' should be enabled") {
+                redemption.getAttribute("disabled") == null
+            }
+        }
         e {
             when (operationType) {
                 OperationType.REDEMPTION -> click(redemption)
@@ -1110,7 +1186,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
             result,
             hasToString("$walletName $walletNum")
         )
-        e {//товарищи в одном месте поменяли локатор во втором нет((((
+        e {
             when (operationType) {
                 OperationType.REDEMPTION -> click(cancelButton)
                 OperationType.TRANSFER -> click(cancel)
@@ -1175,7 +1251,7 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
     }
 
     @Step("Reverse checkbox state for employee {email}")
-    fun reverseCheckboxStatusForEmployee(email: String, user: User): Boolean {
+    fun reverseCheckboxStatusForEmployee(email: String): Boolean {
         val employee = assignEmployee.find {
             it.emailName == email
         } ?: error("Can't find card with '$email'")
@@ -1255,5 +1331,21 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
 
     fun generateLocatorForMaturityButton(maturityDateButtonFirst: String, maturityDateButtonSecond: String): String {
         return "//nz-radio-group[@formcontrolname='subIssues']//label//span[contains(text(),'${maturityDateButtonFirst}')] | //nz-radio-group[@formcontrolname='subIssues']//label//span[contains(text(),'${maturityDateButtonSecond}')]"
+    }
+
+    @Step("Fill field Token quantity to buy")
+    fun setSumTokenQuantityToBuyField(sum: String) {
+        e {
+            click(newOrderButton)
+            sendKeys(tokenQuantityToBuy, sum)
+        }
+    }
+
+    @Step("Fill field Token quantity to receive")
+    fun setSumTokenQuantityToReceiveField(sum: String) {
+        e {
+            click(newOrderButton)
+            sendKeys(tokenQuantityToReceive, sum)
+        }
     }
 }

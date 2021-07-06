@@ -49,12 +49,6 @@ class SmokeRFQE2E : BaseTest() {
         val amount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
         val user = Users.ATM_USER_2FA_OTF_OPERATION_FORTH
 
-        prerequisite {
-            prerequisitesRfq(
-                baseAsset, quoteAsset
-            )
-        }
-
         with(openPage<AtmRFQPage>(driver) { submit(user) }) {
             step("${user.email} create RFQ offer with $amount") {
                 createRFQ(AtmRFQPage.OperationType.BUY, baseAsset, quoteAsset, amount, "1", user)
@@ -100,11 +94,6 @@ class SmokeRFQE2E : BaseTest() {
         val user2 = Users.ATM_USER_2FA_OTF_OPERATION_EIGHTH
         val user1 = Users.ATM_USER_2FA_OTF_OPERATION_SEVENTH
 
-        prerequisite {
-            prerequisitesRfq(
-                baseAsset, quoteAsset
-            )
-        }
         step("${user1.email} create RFQ offer with $amount") {
             with(openPage<AtmRFQPage>(driver) { submit(user1) }) {
                 createRFQ(AtmRFQPage.OperationType.BUY, baseAsset, quoteAsset, amount, "1", user1)

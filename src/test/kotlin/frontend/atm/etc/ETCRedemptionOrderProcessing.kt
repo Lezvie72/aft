@@ -43,7 +43,6 @@ class ETCRedemptionOrderProcessing : BaseTest() {
         val fileName = "ETC_Nomenclature2"
 
         val etcIssuer = Users.ATM_USER_FOR_ACCEPT_ETC_TOKENS_SECOND
-        val etcWalletRedemption = etcIssuer.walletList[1]
         val etcWallet = etcIssuer.walletList[0]
 
         val etcUser = Users.ATM_USER_FOR_ETC_TOKENS_THIRD

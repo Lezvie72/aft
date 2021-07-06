@@ -29,15 +29,17 @@ import java.math.BigDecimal
 @Story("Management of token description and token status")
 class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
 
+    private val tokenValue = CoinType.CC
+
     @TmsLink("ATMCH-1355")
     @Test
     @DisplayName("Register/Managing of Tokens. Mandatory fields checking")
     fun managingOfTokens() {
         with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
             val token = tokensTable.find {
-                it[TICKER_SYMBOL]?.text == "CC"
-            }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
-                ?: error("Row with Ticker symbol CC not found in table")
+                it[TICKER_SYMBOL]?.text == tokenValue.tokenSymbol
+            }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${tokenValue.tokenSymbol}")
+                ?: error("Row with Ticker symbol ${tokenValue.tokenSymbol} not found in table")
             e {
                 click(token)
                 click(editToken)
@@ -57,7 +59,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
             )
             e {
                 click(cancel)
-                sendKeys(search, "CC")
+                sendKeys(search, tokenValue.tokenSymbol)
                 click(usdEquivalentSettings)
                 until("Wait for hidden preloader", 5L) {
                     usdEquivalentOverlay.preloader.getAttribute("style") == "visibility: hidden;"
@@ -144,9 +146,9 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
                 click(cancel)
                 click(
                     tokensTable.find {
-                        it[TICKER_SYMBOL]?.text == "CC"
-                    }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
-                        ?: error("Row with Ticker symbol CC not found in table")
+                        it[TICKER_SYMBOL]?.text == tokenValue.tokenSymbol
+                    }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${tokenValue.tokenSymbol}")
+                        ?: error("Row with Ticker symbol ${tokenValue.tokenSymbol} not found in table")
                 )
             }
 
@@ -205,14 +207,14 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
         // TODO: Данный тест переводит из текущего статуса токена в указанный
         // TODO: Можно попробовать указать наименее популярный токен для тестов
         with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            val tokenName = "CC"
+
             val tokenButton = tokensTable.find {
-                it[TICKER_SYMBOL]?.text == tokenName
-            }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
-                ?: error("Row with Ticker symbol CC not found in table")
+                it[TICKER_SYMBOL]?.text == tokenValue.tokenSymbol
+            }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol ${tokenValue.tokenSymbol}")
+                ?: error("Row with Ticker symbol ${tokenValue.tokenSymbol} not found in table")
 
             val prevStatus = getTokenMainInformation(tokenButton).status
-            val newStatus = "available"
+            val newStatus = AtmAdminTokensPage.StatusToken.AVAILABLE
 
             try {
                 e {
@@ -225,7 +227,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
                 }
 
                 assert {
-                    elementContainsText(tokenStatus, newStatus)
+                    elementContainsText(tokenStatus, newStatus.name)
                 }
 
                 e {
@@ -255,7 +257,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
                 ?: error("Row with Ticker symbol CC not found in table")
 
             val prevStatus = getTokenMainInformation(tokenButton).status
-            val newStatus = "unavailable"
+            val newStatus = AtmAdminTokensPage.StatusToken.UNAVAILABLE
 
             try {
                 e {
@@ -273,7 +275,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
                 }
 
                 assert {
-                    elementContainsText(tokenStatus, newStatus)
+                    elementContainsText(tokenStatus, newStatus.name)
                 }
 
                 e {
@@ -302,7 +304,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
             }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
                 ?: error("Row with Ticker symbol CC not found in table")
 
-            val newStatus = "archived"
+            val newStatus = AtmAdminTokensPage.StatusToken.ARCHIVED
 
             e {
                 editTokenStatus(tokenButton, newStatus)
@@ -319,7 +321,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
             }
 
             assert {
-                elementContainsText(tokenStatus, newStatus)
+                elementContainsText(tokenStatus, newStatus.name)
             }
 
             e {
@@ -350,7 +352,7 @@ class ManagementOfTokenDescriptionAndTokenStatus : BaseTest() {
             }?.get(TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
                 ?: error("Row with Ticker symbol CC not found in table")
 
-            val (prevTokenName, prevTokenDescription, status) = getTokenMainInformation(tokenButton)
+            val (prevTokenName, prevTokenDescription, _) = getTokenMainInformation(tokenButton)
             val prevEquivalent = getTokenEquivalentInformation(tokenButton)
             val newTokenName = "test"
             val newTokenDescription = "test"

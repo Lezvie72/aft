@@ -131,7 +131,7 @@ class NewIssuance : BaseTest() {
                 click(attachementsFromValume)
             }
             assert {
-                elementPresented(attachementsList)
+                elementPresented(attachmentsList)
             }
             e {
                 click(addVolume)

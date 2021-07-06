@@ -5,7 +5,8 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.CoinType.IT
+import models.CoinType
+import models.CoinType.*
 import org.apache.commons.lang.RandomStringUtils.randomNumeric
 import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
@@ -34,6 +35,8 @@ import java.math.BigDecimal
 @Story("Transfer of industrial tokens")
 class TransferOfIndustrialTokens : BaseTest() {
 
+    private val maturityDate = IT.maturityDateMonthNumber
+
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION),
         ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
@@ -60,7 +63,7 @@ class TransferOfIndustrialTokens : BaseTest() {
         }
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amountToTransfer) {
-                prerequisite { placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1) }
+                prerequisite { placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1,maturityDate) }
                 AtmProfilePage(driver).logout()
             }
 
@@ -90,12 +93,12 @@ class TransferOfIndustrialTokens : BaseTest() {
                     )
                     sendKeys(amountTransfer, amountToTransfer.toString())
                     sendKeys(transferNote, "note")
-                    click(submit)
+                    click(submitButton)
                     sendKeys(privateKey, wrongSignature)
                     assert { elementContainingTextPresented(" Invalid key ") }
 
                     deleteData(privateKey)
-                    sendKeys(privateKey, mainWallet.secretKey.toString())
+                    sendKeys(privateKey, mainWallet.secretKey)
                     click(confirmPrivateKeyButton)
                     val code = OAuth.generateCode(user.oAuthSecret)
                     sendKeys(atmOtpConfirmationInput, code)
@@ -135,8 +138,7 @@ class TransferOfIndustrialTokens : BaseTest() {
     fun transferOfIndustrialTokensUsing2FA() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
         val amountToTransfer = BigDecimal("1")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "122020"
+
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = user.mainWallet
@@ -152,7 +154,7 @@ class TransferOfIndustrialTokens : BaseTest() {
         }
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amountToTransfer) {
-                prerequisite { placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1) }
+                prerequisite { placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1,maturityDate) }
                 AtmProfilePage(driver).logout()
             }
 
@@ -168,7 +170,7 @@ class TransferOfIndustrialTokens : BaseTest() {
 
         AtmWalletPage(driver).logout()
 
-        val fee = step("User make transfer from to wallet") {
+        step("User make transfer from to wallet") {
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 transferFromWalletToWallet(
                     IT,
@@ -212,8 +214,7 @@ class TransferOfIndustrialTokens : BaseTest() {
     fun transferOfIndustrialTokensWithout2fa() {
         val amount = BigDecimal("1.${randomNumeric(8)}")
         val amountToTransfer = BigDecimal("1")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "122020"
+
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION
         val mainWallet = user.mainWallet
@@ -230,7 +231,7 @@ class TransferOfIndustrialTokens : BaseTest() {
 
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
             if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amountToTransfer) {
-                prerequisite { placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1) }
+                prerequisite { placeAndProceedTokenRequest(IT, mainWallet, wallet, amount, APPROVE, user, user1,maturityDate) }
                 AtmProfilePage(driver).logout()
             }
 
@@ -246,7 +247,7 @@ class TransferOfIndustrialTokens : BaseTest() {
 
         AtmWalletPage(driver).logout()
 
-        val fee = step("User make transfer from to wallet") {
+       step("User make transfer from to wallet") {
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 transferFromWalletToWallet(
                     IT,
@@ -300,7 +301,7 @@ class TransferOfIndustrialTokens : BaseTest() {
             prerequisite {
                 placeAndProceedTokenRequest(
                     IT, mainWallet, wallet, amount,
-                    APPROVE, user, user1
+                    APPROVE, user, user1,maturityDate
                 )
             }
         }
@@ -363,7 +364,7 @@ class TransferOfIndustrialTokens : BaseTest() {
 //        }
         step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
 //            if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amountToTransfer) {
-            prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+            prerequisite { addITToken(user, user1, mainWallet, wallet, amount, maturityDate) }
             AtmProfilePage(driver).logout()
 
 //            }
@@ -382,7 +383,7 @@ class TransferOfIndustrialTokens : BaseTest() {
 
         AtmWalletPage(driver).logout()
 
-        val fee = step("User make transfer from to wallet") {
+        step("User make transfer from to wallet") {
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 e {
                     chooseWallet(mainWallet.name)
@@ -452,27 +453,20 @@ class TransferOfIndustrialTokens : BaseTest() {
         val secondMainWallet = user2.mainWallet
 
 
-        step("User buy, accepted and get balance from wallet IT token if balance for IT = 0 || < amountToTransfer") {
-//            if (balanceFromWalletBefore == BigDecimal.ZERO || balanceFromWalletBefore < amountToTransfer) {
-            prerequisite { addITToken(user, user1, "10", mainWallet, wallet, amount) }
+        step("User buy, accepted and get balance from wallet IT token") {
+            prerequisite { addITToken(user, user1,  mainWallet, wallet, amount, maturityDate) }
             AtmProfilePage(driver).logout()
-//            }
 
-//            balanceFromWalletBefore =
-//                openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(IT, mainWallet.name)
-
-//            AtmProfilePage(driver).logout()
         }
 
-        var balanceFromWalletBefore = step("User get balance from wallet before operation") {
+        val balanceFromWalletBefore = step("User get balance from wallet before operation") {
             openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(IT, mainWallet.name)
-
         }
         AtmProfilePage(driver).logout()
         step("Admin user change token type fee for IT token") {
             openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken(
-                "IT",
-                "IT",
+                IT,
+                IT,
                 "100",
                 "1",
                 "1200"
@@ -551,8 +545,8 @@ class TransferOfIndustrialTokens : BaseTest() {
         }
         step("Admin user change token type fee for IT token") {
             openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeForToken(
-                "IT",
-                "CC",
+                IT,
+                CC,
                 "100",
                 "1",
                 "1200"

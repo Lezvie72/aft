@@ -10,11 +10,15 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.RandomStringUtils.random
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
+import org.junit.Assert
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
-import pages.atm.*
+import org.openqa.selenium.By
+import pages.atm.AtmAdminRfqSettingsPage
+import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.FIXED
+import pages.atm.AtmRFQPage
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
@@ -28,6 +32,9 @@ import utils.isChecked
 @Story("OTF. RFQ Settings")
 class OtfRfqSettings : BaseTest() {
 
+    private val tokenETC = ETC
+    private val quoteToken = VT
+    private val baseToken = CC
 
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4086")
@@ -35,7 +42,7 @@ class OtfRfqSettings : BaseTest() {
     @DisplayName("Admin panel. OTF. RFQ settings. Validation.")
     fun rfqSettingsValidation() {
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            assert{
+            assert {
                 elementContainingTextPresented("Rfq settings")
                 elementWithTextPresented("Default Asset")
                 elementWithTextPresented("Default fee placing offer (Maker)")
@@ -50,7 +57,7 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(editDisabled)
                 elementPresented(deleteDisabled)
             }
-            e{
+            e {
                 click(firstRow)
             }
             assert {
@@ -71,10 +78,10 @@ class OtfRfqSettings : BaseTest() {
                 defaultFeePlacingOfferMaker.clear()
                 sendKeys(defaultFeePlacingOfferMaker, "10.00")
             }
-            assert{
+            assert {
                 elementPresented(save)
             }
-            e{
+            e {
                 click(save)
             }
         }
@@ -87,10 +94,10 @@ class OtfRfqSettings : BaseTest() {
     fun rfqSettingsAddIncorectTokenRate() {
         val errorText = "Token is not found"
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            e{
+            e {
                 click(add)
             }
-            assert{
+            assert {
                 elementContainingTextPresented("Token")
                 elementPresented(availableBase)
                 elementPresented(availableQuote)
@@ -100,15 +107,23 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(confirmDialog)
                 elementPresented(cancelDialog)
             }
-            e{
+            e {
                 sendKeys(tokenInput, "qwerty")
-                click(confirmDialog)
+            }
+            assert {
+                elementDisabled(confirmDialog)
+            }
+            wait {
+                until("pop up window is presented", 15) {
+                    check {
+                        isElementPresented(By.xpath(".//mat-option//span[@class='mat-option-text']"))
+                    }
+                }
             }
             assertThat(
                 "Expected error text: $errorText",
-                tokenInput.errorText == errorText
+                popUpWindow.getAttribute("innerHTML") == errorText
             )
-        
         }
     }
 
@@ -132,21 +147,21 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(tokenInput, "ETT")
+                chooseToken(tokenInput, tokenETC.tokenSymbol)
                 setCheckbox(availableBase, true)
                 setCheckbox(availableQuote, true)
                 sendKeys(feePlacingAmount, "10")
-                chooseToken(feePlacingAsset, "ETT")
-                select(feePlacingMode, "FIXED")
-                chooseToken(feeAcceptingAsset, "ETT")
+                chooseToken(feePlacingAsset, tokenETC.tokenSymbol)
+                select(feePlacingMode, FIXED.state)
+                chooseToken(feeAcceptingAsset, tokenETC.tokenSymbol)
                 sendKeys(feeAcceptingAmount, "10")
-                select(feeAcceptingMode, "FIXED")
+                select(feeAcceptingMode, FIXED.state)
                 click(confirmDialog)
             }
             assert {
-                elementContainingTextPresented("ETT")
+                elementContainingTextPresented(tokenETC.tokenSymbol)
             }
-            deleteToken("ETT")
+            deleteToken(tokenETC.tokenSymbol)
         }
     }
 
@@ -158,18 +173,18 @@ class OtfRfqSettings : BaseTest() {
     fun rfqSettingsEditTokenRate() {
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             val amount = random(2, false, true)
-            e{
+            e {
                 click(token)
                 click(edit)
-                sendKeys(feePlacingAsset,amount)
-                sendKeys(feePlacingAmount,amount)
-                sendKeys(feeAcceptingAmount,amount)
-                sendKeys(feeAcceptingAsset,amount)
-                select(feeAcceptingMode, "FIXED")
-                select(feePlacingMode, "FIXED")
+                sendKeys(feePlacingAsset, amount)
+                sendKeys(feePlacingAmount, amount)
+                sendKeys(feeAcceptingAmount, amount)
+                sendKeys(feeAcceptingAsset, amount)
+                select(feeAcceptingMode, FIXED.state)
+                select(feePlacingMode, FIXED.state)
                 click(confirmDialog)
             }
-            assert{
+            assert {
                 elementContainingTextPresented("Token")
                 elementPresented(availableBase)
                 elementPresented(availableQuote)
@@ -179,16 +194,16 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(confirmDialog)
                 elementPresented(cancelDialog)
             }
-            e{
+            e {
                 sendKeys(tokenInput, "ETT")
                 setCheckbox(availableBase, true)
                 setCheckbox(availableQuote, true)
                 sendKeys(feePlacingAmount, "10")
                 sendKeys(feePlacingAsset, "10")
-                select(feePlacingMode, "FIXED")
+                select(feePlacingMode, FIXED.state)
                 sendKeys(feeAcceptingAsset, "10")
                 sendKeys(feeAcceptingAmount, "10")
-                select(feeAcceptingMode, "FIXED")
+                select(feeAcceptingMode, FIXED.state)
                 click(confirmDialog)
             }
 
@@ -200,12 +215,11 @@ class OtfRfqSettings : BaseTest() {
     @Test
     @DisplayName("Admin panel. OTF. RFQ settings. Delete token rate.")
     fun rfqSettingsDeleteTokenRate() {
-        val token = ETC.tokenSymbol
 
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            e{
+            e {
                 click(add)
-                tokenInputSelect.sendAndSelect(token, token,this@with)
+                tokenInputSelect.sendAndSelect(tokenETC.tokenSymbol, tokenETC.tokenSymbol, this@with)
 
                 Thread.sleep(2000)
                 click(confirmDialog)
@@ -216,7 +230,7 @@ class OtfRfqSettings : BaseTest() {
                         }
                     }
                 }
-                deleteToken(token)
+                deleteToken(tokenETC.tokenSymbol)
             }
         }
     }
@@ -226,9 +240,9 @@ class OtfRfqSettings : BaseTest() {
     @Test
     @DisplayName("Administration panel. OTF management. RFQ. Add token rate")
     fun rfqAddTokenRate() {
-        val defaultAssetValue = "CC"
+
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            assert{
+            assert {
                 elementContainingTextPresented("Rfq settings")
                 elementPresented(defaultAsset)
                 elementPresented(defaultFeePlacingOfferMaker)
@@ -244,11 +258,17 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(deleteDisabled)
             }
 
-            e{
-                deleteToken(defaultAssetValue)
+            val row = rfqSettingsTable.find {
+                it[AtmAdminRfqSettingsPage.TOKEN]?.text == baseToken.tokenSymbol
+            }?.get(AtmAdminRfqSettingsPage.TOKEN)
+            if (row != null) {
+                deleteToken(baseToken.tokenSymbol)
+            }
+
+            e {
                 click(add)
             }
-            assert{
+            assert {
                 elementContainingTextPresented("Token")
                 elementPresented(tokenInput)
                 elementPresented(availableBase)
@@ -262,10 +282,12 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(confirmDialog)
                 elementPresented(cancelDialog)
             }
-            e{
+            e {
                 click(cancelDialog)
-                addToken(defaultAssetValue, true, true,
-                    "1", "FIXED", "2","FIXED")
+                addToken(
+                    baseToken.tokenSymbol, true, true,
+                    "1", FIXED.state, "2", FIXED.state
+                )
                 driver.navigate().refresh()
                 wait {
                     until("wait until data presented", 15) {
@@ -274,23 +296,23 @@ class OtfRfqSettings : BaseTest() {
                         }
                     }
                 }
-                chooseToken(defaultAssetValue)
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
             }
             assertThat(
                 "Default asset saved",
                 defaultAsset.value,
-                Matchers.hasToString(defaultAssetValue)
+                Matchers.hasToString(baseToken.tokenSymbol)
             )
             assertThat(
                 "Fee accepting asset saved",
                 feeAcceptingAsset.value,
-                Matchers.hasToString(defaultAssetValue)
+                Matchers.hasToString(baseToken.tokenSymbol)
             )
             assertThat(
                 "Fee placing asset saved",
                 feePlacingAsset.value,
-                Matchers.hasToString(defaultAssetValue)
+                Matchers.hasToString(baseToken.tokenSymbol)
             )
             assertThat(
                 "Fee placing amount saved",
@@ -306,11 +328,11 @@ class OtfRfqSettings : BaseTest() {
         with(openPage<AtmRFQPage>(driver) { submit(Users.ATM_USER_2FA_OTF_OPERATION_SECOND) }) {
             e {
                 click(createRequest)
-                select(assetToSend, defaultAssetValue)
-                select(assetToReceive, defaultAssetValue)
+                select(assetToSend, baseToken.tokenSymbol)
+                select(assetToReceive, baseToken.tokenSymbol)
             }
             assert {
-                elementContainingTextPresented(defaultAssetValue)
+                elementContainingTextPresented(baseToken.tokenSymbol)
             }
         }
     }
@@ -320,9 +342,9 @@ class OtfRfqSettings : BaseTest() {
     @Test
     @DisplayName("Administration panel. OTF management. RFQ. Edit token rate")
     fun rfqEditTokenRate() {
-        val defaultAssetValue = "CC"
+
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            assert{
+            assert {
                 elementContainingTextPresented("Rfq settings")
                 elementPresented(defaultAsset)
                 elementPresented(defaultFeePlacingOfferMaker)
@@ -337,15 +359,21 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(editDisabled)
                 elementPresented(deleteDisabled)
             }
-
-            e{
-                deleteToken(defaultAssetValue)
-                addToken(defaultAssetValue, true, true,
-                    "1", "FIXED", "2","FIXED")
-                chooseToken(defaultAssetValue)
+            val row = rfqSettingsTable.find {
+                it[AtmAdminRfqSettingsPage.TOKEN]?.text == baseToken.tokenSymbol
+            }?.get(AtmAdminRfqSettingsPage.TOKEN)
+            if (row != null) {
+                deleteToken(baseToken.tokenSymbol)
+            }
+            e {
+                addToken(
+                    baseToken.tokenSymbol, true, true,
+                    "1", FIXED.state, "2", FIXED.state
+                )
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
             }
-            assert{
+            assert {
                 elementContainingTextPresented("Token")
                 elementPresented(tokenInput)
                 elementPresented(availableBase)
@@ -359,7 +387,7 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(confirmDialog)
                 elementPresented(cancelDialog)
             }
-            e{
+            e {
                 setCheckbox(availableBase, false)
                 setCheckbox(availableQuote, false)
                 click(confirmDialog)
@@ -378,7 +406,7 @@ class OtfRfqSettings : BaseTest() {
                         }
                     }
                 }
-                chooseToken(defaultAssetValue)
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
             }
             assertThat(false, Matchers.equalTo(availableBase.isChecked()))
@@ -389,15 +417,15 @@ class OtfRfqSettings : BaseTest() {
                 click(createRequest)
                 click(assetToSend)
             }
-            assert { elementContainingTextNotPresented(defaultAssetValue) }
-            e{
+            assert { elementContainingTextNotPresented(baseToken.tokenSymbol) }
+            e {
                 click(assetToReceive)
             }
-            assert { elementContainingTextNotPresented(defaultAssetValue) }
+            assert { elementContainingTextNotPresented(baseToken.tokenSymbol) }
         }
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            e{
-                chooseToken(defaultAssetValue)
+            e {
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
                 setCheckbox(availableBase, true)
                 setCheckbox(availableQuote, true)
@@ -417,7 +445,7 @@ class OtfRfqSettings : BaseTest() {
                         }
                     }
                 }
-                chooseToken(defaultAssetValue)
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
             }
             assertThat(true, Matchers.equalTo(availableBase.isChecked()))
@@ -426,11 +454,11 @@ class OtfRfqSettings : BaseTest() {
         with(openPage<AtmRFQPage>(driver) { submit(Users.ATM_USER_2FA_OTF_OPERATION_SECOND) }) {
             e {
                 click(createRequest)
-                select(assetToSend, defaultAssetValue)
-                select(assetToReceive, defaultAssetValue)
+                select(assetToSend, baseToken.tokenSymbol)
+                select(assetToReceive, baseToken.tokenSymbol)
             }
             assert {
-                elementContainingTextPresented(defaultAssetValue)
+                elementContainingTextPresented(baseToken.tokenSymbol)
             }
         }
     }
@@ -440,14 +468,13 @@ class OtfRfqSettings : BaseTest() {
     @Test
     @DisplayName("Administration panel. OTF management. RFQ. Delete token rate")
     fun rfqDeleteTokenRate() {
-        val defaultAssetValue = "GF28ILN060B"
 
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            addTokenIfNotPresented(defaultAssetValue)
+            addTokenIfNotPresented(quoteToken)
         }
 
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            assert{
+            assert {
                 elementContainingTextPresented("Rfq settings")
                 elementPresented(defaultAsset)
                 elementPresented(defaultFeePlacingOfferMaker)
@@ -463,8 +490,8 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(deleteDisabled)
             }
 
-            e{
-                deleteToken(defaultAssetValue)
+            e {
+                deleteToken(quoteToken.tokenSymbol)
                 driver.navigate().refresh()
                 wait {
                     until("wait until data presented", 15) {
@@ -474,23 +501,24 @@ class OtfRfqSettings : BaseTest() {
                     }
                 }
             }
-            assert {
-                elementContainingTextNotPresented(defaultAssetValue)
-            }
+            val row = rfqSettingsTable.find {
+                it[AtmAdminRfqSettingsPage.TOKEN]?.text == quoteToken.tokenSymbol
+            }?.get(AtmAdminRfqSettingsPage.TOKEN)
+            Assert.assertTrue("Row not equal null", row == null)
         }
         with(openPage<AtmRFQPage>(driver) { submit(Users.ATM_USER_2FA_OTF_OPERATION_SECOND) }) {
             e {
                 click(createRequest)
                 click(assetToSend)
             }
-            assert { elementContainingTextNotPresented(defaultAssetValue) }
-            e{
+            assert { elementContainingTextNotPresented(quoteToken.tokenSymbol) }
+            e {
                 click(assetToReceive)
             }
-            assert { elementContainingTextNotPresented(defaultAssetValue) }
+            assert { elementContainingTextNotPresented(quoteToken.tokenSymbol) }
         }
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            addToken(defaultAssetValue, true, true)
+            addToken(quoteToken.tokenSymbol, true, true)
         }
     }
 
@@ -499,11 +527,11 @@ class OtfRfqSettings : BaseTest() {
     @Test
     @DisplayName("Administration panel. OTF management. RFQ. Default values")
     fun rfqDefaultValues() {
-        val defaultAssetValueNew = "CC"
-        val defaultFeePlacingOfferInputMakerValueNew = "0.${RandomStringUtils.randomNumeric(7)+1}"
-        val defaultFeePlacingOfferInputTakerValueNew ="0.${RandomStringUtils.randomNumeric(7)+1}"
+
+        val defaultFeePlacingOfferInputMakerValueNew = "0.${RandomStringUtils.randomNumeric(7) + 1}"
+        val defaultFeePlacingOfferInputTakerValueNew = "0.${RandomStringUtils.randomNumeric(7) + 1}"
         with(openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            assert{
+            assert {
                 elementContainingTextPresented("Rfq settings")
                 elementPresented(defaultAsset)
                 elementPresented(defaultFeePlacingOfferMaker)
@@ -518,11 +546,13 @@ class OtfRfqSettings : BaseTest() {
                 elementPresented(editDisabled)
                 elementPresented(deleteDisabled)
             }
-            e{
-                defaultAsset.delete()
-                sendKeys(defaultAsset, defaultAssetValueNew)
-                chooseToken(defaultAsset, defaultAssetValueNew)
-                if (check { isElementPresented(save) }){ click(save) }
+            e {
+                click(clearButton)
+                sendKeys(defaultAsset, baseToken.tokenSymbol)
+                chooseToken(defaultAsset, baseToken.tokenSymbol)
+                if (check { isElementPresented(save) }) {
+                    click(save)
+                }
                 defaultFeePlacingOfferMaker.delete()
                 sendKeys(defaultFeePlacingOfferMaker, defaultFeePlacingOfferInputMakerValueNew)
                 click(save)
@@ -542,7 +572,7 @@ class OtfRfqSettings : BaseTest() {
             assertThat(
                 "Default asset saved",
                 defaultAsset.value,
-                Matchers.hasToString(defaultAssetValueNew)
+                Matchers.hasToString(baseToken.tokenSymbol)
             )
             assertThat(
                 "Default fee placing offer (Maker) saved",
@@ -554,10 +584,15 @@ class OtfRfqSettings : BaseTest() {
                 defaultFeeAcceptingOfferTaker.value,
                 Matchers.hasToString(defaultFeePlacingOfferInputTakerValueNew)
             )
-            e{
-                deleteToken(defaultAssetValueNew)
-                addToken(defaultAssetValueNew, true, true)
+
+            val row = rfqSettingsTable.find {
+                it[AtmAdminRfqSettingsPage.TOKEN]?.text == baseToken.tokenSymbol
+            }?.get(AtmAdminRfqSettingsPage.TOKEN)
+            if (row != null) {
+                deleteToken(baseToken.tokenSymbol)
             }
+            addToken(baseToken.tokenSymbol, true, true)
+
         }
     }
 

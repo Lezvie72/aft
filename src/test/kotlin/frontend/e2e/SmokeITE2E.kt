@@ -10,6 +10,8 @@ import org.apache.commons.lang.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.closeTo
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceAccessMode.READ
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
@@ -27,12 +29,19 @@ import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
-@Tag(TagNames.Flow.SMOKEE2E)
+@Tags(Tag(TagNames.Flow.SMOKEE2E))
+@Execution(ExecutionMode.SAME_THREAD)
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Epic("Frontend")
 @Feature("E2E")
 @Story("IT")
 class SmokeITE2E : BaseTest() {
 
+    private val maturityDateForBuy = IT.maturityDateMonthNumber
+    private val maturityDateForRedemption = IT.maturityDateMonthString
+
+
+    @Order(1)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN)
@@ -130,6 +139,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(2)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_IT_TOKEN_ONE, mode = READ),
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN_ONE, mode = READ)
@@ -145,15 +155,9 @@ class SmokeITE2E : BaseTest() {
         val user = Users.ATM_USER_MAIN_FOR_IT_ONE
         val userWallet = user.mainWallet
 
-        step("User buy CC token") {
-            prerequisite {
-                addCurrencyCoinToWallet(user, "10", userWallet)
-            }
-        }
-
         step("User buy IT token") {
             with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-                buyTokenNew(IT, amount.toString(), user, userWallet)
+                buyOrReceiveToken(IT, amount.toString(), user, userWallet, maturityDateForBuy)
             }
         }
 
@@ -240,6 +244,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(3)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_IT_TOKEN_SECOND, mode = READ),
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN_SECOND, mode = READ)
@@ -257,14 +262,10 @@ class SmokeITE2E : BaseTest() {
         val user = Users.ATM_USER_MAIN_FOR_IT_SECOND
         val userWallet = user.mainWallet
 
-        step("User buy CC token") {
-            prerequisite {
-                addCurrencyCoinToWallet(user, "10", userWallet)
-            }
-        }
+
         step("User buy IT token") {
             with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-                buyTokenNew(IT, amount.toString(), user, userWallet)
+                buyOrReceiveToken(IT, amount.toString(), user, userWallet, maturityDateForBuy)
             }
         }
 
@@ -330,6 +331,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(4)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_IT_TOKEN_THIRD, mode = READ),
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN_THIRD, mode = READ)
@@ -345,14 +347,9 @@ class SmokeITE2E : BaseTest() {
         val user = Users.ATM_USER_MAIN_FOR_IT_THIRD
         val userWallet = user.mainWallet
 
-        step("User buy CC token") {
-            prerequisite {
-                addCurrencyCoinToWallet(user, "10", userWallet)
-            }
-        }
         step("User buy IT token") {
             with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-                buyTokenNew(IT, amount.toString(), user, userWallet)
+                buyOrReceiveToken(IT, amount.toString(), user, userWallet, maturityDateForBuy)
             }
         }
         val balanceWalletBefore = step("User get balance from wallet before operation") {
@@ -434,6 +431,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(5)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA)
@@ -497,6 +495,11 @@ class SmokeITE2E : BaseTest() {
                 chooseWallet(userWallet.name)
                 chooseToken(IT)
                 e {
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                 }
                 val min = amountRedemptionLimitIt.minLimitVal.toBigDecimal()
@@ -535,6 +538,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(6)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND)
@@ -548,8 +552,6 @@ class SmokeITE2E : BaseTest() {
 
         val amount = min + BigDecimal("2")
         val amountForRedemption = min + BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_2FA_OTF_OPERATION_SECOND
         val mainWallet = userBuyer.mainWallet
@@ -575,7 +577,7 @@ class SmokeITE2E : BaseTest() {
         }
 
         step("User buy IT token") {
-            prerequisite { addITToken(userBuyer, itIssuer, "10", mainWallet, itWallet, amount) }
+            prerequisite { addITToken(userBuyer, itIssuer, mainWallet, itWallet, amount, maturityDateForBuy) }
             AtmProfilePage(driver).logout()
         }
 
@@ -593,7 +595,7 @@ class SmokeITE2E : BaseTest() {
                     IT,
                     mainWallet,
                     amountForRedemption.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -701,6 +703,7 @@ class SmokeITE2E : BaseTest() {
         )
     }
 
+    @Order(6)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN_THIRD),
         ResourceLock(Constants.ROLE_USER_IT_TOKEN_THIRD)
@@ -715,8 +718,6 @@ class SmokeITE2E : BaseTest() {
         val amount = min + BigDecimal("2.${RandomStringUtils.randomNumeric(8)}")
         val amountForRedemption = min + BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
         val partlyAmount = min + BigDecimal("0.${RandomStringUtils.randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_MAIN_FOR_IT_THIRD
         val mainWallet = userBuyer.mainWallet
@@ -742,7 +743,7 @@ class SmokeITE2E : BaseTest() {
         }
 
         step("User buy IT token") {
-            prerequisite { addITToken(userBuyer, itIssuer, "10", mainWallet, itWallet, amount) }
+            prerequisite { addITToken(userBuyer, itIssuer, mainWallet, itWallet, amount, maturityDateForBuy) }
             AtmProfilePage(driver).logout()
         }
 
@@ -760,7 +761,7 @@ class SmokeITE2E : BaseTest() {
                     IT,
                     mainWallet,
                     amountForRedemption.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -868,6 +869,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(7)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN_SECOND),
         ResourceLock(Constants.ROLE_USER_IT_TOKEN_SECOND)
@@ -881,8 +883,6 @@ class SmokeITE2E : BaseTest() {
 
         val amount = min + BigDecimal("2.${RandomStringUtils.randomNumeric(8)}")
         val amountForRedemption = min + BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-        val maturityDate = "December 2020"
 
         val userBuyer = Users.ATM_USER_MAIN_FOR_IT_SECOND
         val mainWallet = userBuyer.mainWallet
@@ -908,7 +908,7 @@ class SmokeITE2E : BaseTest() {
         AtmProfilePage(driver).logout()
 
         step("User buy IT token") {
-            prerequisite { addITToken(userBuyer, itIssuer, "10", mainWallet, itWallet, amount) }
+            prerequisite { addITToken(userBuyer, itIssuer, mainWallet, itWallet, amount, maturityDateForBuy) }
             AtmProfilePage(driver).logout()
         }
 
@@ -926,7 +926,7 @@ class SmokeITE2E : BaseTest() {
                     IT,
                     mainWallet,
                     amountForRedemption.toString(),
-                    maturityDate,
+                    maturityDateForRedemption,
                     userBuyer
                 )
             }
@@ -1035,6 +1035,7 @@ class SmokeITE2E : BaseTest() {
 
     }
 
+    @Order(8)
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_FOR_ACCEPT_IT_TOKEN, mode = READ),
         ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_SECOND, mode = READ)
@@ -1068,7 +1069,7 @@ class SmokeITE2E : BaseTest() {
         }
         openPage<AtmProfilePage>(driver).logout()
         step("User buy IT token") {
-            prerequisite { addITToken(user, itIssuer, "10", userWallet, itWallet, amount) }
+            prerequisite { addITToken(user, itIssuer, userWallet, itWallet, amount, maturityDateForBuy) }
             AtmProfilePage(driver).logout()
         }
 
@@ -1143,7 +1144,7 @@ class SmokeITE2E : BaseTest() {
         }
     }
 
-
+    @Order(1)
     @TmsLink("ATMCH-5137")
     @Test
     @DisplayName("Uploading the document: steps 47-50 and Removing the document: steps 51-53, 59")

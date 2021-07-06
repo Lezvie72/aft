@@ -187,7 +187,7 @@ class AddingAndRemovingEmployeesOfLegalEntity : BaseTest() {
                 newTextEmail(
                     href,
                     "Atomyze profile suspended Your account has been suspended " +
-                            "Dear {{ full name }}, Your account has been suspended and is under investigation. " +
+                            "Dear employee, Your account has been suspended and is under investigation. " +
                             "For further information, please contact your relationship manager. " +
                             "Best Regards,ATOMYZE ATOMYZE by Tokentrust AG Baarerstrasse 22 6300 Zug Web: www.atomyze.chSocial: LinkedIn Support: support@atomyze.ch "
                 )
@@ -339,7 +339,7 @@ class AddingAndRemovingEmployeesOfLegalEntity : BaseTest() {
 
         val user = Users.ATM_USER_INVITE_TO_COMPANY
 
-        val newEmployee = Users.ATM_USER_DUMB_INVATED_TO_COMPANY
+        val newEmployee = Users.ATM_USER_DUMB_INVITED_TO_COMPANY
 
         //TODO: look for some pages before search by email
         prerequisite {

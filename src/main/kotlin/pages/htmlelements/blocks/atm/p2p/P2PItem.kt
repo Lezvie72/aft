@@ -18,6 +18,14 @@ class P2PItem : BaseBlock<AtmPage>() {
     @Name("To receive amount")
     lateinit var toReceive: AtmAmount
 
+    @Name("Show button")
+    @FindBy(xpath = ".//atm-span[contains(text(), 'Show')]")
+    lateinit var showCounterparty: Button
+
+    @Name("Counterparty")
+    @FindBy(xpath = ".//span[contains(text(), 'Counterparty')]/ancestor::atm-property-value//atm-counterparty")
+    lateinit var counterpartyValue: Button
+
     @FindBy(xpath = ".//span[contains(text(), ' AMOUNT RECEIVED ')]/ancestor::atm-property-value//atm-amount")
     @Name("Amount received")
     lateinit var amountReceived: AtmAmount

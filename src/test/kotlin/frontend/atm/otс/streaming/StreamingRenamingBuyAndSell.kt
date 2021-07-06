@@ -54,7 +54,7 @@ class StreamingRenamingBuyAndSell : BaseTest() {
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -65,8 +65,8 @@ class StreamingRenamingBuyAndSell : BaseTest() {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceSell.toString(),
                     AtmStreamingPage.ExpireType.TEMPORARY, maker
                 )
@@ -77,8 +77,8 @@ class StreamingRenamingBuyAndSell : BaseTest() {
             with(openPage<AtmStreamingPage>(driver) { submit(maker) }) {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$baseAsset/$quoteAsset",
-                    "$amountBaseAsset $baseAsset",
+                    "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                    "$amountBaseAsset ${baseAsset.tokenSymbol}",
                     unitPriceBuy.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, maker
                 )

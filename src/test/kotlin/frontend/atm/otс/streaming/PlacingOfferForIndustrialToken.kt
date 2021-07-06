@@ -1,7 +1,10 @@
 package frontend.atm.otс.streaming
 
 import frontend.BaseTest
-import io.qameta.allure.*
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
 import models.CoinType
 import models.OtfAmounts
 import org.apache.commons.lang.RandomStringUtils
@@ -20,7 +23,7 @@ import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -36,7 +39,7 @@ class PlacingOfferForIndustrialToken : BaseTest() {
     private val amountSell = OtfAmounts.AMOUNT_10.amount
     private val amountBuy = OtfAmounts.AMOUNT_10.amount
     private val unitPriceOffer = BigDecimal("1")
-    private val maturityDate = "22 September 2020"
+    private val maturityDate = quoteAsset.date
     private val wallet = "OTF 1"
     private val invalid2FaKey = "123456"
     private val invalidPrivateKey = "12345678bb4992acf09c9cba9e266c696aff77fca923db2a472b813e37f9e96f"
@@ -64,8 +67,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
             e {
                 fee = createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserTwo,
@@ -152,8 +155,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne2FA, maturityDate, manualCompleted = true
@@ -193,8 +196,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne2FA, maturityDate, manualCompleted = true
@@ -247,8 +250,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDate, manualCompleted = true
@@ -307,8 +310,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne, maturityDate, manualCompleted = true
@@ -367,8 +370,8 @@ class PlacingOfferForIndustrialToken : BaseTest() {
             e {
                 fee = createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne2FA,
@@ -401,7 +404,6 @@ class PlacingOfferForIndustrialToken : BaseTest() {
     fun itClientCreateOfferForSellUserHas2Fa() {
         var initBalance = ""
         var afterBalance = ""
-        var fee = BigDecimal("0")
 
         with(openPage<AtmWalletPage>(driver) { submit(industrialUserOne2FA) }) {
             e {
@@ -415,10 +417,10 @@ class PlacingOfferForIndustrialToken : BaseTest() {
 
         with(openPage<AtmStreamingPage>(driver)) {
             e {
-                fee = createStreaming(
+                createStreaming(
                     AtmStreamingPage.OperationType.SELL,
-                    "$quoteAsset/$baseAsset",
-                    "$amountBuy $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountBuy ${quoteAsset.tokenSymbol}",
                     unitPriceOffer.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne2FA,

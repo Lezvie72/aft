@@ -24,7 +24,7 @@ import utils.helpers.openPage
 import java.math.BigDecimal
 
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Epic.STREAMING.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Streaming")
@@ -50,7 +50,7 @@ class OfferPlacementStreaming : BaseTest() {
     fun streamingPlaceOfferCancelPlacingTransfer() {
         val unitPriceAmount = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}")
 
-        val (baseBefore, quoteBefore) = with(openPage<AtmWalletPage>(driver) { submit(userOne) }) {
+        val (baseBefore, _) = with(openPage<AtmWalletPage>(driver) { submit(userOne) }) {
             val base = getBalance(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getBalance(quoteAsset, firstWallet.name)
@@ -61,8 +61,8 @@ class OfferPlacementStreaming : BaseTest() {
             e {
                 click(createOffer)
                 click(iWantToBuyAsset)
-                select(selectAssetPair, "$quoteAsset/$baseAsset")
-                selectAmount("$amountCount $quoteAsset")
+                select(selectAssetPair, "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}")
+                selectAmount("$amount ${quoteAsset.tokenSymbol}")
                 clear(unitPrice)
                 sendKeys(unitPrice, unitPriceAmount.toString())
                 click(cancelPlaceOffer)
@@ -75,7 +75,7 @@ class OfferPlacementStreaming : BaseTest() {
             )
         }
 
-        val (baseAfter, quoteAfter) = with(openPage<AtmWalletPage>(driver)) {
+        val (baseAfter, _) = with(openPage<AtmWalletPage>(driver)) {
             val base = getBalance(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getBalance(quoteAsset, firstWallet.name)
@@ -107,7 +107,7 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
-        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+        val (baseBeforeHeld, _) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getHeldInOrders(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -119,8 +119,8 @@ class OfferPlacementStreaming : BaseTest() {
 
             val fee = createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amount ${quoteAsset.tokenSymbol}",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.TEMPORARY, user
             )
@@ -137,7 +137,7 @@ class OfferPlacementStreaming : BaseTest() {
                 base to quote
             }
 
-            val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val (baseAfterHeld, _) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
                 val base = getHeldInOrders(baseAsset, firstWallet.name)
                 openPage<AtmWalletPage>(driver)
                 val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -181,7 +181,7 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
-        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+        val (_, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getHeldInOrders(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -194,8 +194,8 @@ class OfferPlacementStreaming : BaseTest() {
 
             createStreaming(
                 AtmStreamingPage.OperationType.SELL,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amount ${quoteAsset.tokenSymbol}",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, userThree
             )
@@ -212,7 +212,7 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
-        val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+        val (_, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getHeldInOrders(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -253,7 +253,7 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
-        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+        val (_, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getHeldInOrders(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -266,8 +266,8 @@ class OfferPlacementStreaming : BaseTest() {
 
             createStreaming(
                 AtmStreamingPage.OperationType.SELL,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amount ${quoteAsset.tokenSymbol}",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.TEMPORARY, userThree
             )
@@ -284,7 +284,7 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
-        val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+        val (_, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getHeldInOrders(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -384,7 +384,7 @@ class OfferPlacementStreaming : BaseTest() {
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -394,8 +394,8 @@ class OfferPlacementStreaming : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountCount ${quoteAsset.tokenSymbol}",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.TEMPORARY,
                 user
@@ -417,14 +417,11 @@ class OfferPlacementStreaming : BaseTest() {
     @DisplayName("Streaming. Placing sell offer")
     fun streamingPlacingSellOffer() {
         val unitPrice = BigDecimal("1.0000${RandomStringUtils.randomNumeric(4)}") //1.97179569
-        val baseAsset = CoinType.CC
-        val quoteAsset = CoinType.VT
         val user = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
-        val amount = OtfAmounts.AMOUNT_10.amount
 
         prerequisite {
             prerequisitesStreaming(
-                baseAsset.toString(), quoteAsset.toString(), "1",
+                baseAsset, quoteAsset, "1",
                 "1", "1",
                 "FIXED", "FIXED",
                 true
@@ -442,8 +439,8 @@ class OfferPlacementStreaming : BaseTest() {
             }
             openPage<AtmStreamingPage>(driver) { submit(user) }.createStreaming(
                 AtmStreamingPage.OperationType.SELL,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountCount ${quoteAsset.tokenSymbol}",
                 unitPrice.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 user
@@ -509,7 +506,7 @@ class OfferPlacementStreaming : BaseTest() {
             base to quote
         }
 
-        val (baseBeforeHeld, quoteBeforeHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+        val (baseBeforeHeld, _) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
             val base = getHeldInOrders(baseAsset, firstWallet.name)
             openPage<AtmWalletPage>(driver)
             val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -522,8 +519,8 @@ class OfferPlacementStreaming : BaseTest() {
 
             val fee = createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$quoteAsset/$baseAsset",
-                "$amountCount $quoteAsset",
+                "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                "$amountCount ${quoteAsset.tokenSymbol}",
                 unitPriceAmount.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED, user
             )
@@ -539,7 +536,7 @@ class OfferPlacementStreaming : BaseTest() {
                 base to quote
             }
 
-            val (baseAfterHeld, quoteAfterHeld) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
+            val (baseAfterHeld, _) = with(openPage<AtmWalletPage>(driver) { submit(userThree) }) {
                 val base = getHeldInOrders(baseAsset, firstWallet.name)
                 openPage<AtmWalletPage>(driver)
                 val quote = getHeldInOrders(quoteAsset, firstWallet.name)
@@ -596,8 +593,8 @@ class OfferPlacementStreaming : BaseTest() {
             e {
                 createStreaming(
                     AtmStreamingPage.OperationType.BUY,
-                    "$quoteAsset/$baseAsset",
-                    "$amountCount $quoteAsset",
+                    "${quoteAsset.tokenSymbol}/${baseAsset.tokenSymbol}",
+                    "$amountCount ${quoteAsset.tokenSymbol}",
                     unitPrice.toString(),
                     AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                     industrialUserOne2FA, manualCompleted = true

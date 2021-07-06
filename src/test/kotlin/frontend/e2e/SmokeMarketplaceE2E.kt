@@ -78,9 +78,9 @@ class SmokeMarketplaceE2E : BaseTest() {
                 e {
                     click(cancel)
 
-                    sendKeys(search, "VT")
+//                    sendKeys(search, VT.tokenSymbol)
                     val row = tokensTable.find {
-                        it[AtmAdminTokensPage.TICKER_SYMBOL]?.text == "VT"
+                        it[AtmAdminTokensPage.TICKER_SYMBOL]?.text == VT.tokenSymbol
                     }?.get(AtmAdminTokensPage.TICKER_SYMBOL)?.to<Button>("Ticker symbol VT")
                         ?: error("Row with Ticker symbol VT not found in table")
                     e {
@@ -127,11 +127,11 @@ class SmokeMarketplaceE2E : BaseTest() {
 
         step("Admin go to Token page and changes fee") {
             with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-                e {
-                    sendKeys(search, "CC")
-                }
+//                e {
+//                    sendKeys(search, CC.tokenSymbol)
+//                }
                 val row = tokensTable.find {
-                    it[AtmAdminTokensPage.TICKER_SYMBOL]?.text == "CC"
+                    it[AtmAdminTokensPage.TICKER_SYMBOL]?.text == CC.tokenSymbol
                 }?.get(AtmAdminTokensPage.TICKER_SYMBOL)?.to<Button>("Ticker symbol $CC")
                     ?: error("Row with Ticker symbol $CC not found in table")
                 e {
@@ -147,8 +147,8 @@ class SmokeMarketplaceE2E : BaseTest() {
                 }
 
                 e {
-                    chargeInInput.clear()
-                    chargeIn.sendAndSelect("CC", "CC", this@with)
+                    click(clearButton)
+                    chargeIn.sendAndSelect(CC.tokenSymbol, CC.tokenSymbol, this@with)
                     sendKeys(rate, newFeeRate)
                     sendKeys(floor, newFloor)
                     sendKeys(cap, newCap)
@@ -201,7 +201,7 @@ class SmokeMarketplaceE2E : BaseTest() {
 
         step("Admin go to Token page and changes fee back") {
             with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-                changeFeeForToken("CC", "CC", "0","1", "1")
+                changeFeeForToken(CC, CC, "0", "1", "1")
             }
 
         }
@@ -234,12 +234,12 @@ class SmokeMarketplaceE2E : BaseTest() {
         step("Admin go to Token page and changes status for token")
         {
             with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-                val tokenName = "FT"
+                val tokenName = FT.tokenSymbol
                 val tokenButton = tokensTable.find {
                     it[AtmAdminTokensPage.TICKER_SYMBOL]?.text == tokenName
-                }?.get(AtmAdminTokensPage.TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
-                    ?: error("Row with Ticker symbol CC not found in table")
-                editTokenStatus(tokenButton, "Unavailable")
+                }?.get(AtmAdminTokensPage.TICKER_SYMBOL)?.to<Button>("Ticker symbol $tokenName")
+                    ?: error("Row with Ticker symbol $tokenName not found in table")
+                editTokenStatus(tokenButton, AtmAdminTokensPage.StatusToken.UNAVAILABLE)
             }
 
         }
@@ -255,12 +255,12 @@ class SmokeMarketplaceE2E : BaseTest() {
         step("Admin go to Token page and changes status for token")
         {
             with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-                val tokenName = "FT"
+                val tokenName = FT.tokenSymbol
                 val tokenButton = tokensTable.find {
                     it[AtmAdminTokensPage.TICKER_SYMBOL]?.text == tokenName
-                }?.get(AtmAdminTokensPage.TICKER_SYMBOL)?.to<Button>("Ticker symbol CC")
-                    ?: error("Row with Ticker symbol CC not found in table")
-                editTokenStatus(tokenButton, "Available")
+                }?.get(AtmAdminTokensPage.TICKER_SYMBOL)?.to<Button>("Ticker symbol $tokenName")
+                    ?: error("Row with Ticker symbol $tokenName not found in table")
+                editTokenStatus(tokenButton, AtmAdminTokensPage.StatusToken.AVAILABLE)
             }
         }
 
@@ -292,7 +292,7 @@ class SmokeMarketplaceE2E : BaseTest() {
             openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(CC, wallet.name)
         }
         step("User buy CC token") {
-            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(CC, amount, user, wallet)
+            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(CC, amount, user, wallet)
         }
         //TODO transaction history
         val balanceAfter = step("User check balance after operation") {
@@ -315,13 +315,13 @@ class SmokeMarketplaceE2E : BaseTest() {
         val user = Users.ATM_USER_2MAIN_WALLET
         val wallet = user.walletList[0]
 
-        prerequisite { addCurrencyCoinToWallet(user, amount, wallet) }
+//        prerequisite { addCurrencyCoinToWallet(user, amount, wallet) }
 
         val balanceBefore = step("User check balance before operation") {
             openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(VT, wallet.name)
         }
-        step("User buy CC token") {
-            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(VT, amount, user, wallet)
+        step("User buy VT token") {
+            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(VT, amount, user, wallet)
         }
         //TODO transaction history
         val balanceAfter = step("User check balance after operation") {

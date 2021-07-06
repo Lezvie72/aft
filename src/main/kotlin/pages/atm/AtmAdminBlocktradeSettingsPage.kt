@@ -2,6 +2,7 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
+import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -15,6 +16,7 @@ import pages.htmlelements.elements.SdexTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.CheckBox
+import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
 
 @PageUrl("/p2p-settings")
@@ -127,12 +129,26 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var feeAcceptingAssetSelect: AtmAdminSelect
 
     @Name("Confirm add token")
-    @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CONFIRM')]")
+    @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CONFIRM')]//ancestor::button")
     lateinit var confirmDialog: Button
 
     @Name("Cancel add token")
     @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CANCEL')]")
     lateinit var cancelDialog: Button
+
+    @Name("Clear button")
+    @FindBy(xpath = "//mat-icon[text()='clear']")
+    lateinit var clearButton: Button
+
+    @Name("Token clear button")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='token']//mat-icon[text()='clear']")
+    lateinit var tokenClearButton: Button
+
+    @Name("Token clear button")
+    @FindBy(xpath = ".//mat-option//span[@class='mat-option-text']")
+    lateinit var popUpWindow: TextInput
+
+
 
 //endregion
 
@@ -243,9 +259,13 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                 }
             }
         }
-        assert {
-            elementContainingTextNotPresented(tokenName)
-        }
+        val row = blocktradeSettingsTable.find {
+            it[TOKEN]?.text == tokenName
+        }?.get(TOKEN)
+        Assertions.assertTrue(
+          row == null,
+            "Row with $tokenName is found"
+        )
 
     }
 

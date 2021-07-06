@@ -4,6 +4,7 @@ import frontend.BaseTest
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.TmsLink
+import models.CoinType
 import models.CoinType.CC
 import models.CoinType.FIAT
 import models.user.classes.DefaultUser
@@ -14,7 +15,10 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import pages.atm.*
+import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
 import utils.TagNames
 import utils.gmail.GmailApi
@@ -49,7 +53,6 @@ class SmokeTests : BaseTest() {
                     }
                 }
             }
-
             step("Navigate from email") {
                 openPage<AtmHomePage>(driver)
                 val href = GmailApi.getHrefForNewUserATM(user.email)
@@ -194,10 +197,11 @@ class SmokeTests : BaseTest() {
                     click(privateKeyInput)
                     sendKeys(privateKeyInput, privateKey)
                     click(confirmSignature)
-                    clickUntilElementIsPresented(nextButton, "Wallets",1, pollingEveryInSeconds = 5)
+                    clickUntilElementIsPresented(nextButton, "Wallets", 1, pollingEveryInSeconds = 5)
                 }
-
-                Assertions.assertTrue(isWalletWithLabelPresented(label), "Wallet with label $label wasn't found")
+                with(openPage<AtmWalletPage>(driver) { submit(user) }) {
+                    Assertions.assertTrue(isWalletWithLabelPresented(label), "Wallet with label $label wasn't found")
+                }
             }
         }
     }
@@ -217,7 +221,7 @@ class SmokeTests : BaseTest() {
         }
 
         val balance = step("AND User go to Wallet get balance") {
-            openPage<AtmWalletPage>().getBalance(FIAT,wallet.name)
+            openPage<AtmWalletPage>().getBalance(FIAT, wallet.name)
         }
         step("WHEN Admin create send fiat to wallet") {
             with(openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }) {
@@ -238,7 +242,7 @@ class SmokeTests : BaseTest() {
 
             with(openPage<AtmWalletPage>(driver) { submit(user) }) {
                 Thread.sleep(10000)
-                getBalance(FIAT,wallet.name)
+                getBalance(FIAT, wallet.name)
             }
         }
 

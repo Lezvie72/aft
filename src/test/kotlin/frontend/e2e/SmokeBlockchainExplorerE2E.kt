@@ -5,11 +5,11 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
+import models.CoinType.ETC
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import pages.atm.AtmBlockchainExplorerPage
-import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_ACCEPTREDEEMREQUEST
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_ADDUSER
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_ARGS
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_BLOCK
@@ -23,7 +23,6 @@ import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_CHANNELS
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_CHANNEL_BLOCKS
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_CHANNEL_INFORMATION
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_CODE
-import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_CREATEREDEEMREQUEST
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_DATA_HASH
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_ENDORSED_BY
 import pages.atm.AtmBlockchainExplorerPage.Companion.TEXT_ENDORSER

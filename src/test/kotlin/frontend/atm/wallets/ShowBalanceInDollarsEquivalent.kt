@@ -16,13 +16,14 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmAdminTokensPage
-import pages.atm.AtmAdminTokensPage.EquivalentType.*
+import pages.atm.AtmAdminTokensPage.EquivalentType.FIXED
 import pages.atm.AtmWalletPage
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 import java.math.BigDecimal
+import java.math.BigDecimal.ROUND_HALF_UP
 
 @Tags(Tag(TagNames.Epic.WALLET.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
@@ -42,19 +43,24 @@ class ShowBalanceInDollarsEquivalent : BaseTest() {
         val wallet = user.mainWallet
 
         with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            editUsdEquivalent("VT", FIXED, value,"")
+            editUsdEquivalent(VT, FIXED, value,"")
         }
         with(openPage<AtmWalletPage>(driver) { submit(user) }) {
             chooseWallet(wallet.name)
             setDisplayZeroBalance(true)
+
             val balanceFromWallet = balanceUser.amount
-            val usdBalanceVT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(VT,wallet.name)
-            val usdBalanceCC = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(CC,wallet.name)
-            val usdBalanceFT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(FT,wallet.name)
-            val usdBalanceIT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(IT,wallet.name)
-            val balanceVT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(VT,wallet.name)
-            val usdBalanceFiat = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(FIAT,wallet.name)
-            //TODO: how system makes rounding for USD equivalent (it's displayed without decimal part) so assertions can failed
+
+            val usdBalanceVT =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(VT, wallet.name)
+            val usdBalanceCC =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(CC, wallet.name)
+            val usdBalanceIT =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(IT, wallet.name)
+            val balanceVT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(VT, wallet.name)
+            val usdBalanceFiat =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(FIAT, wallet.name)
+
             assertThat(
                 "Expected base balance: $usdBalanceVT, was: $balanceVT",
                 usdBalanceVT,
@@ -63,11 +69,15 @@ class ShowBalanceInDollarsEquivalent : BaseTest() {
             assertThat(
                 "Expected base balance: $balanceFromWallet, was: sum of balance tokens in usd equivalent",
                 balanceFromWallet,
-                closeTo(usdBalanceCC + usdBalanceFT + usdBalanceFiat + usdBalanceVT + usdBalanceIT, BigDecimal("0.01"))
+                closeTo(
+                    (usdBalanceCC + usdBalanceFiat + usdBalanceVT + usdBalanceIT).setScale(0, ROUND_HALF_UP),
+                    BigDecimal("0.01")
+                )
             )
         }
     }
 
+    @ResourceLock(Constants.ROLE_USER_2FA_MANUAL_SIG_MAIN_WALLET)
     @TmsLink("ATMCH-2247")
     @Test
     @DisplayName("USD equivalent, integer rate")
@@ -78,19 +88,24 @@ class ShowBalanceInDollarsEquivalent : BaseTest() {
         val wallet = user.mainWallet
 
         with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            editUsdEquivalent("VT",FIXED, value,"")
+            editUsdEquivalent(VT,FIXED, value,"")
         }
 
         with(openPage<AtmWalletPage>(driver) { submit(user) }) {
             chooseWallet(wallet.name)
             setDisplayZeroBalance(true)
+
             val balanceFromWallet = balanceUser.amount
-            val usdBalanceVT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(VT,wallet.name)
-            val usdBalanceCC = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(CC,wallet.name)
-            val usdBalanceFT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(FT,wallet.name)
-            val usdBalanceIT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(IT,wallet.name)
-            val balanceVT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(VT,wallet.name)
-            val usdBalanceFiat = openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(FIAT,wallet.name)
+
+            val usdBalanceVT =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(VT, wallet.name)
+            val usdBalanceCC =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(CC, wallet.name)
+            val usdBalanceIT =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(IT, wallet.name)
+            val balanceVT = openPage<AtmWalletPage>(driver) { submit(user) }.getBalance(VT, wallet.name)
+            val usdBalanceFiat =
+                openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForUSD(FIAT, wallet.name)
             assertThat(
                 "Expected base balance: $usdBalanceVT, was: $balanceVT",
                 usdBalanceVT,
@@ -99,7 +114,10 @@ class ShowBalanceInDollarsEquivalent : BaseTest() {
             assertThat(
                 "Expected base balance: $balanceFromWallet, was: sum of balance tokens in usd equivalent",
                 balanceFromWallet,
-                closeTo(usdBalanceCC + usdBalanceFT + usdBalanceFiat + usdBalanceVT + usdBalanceIT, BigDecimal("0.01"))
+                closeTo(
+                    (usdBalanceCC + usdBalanceFiat + usdBalanceVT + usdBalanceIT).setScale(0, ROUND_HALF_UP),
+                    BigDecimal("0.01")
+                )
             )
         }
     }

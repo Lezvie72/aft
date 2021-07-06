@@ -140,7 +140,7 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
 
     @Step("Assertion: Is element containing text presented")
     @Action("assert element containing text presented")
-    fun elementContainingTextPresented(partialText: String) {
+    fun elementContainingTextPresented(partialText: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { isElementContainingTextPresented(partialText, timeoutInSeconds) }) {
             "No element containing text '$partialText' is presented on page"
         }
@@ -148,34 +148,34 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
 
     @Step("Assertion: Is element containing text not presented")
     @Action("assert element containing text not presented")
-    fun elementContainingTextNotPresented(partialText: String) {
+    fun elementContainingTextNotPresented(partialText: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(!page.check { isElementContainingTextPresented(partialText, timeoutInSeconds) }) {
-            "No element containing text '$partialText' is presented on page"
+            "Element containing text '$partialText' is presented on page, but should not"
         }
     }
 
     @Action("assert element contains text")
-    fun elementContainsText(name: String, value: String) {
+    fun elementContainsText(name: String, value: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         val e: WebElement = page.findElementByName(name)
         elementContainsText(e, value)
     }
 
     @Step("Assertion: element '{e.name}' should contain text {text}")
-    fun elementContainsText(e: WebElement, text: String) {
+    fun elementContainsText(e: WebElement, text: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { isElementContainsText(e, text, timeoutInSeconds) }) {
             "Element ${e.getName()} doesn't contain text $text"
         }
     }
 
     @Step("Assertion: element '{e.name}' should contain text {text}")
-    fun elementContainsTextWithIgnoreCase(e: WebElement, text: String) {
+    fun elementContainsTextWithIgnoreCase(e: WebElement, text: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { isElementContainsText(e, text, timeoutInSeconds, true) }) {
             "Element ${e.getName()} doesn't contain text $text"
         }
     }
 
     @Step("Assertion: element '{e.name}' should not contain text {text}")
-    fun elementNotContainsText(e: WebElement, text: String) {
+    fun elementNotContainsText(e: WebElement, text: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { !isElementContainsText(e, text, timeoutInSeconds) }) {
             "Element ${e.getName()} contain text $text"
         }
@@ -188,7 +188,7 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
     }
 
     @Step("Assertion: element '{e.name}' is enabled")
-    fun elementEnabled(e: WebElement) {
+    fun elementEnabled(e: WebElement, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { isElementEnabled(e, timeoutInSeconds) }) {
             "Element '${e.getName()}' is disabled"
         }
@@ -203,27 +203,27 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
     }
 
     @Step("Assertion: element '{e.name}' is disabled")
-    fun elementDisabled(e: WebElement) {
+    fun elementDisabled(e: WebElement, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(!page.check { isElementEnabled(e, timeoutInSeconds) }) {
             "Element '${e.getName()}' is enabled"
         }
     }
 
     @Action("assert element is displayed")
-    fun elementIsDisplayed(name: String) {
+    fun elementIsDisplayed(name: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         val e: WebElement = page.findElementByName(name)
         assert(page.check { isElementPresented(e, timeoutInSeconds) })
     }
 
     @Step("Assertion: element '{e.name}' should be not presented on page")
-    fun elementNotPresented(e: WebElement) {
+    fun elementNotPresented(e: WebElement, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { !isElementPresented(e, timeoutInSeconds) }) {
             "Element ${e.getName()} presented on page"
         }
     }
 
     @Step("Assertion: element '{e.name}' should be presented on page")
-    fun elementPresented(e: WebElement) {
+    fun elementPresented(e: WebElement, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { isElementPresented(e, timeoutInSeconds) }) {
             "Element ${e.getName()} not presented on page"
         }
@@ -300,7 +300,7 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
 
     @Action("assert url matches")
     @Step("Assertion: url matches '{regex}'")
-    fun urlMatches(regex: String) {
+    fun urlMatches(regex: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { urlMatches(regex, timeoutInSeconds) }) {
             "Expected url to match '$regex'. Current url: ${driver.currentUrl}"
         }
@@ -308,7 +308,7 @@ class AssertActions<T : WebDriver>(page: BasePage, driver: T, val timeoutInSecon
 
     @Action("assert url ends")
     @Step("Assertion: url ends with '{regex}'")
-    fun urlEndsWith(regex: String) {
+    fun urlEndsWith(regex: String, timeoutInSeconds: Long = this.timeoutInSeconds) {
         assert(page.check { urlMatches("^.*$regex$", timeoutInSeconds) }) {
             "Expected url to ends with '$regex'. Current url: ${driver.currentUrl}"
         }

@@ -10,9 +10,12 @@ import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
 import pages.atm.AtmAdminKycManagementPage.StatusType.*
 import pages.core.annotations.PageUrl
+import pages.htmlelements.blocks.BaseBlock
+import pages.htmlelements.elements.AtmInput
 import pages.htmlelements.elements.SdexTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.CheckBox
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.attach
 import utils.helpers.to
@@ -38,6 +41,30 @@ open class AtmAdminKycManagementPage(driver: WebDriver) : AtmAdminPage(driver) {
         APPROVE, PASSED, BLOCK, DECLINE, CLEAR
     }
 
+    enum class KycStatus {
+        ALL, BLOCKED, NOT_STARTED, RED, PENDING, VALIDATING, GREEN, GREEN_AUTO, GREEN_EMPLOYEE
+    }
+
+    @Name("Requested date from")
+    @FindBy(xpath = "//form//mat-label[contains(text(), 'Requested date from')]//ancestor::mat-form-field")
+    lateinit var searchRequestedDateFrom: AtmInput
+
+    @Name("Modified date from")
+    @FindBy(xpath = "//form//mat-label[contains(text(), 'Modified date from')]//ancestor::mat-form-field")
+    lateinit var searchModifiedDateFrom: AtmInput
+
+    @Name("Requested date to")
+    @FindBy(xpath = "//form//mat-label[contains(text(), 'Requested date to')]//ancestor::mat-form-field")
+    lateinit var searchRequestedDateTo: AtmInput
+
+    @Name("Modified date to")
+    @FindBy(xpath = "//form//mat-label[contains(text(), 'Modified date to')]//ancestor::mat-form-field")
+    lateinit var searchModifiedDateTo: AtmInput
+
+    @Name("Search field in filter")
+    @FindBy(xpath = "//form//mat-label[contains(text(), 'Search')]//ancestor::mat-form-field")
+    lateinit var searchField: AtmInput
+
     @Name("User list")
     @FindBy(xpath = "//sdex-kyc-management//article")
     lateinit var userList: SdexTable
@@ -50,9 +77,17 @@ open class AtmAdminKycManagementPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(css = "input[formcontrolname='searchText']")
     lateinit var emailSearch: TextInput
 
+    @Name("Kyc status field")
+    @FindBy(xpath = "//form//span//*[contains(text(), 'KYC status')]")
+    lateinit var kycStatus: Button
+
     @Name("Apply filters button")
     @FindBy(xpath = "//button//span[contains(text(), 'Apply')]")
     lateinit var applyFiltersButton: Button
+
+    @Name("Reset filters button")
+    @FindBy(xpath = "//button//span[contains(text(), 'Reset')]")
+    lateinit var resetFiltersButton: Button
 
     //Review kyc application block sdex-kyc-info-dialog
 
@@ -119,6 +154,17 @@ open class AtmAdminKycManagementPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("Confirmation dialog")
     @FindBy(xpath = ".//sdex-status-confirmation-dialog")
     lateinit var confirmationDialog: Button
+
+    @Name("KYC management in navigation bar")
+    @FindBy(xpath = "//sdex-sidenav//span[contains(text(), 'KYC management')]")
+    lateinit var kycManagementInSettings: Button
+
+    @Name("Count all requests in bottom sidebar")
+    @FindBy(xpath = "//div[@class = 'mat-paginator-range-label']")
+    lateinit var countAllRequestsInBottomSidebar: Button
+
+    @Name("KYC filter bar")
+    lateinit var kycFilterBar: KycFilterSelector
 
     @Step("User opens review KYC application for user {email}")
     fun openKycReviewApplicationByEmail(email: String) {
@@ -239,5 +285,47 @@ open class AtmAdminKycManagementPage(driver: WebDriver) : AtmAdminPage(driver) {
         assertThat("Row found with email '$loggedBy'", dateRow, notNullValue())
         assertThat("Row found with email '$loggedBy'", noteRow, `is`(note))
         assertThat("Row found with email '$loggedBy'", loggedByRow, `is`(loggedBy))
+    }
+
+    @Name("Kyc filter selector")
+    @FindBy(xpath = "//div[@class = 'cdk-overlay-pane']")
+    class KycFilterSelector : BaseBlock<AtmPage>() {
+        @Name("ALL")
+        @FindBy(xpath = ".//span[contains(text(), 'ALL')]//parent::mat-option")
+        lateinit var all: CheckBox
+
+        @Name("BLOCKED")
+        @FindBy(xpath = ".//span[contains(text(), 'BLOCKED')]//parent::mat-option")
+        lateinit var blocked: CheckBox
+
+        @Name("NOT STARTED")
+        @FindBy(xpath = ".//span[contains(text(), 'NOT STARTED')]//parent::mat-option")
+        lateinit var notStarted: CheckBox
+
+        @Name("RED")
+        @FindBy(xpath = ".//span[contains(text(), 'RED')]//parent::mat-option")
+        lateinit var red: CheckBox
+
+        @Name("PENDING")
+        @FindBy(xpath = ".//span[contains(text(), 'PENDING')]//parent::mat-option")
+        lateinit var pending: CheckBox
+
+        @Name("VALIDATING")
+        @FindBy(xpath = ".//span[contains(text(), 'VALIDATING')]//parent::mat-option")
+        lateinit var validating: CheckBox
+
+        @Name("GREEN")
+        @FindBy(xpath = ".//span[contains(text(), 'GREEN')]//parent::mat-option")
+        lateinit var green: CheckBox
+
+        @Name("GREEN AUTO")
+        @FindBy(xpath = ".//span[contains(text(), 'GREEN AUTO')]//parent::mat-option")
+        lateinit var greenAuto: CheckBox
+
+        @Name("GREEN EMPLOYEE")
+        @FindBy(xpath = ".//span[contains(text(), 'GREEN EMPLOYEE')]//parent::mat-option")
+        lateinit var greenEmployee: CheckBox
+
+        val localAttribute = "aria-selected"
     }
 }

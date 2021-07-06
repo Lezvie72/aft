@@ -30,8 +30,8 @@ import java.math.BigDecimal
 @Story("Cancellation of the offer")
 class CancellationOfTheOffer : BaseTest() {
     // preconditions
-    private val baseAsset = CoinType.VT
-    private val quoteAsset = CoinType.CC
+    private val baseAsset = CoinType.VT.tokenSymbol
+    private val quoteAsset = CoinType.CC.tokenSymbol
     private val amountBuy = OtfAmounts.AMOUNT_10.amount
     private val userOne2FA = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
 

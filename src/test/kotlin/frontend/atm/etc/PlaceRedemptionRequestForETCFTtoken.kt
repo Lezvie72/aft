@@ -44,13 +44,18 @@ class PlaceRedemptionRequestForETCFTtoken : BaseTest() {
         val etcUser = Users.ATM_USER_FOR_ETC_TOKENS
         val wallet = etcUser.walletList[0]
 
-        val (amount, barNo) = prerequisite { prerequisiteForEtc(etcWallet, wallet, fileName, etcIssuer) }
+        val (amount, _) = prerequisite { prerequisiteForEtc(etcWallet, wallet, fileName, etcIssuer) }
         openPage<AtmWalletPage>(driver).logout()
 
         with(openPage<AtmWalletPage>(driver) { submit(etcUser) }) {
             chooseWallet(wallet.name)
             chooseToken(ETC)
             e {
+                wait {
+                    until("Button 'Redeem' should be enabled") {
+                        redemption.getAttribute("disabled") == null
+                    }
+                }
                 click(redemption)
             }
             assert {
@@ -109,6 +114,11 @@ class PlaceRedemptionRequestForETCFTtoken : BaseTest() {
             chooseWallet(wallet.name)
             chooseToken(ETC)
             e {
+                wait {
+                    until("Button 'Redeem' should be enabled") {
+                        redemption.getAttribute("disabled") == null
+                    }
+                }
                 click(redemption)
                 click(redeemManual)
             }
@@ -172,6 +182,11 @@ class PlaceRedemptionRequestForETCFTtoken : BaseTest() {
                 e {
                     chooseWallet(wallet.name)
                     chooseToken(ETC)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                     click(manualRedeemEtc)
                 }

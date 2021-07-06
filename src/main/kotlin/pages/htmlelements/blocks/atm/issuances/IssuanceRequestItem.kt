@@ -13,7 +13,7 @@ import ru.yandex.qatools.htmlelements.element.TextBlock
 class IssuanceRequestItem : BaseBlock<AtmPage>() {
 
     // Ошибка в xpath. Если вдруг что-то не работает, то я чинила >.>
-    @FindBy(xpath = ".//div[contains(text(), 'Requested') or contains(text(), 'Total requested')]/ancestor::atm-amount-field//atm-amount")
+    @FindBy(xpath = ".//*[contains(text(), 'Requested') or contains(text(), 'Total requested') or contains(text(), 'Requested amount')]/ancestor::div[contains(@class,'property')]//atm-amount")
     @Name("Total requested")
     lateinit var totalRequested: AtmAmount
 

@@ -14,17 +14,17 @@ import ru.yandex.qatools.htmlelements.element.Button
 import utils.helpers.to
 
 @Name("Issuances Volume Redemption Item")
-@FindBy(css = "atm-volume-item")
+@FindBy(css = "atm-volume-stat-item")
 class IssuanceVolumeRedemptionItem : BaseBlock<AtmPage>() {
 
-    @FindBy(xpath = ".//span[contains(text(), 'Token quantity requested to redeem')]//ancestor::div//atm-amount")
+    @FindBy(xpath = ".//span[contains(text(), 'Token quantity requested to redeem')]//ancestor::div//atm-amount | .//span[contains(text(), 'Requested amount')]//ancestor::div//atm-amount")
     @Name("Requested amount")
     lateinit var requestedAmount: AtmAmount
 
     @Step("check the status for order")
     fun checkStatus(status: String) {
         val cardWithStatus = wait {
-            untilPresented<WebElement>(By.xpath(".//atm-redemption-deal-base//nz-tag[contains(text(),'${status.toUpperCase()}')]"))
+            untilPresented<WebElement>(By.xpath(".//atm-ind-redemption-deal-base//nz-tag[contains(text(),'${status.toUpperCase()}')] | .//atm-redemption-deal-base//nz-tag[contains(text(),'${status.toUpperCase()}')]"))
         }.to<Button>("Card '$status'")
         assert { elementPresented(cardWithStatus) }
         MatcherAssert.assertThat("Order", cardWithStatus.text, Matchers.`is`(status.toUpperCase()))

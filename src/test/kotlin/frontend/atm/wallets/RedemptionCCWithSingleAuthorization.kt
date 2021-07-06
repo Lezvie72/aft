@@ -90,6 +90,11 @@ class RedemptionCCWithSingleAuthorization : BaseTest() {
             e {
                 chooseWallet(wallet.name)
                 chooseToken(CC)
+                wait {
+                    until("Button 'Redeem' should be enabled") {
+                        redemption.getAttribute("disabled") == null
+                    }
+                }
                 click(redemption)
                 select(selectWallet, wallet.publicKey)
                 sendKeys(tokenQuantity, "1")
@@ -126,6 +131,11 @@ class RedemptionCCWithSingleAuthorization : BaseTest() {
             e {
                 chooseWallet(wallet.name)
                 chooseToken(CC)
+                wait {
+                    until("Button 'Redeem' should be enabled") {
+                        redemption.getAttribute("disabled") == null
+                    }
+                }
                 click(redemption)
                 select(selectWallet, wallet.publicKey)
                 sendKeys(tokenQuantity, "1")
@@ -176,6 +186,11 @@ class RedemptionCCWithSingleAuthorization : BaseTest() {
                 e {
                     chooseWallet(wallet.name)
                     chooseToken(CC)
+                    wait {
+                        until("Button 'Redeem' should be enabled") {
+                            redemption.getAttribute("disabled") == null
+                        }
+                    }
                     click(redemption)
                     select(selectWallet, wallet.publicKey)
                     deleteData(tokenQuantity)

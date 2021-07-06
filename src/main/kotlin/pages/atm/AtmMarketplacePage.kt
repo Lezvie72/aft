@@ -19,10 +19,7 @@ import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
 import pages.htmlelements.blocks.atm.marketplace.AtmMarketplaceIndustrialCard
 import pages.htmlelements.blocks.atm.marketplace.AtmMarketplaceTokens
-import pages.htmlelements.elements.AtmAmount
-import pages.htmlelements.elements.AtmRadio
-import pages.htmlelements.elements.AtmSelect
-import pages.htmlelements.elements.AtmTable
+import pages.htmlelements.elements.*
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextBlock
@@ -93,7 +90,7 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
     lateinit var allTokensButton: Button
 
     @Name("Select maturity date")
-    @FindBy(xpath = "//atm-custom-select[contains(@formcontrolname, 'maturity')]/nz-select")
+    @FindBy(xpath = "//atm-custom-select[contains(@formcontrolname, 'maturity')]/nz-select | //form/nz-form-item[2]//nz-select")
     lateinit var selectMaturityDate: AtmSelect
 
     @Name("Comment")
@@ -142,56 +139,37 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//div[@class='market__list']")
     lateinit var tokensCards: AtmTable<AtmMarketplaceIndustrialCard>
 
-    @Step("Add currency coin")
-    fun buyCurrencyCoin(user: User, amount: String, wallet: SimpleWallet) {
-        e {
-            chooseToken(CC)
-            click(newOrderButton)
-
-            select(selectWallet, wallet.publicKey)
-            deleteData(tokenQuantity)
-            sendKeys(tokenQuantity, amount)
-            click(submitButton)
-            signAndSubmitMessage(user, wallet.secretKey)
-        }
-    }
 
     @Action("User buy token {coinType.tokenName}")
     @Step("buy token")
-    fun buyToken(coinType: CoinType, walletNum: String, amount: String, user: DefaultUser, secretKey: String?) {
+    fun buyOrReceiveToken(
+        coinType: CoinType,
+        amount: String,
+        user: DefaultUser,
+        wallet: SimpleWallet,
+        maturityDate: String = "",
+        needReceive: Boolean = false
+    ) {
         e {
             chooseToken(coinType)
             click(newOrderButton)
-            select(selectWallet, walletNum)
+            if (needReceive) click(receiveButton)
             deleteData(tokenQuantity)
             sendKeys(tokenQuantity, amount)
-            click(submitButton)
-        }
-        signAndSubmitMessage(user, secretKey)
-    }
-
-    //TODO перевести все тесты(связанные с покупкой токенов) на этот метод
-    @Action("User buy token {coinType.tokenName}")
-    @Step("buy token")
-    fun buyTokenNew(coinType: CoinType, amount: String, user: DefaultUser, wallet: SimpleWallet) {
-//        val maturityDate = LocalDateTime.now().month.getDisplayName(TextStyle.SHORT, Locale.US)
-//        val maturityDate = YearMonth.of(LocalDateTime.now().year, LocalDateTime.now().month)
-//            .format(DateTimeFormatter.ofPattern("MMyyyy"))
-        val maturityDate = "122020"
-
-
-        e {
-            chooseToken(coinType)
-            click(newOrderButton)
             select(selectWallet, wallet.publicKey)
-            deleteData(tokenQuantity)
-            sendKeys(tokenQuantity, amount)
+            wait {
+                until("Count should be $amount") {
+                    check { isElementContainingTextPresented(amount.split(".").last()) } or
+                            check { isElementContainingTextPresented(amount.split(".").first()) }
+                }
+            }
             when (coinType) {
                 IT -> select(selectMaturityDate, maturityDate)
             }
             click(submitButton)
         }
         signAndSubmitMessage(user, wallet.secretKey)
+        if (check { isElementContainingTextPresented("Order failed", 10L) }) error("Found message Order failed")
     }
 
     @Step("User choose token {coinType.tokenName}")

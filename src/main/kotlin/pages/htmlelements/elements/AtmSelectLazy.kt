@@ -6,7 +6,8 @@ import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import pages.BasePage
 import pages.core.actions.isEnabledSafety
-import ru.yandex.qatools.htmlelements.element.*
+import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.TypifiedElement
 import utils.helpers.to
 
 class AtmSelectLazy(wrappedElement: WebElement) : TypifiedElement(wrappedElement) {
@@ -36,7 +37,7 @@ class AtmSelectLazy(wrappedElement: WebElement) : TypifiedElement(wrappedElement
                 Thread.sleep(2000)
                 val first = this@AtmSelectLazy.text
                 //chek goal
-                var isFound: Boolean =
+                val isFound: Boolean =
                     page.isEnabledSafety(this@AtmSelectLazy, "$virtualPort$itemOption[@title='${text}']")
                 //cycle for find goal
                 if (!isFound) {
@@ -63,7 +64,6 @@ class AtmSelectLazy(wrappedElement: WebElement) : TypifiedElement(wrappedElement
                                     "Selected item"
                                 )
                             }
-                            valueFound = true
                             click(item)
                             this@AtmSelectLazy.text == text
                             break
@@ -94,7 +94,14 @@ class AtmSelectLazy(wrappedElement: WebElement) : TypifiedElement(wrappedElement
     @Step("get data as string from element")
     fun getHeadersAsString(page: BasePage, setWithoutSplit : Boolean = false): MutableSet<String> {
         waitLazyLabelText(page)
-        var rowSet: MutableSet<String> = mutableSetOf()
+        page.wait {
+            until("Item in lazy list should has label") {
+                page.check {
+                    this@AtmSelectLazy.findElement(By.xpath(".$itemSelect")).getAttribute("title").isNotEmpty()
+                }
+            }
+        }
+        val rowSet: MutableSet<String> = mutableSetOf()
         rowSet.add(this@AtmSelectLazy.findElement(By.xpath(".$itemSelect")).getAttribute("title"))
         page.e {
             click(this@AtmSelectLazy)
@@ -107,14 +114,11 @@ class AtmSelectLazy(wrappedElement: WebElement) : TypifiedElement(wrappedElement
             Thread.sleep(2000)
             //element that can be used as active for send keys
             val intractableElement = this@AtmSelectLazy.findElement(connectorInput)
-            //chek goal
-            var isFound: Boolean =
-                driver.isEnabledSafety(this@AtmSelectLazy, "$virtualPort$itemOption[@title='${text}']")
             //cycle for find goal
-            var beforeThrowException = 0
+            val beforeThrowException = 0
             while (true) {
                 intractableElement.sendKeys(Keys.DOWN)
-                var currentValue: String = ""
+                var currentValue = ""
                 if (page.isEnabledSafety(this@AtmSelectLazy, activeLine)) {
                     currentValue = this@AtmSelectLazy.findElement(By.xpath(activeLine)).getAttribute("title")
                 }

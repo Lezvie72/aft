@@ -5,6 +5,7 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
+import models.CoinType
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
@@ -75,6 +76,53 @@ class UpdateMarketplaceInformation : BaseTest() {
 
                 softAssert { elementContainingTextPresented("ATTACHMENTS") }
                 softAssert { elementPresented(datesRadio) }
+            }
+        }
+    }
+
+    @TmsLink("ATMCH-5245")
+    @Test
+    @DisplayName("IT. Checking the metadata of tokens in the Marketplace section")
+    fun marketplaceCheckingMetadata() {
+        with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
+            e{
+                chooseToken(CoinType.GF28ILN060A)
+            }
+            assert {
+                elementContainingTextPresented("Nickel Full Plate Cathodes, LME deliverable")
+                elementContainingTextPresented("Floating")
+                elementContainingTextPresented("Non-prepaid")
+                elementContainingTextPresented("1")
+            }
+            openPage<AtmMarketplacePage>(driver)
+            e{
+                chooseToken(CoinType.GF28ILN060B)
+            }
+            assert {
+                elementContainingTextPresented("Nickel Full Plate Cathodes, LME deliverable")
+                elementContainingTextPresented("Floating")
+                elementContainingTextPresented("Non-prepaid")
+                elementContainingTextPresented("1")
+            }
+            openPage<AtmMarketplacePage>(driver)
+            e{
+                chooseToken(CoinType.GF29ILN037C)
+            }
+            assert {
+                elementContainingTextPresented("Copper NORILSK Full Plate")
+                elementContainingTextPresented("Floating")
+                elementContainingTextPresented("Non-prepaid")
+                elementContainingTextPresented("1")
+            }
+            openPage<AtmMarketplacePage>(driver)
+            e{
+                chooseToken(CoinType.GF29ILN037D)
+            }
+            assert {
+                elementContainingTextPresented("Copper NORILSK Full Plate")
+                elementContainingTextPresented("Floating")
+                elementContainingTextPresented("Non-prepaid")
+                elementContainingTextPresented("1")
             }
         }
     }

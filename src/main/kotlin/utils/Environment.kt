@@ -47,6 +47,7 @@ object Environment {
                 "prod" -> Stand.PROD
                 "shared" -> Stand.SHARED
                 "tokentrust" -> Stand.TOKEN_TRUST
+                "uattokentrust" -> Stand.UAT_TOKEN_TRUST
                 else -> error("Unknown stand $standProp")
             }
         }

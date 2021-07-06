@@ -5,8 +5,7 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
-import models.CoinType
-import models.CoinType.ETC
+import models.CoinType.*
 import org.apache.commons.lang.RandomStringUtils
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.*
@@ -30,6 +29,8 @@ import java.time.ZoneOffset
 @Feature("Wallets")
 @Story("Notifications about new messages in chat")
 class NotificationsAboutNewMessagesInChat : BaseTest() {
+
+    private val maturityDate = IT.maturityDateMonthNumber
 
     @Order(1)
     @ResourceLocks(
@@ -173,7 +174,7 @@ class NotificationsAboutNewMessagesInChat : BaseTest() {
 
         step("User buy IT token") {
             with(openPage<AtmMarketplacePage>(itUserBrowser) { submit(user) }) {
-                buyTokenNew(CoinType.IT, amount.toString(), user, userWallet)
+                buyOrReceiveToken(IT, amount.toString(), user, userWallet,maturityDate)
             }
         }
 
@@ -182,7 +183,7 @@ class NotificationsAboutNewMessagesInChat : BaseTest() {
             {
                 findOrderAndOpenCard(
                     userWallet,
-                    CoinType.IT,
+                    IT,
                     amount
                 )
                 e {
@@ -273,13 +274,13 @@ class NotificationsAboutNewMessagesInChat : BaseTest() {
         step("Issuer change redemption limit") {
             with(openPage<AtmIssuancesPage>(driver) { submit(itIssuer) }) {
                 changeLimitAmount(
-                    CoinType.IT,
+                    IT,
                     AtmIssuancesPage.OperationType.RECEIVE,
                     AtmIssuancesPage.LimitType.MIN, "0.00000001", itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
-                    CoinType.IT,
+                    IT,
                     AtmIssuancesPage.OperationType.REDEMPTION,
                     AtmIssuancesPage.LimitType.MAX, "100.00000000", itIssuer, itWallet
                 )
@@ -288,7 +289,7 @@ class NotificationsAboutNewMessagesInChat : BaseTest() {
         openPage<AtmProfilePage>(driver).logout()
 
         step("User buy IT token") {
-            prerequisite { addITToken(user, itIssuer, "10", userWallet, itWallet, amount) }
+            prerequisite { addITToken(user, itIssuer,  userWallet, itWallet, amount, maturityDate) }
             AtmProfilePage(driver).logout()
         }
 
@@ -298,7 +299,7 @@ class NotificationsAboutNewMessagesInChat : BaseTest() {
         step("User make Redemption") {
             with(openPage<AtmWalletPage>(itUserBrowser) { submit(user) }) {
                 redeemToken(
-                    CoinType.IT,
+                    IT,
                     userWallet,
                     amount.toString(),
                     "",
@@ -312,7 +313,7 @@ class NotificationsAboutNewMessagesInChat : BaseTest() {
             {
                 findOrderAndOpenCard(
                     userWallet,
-                    CoinType.IT,
+                    IT,
                     amount
                 )
                 e {

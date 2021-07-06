@@ -9,7 +9,7 @@ import models.CoinType.VT
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
-import pages.atm.AtmAdminNodesManagementPage.NodeType.*
+import pages.atm.AtmAdminNodesManagementPage.NodeType.ENDORSER
 import pages.atm.AtmValidatorPage.NodeType
 import utils.Constants
 import utils.TagNames
@@ -24,6 +24,7 @@ import utils.helpers.step
 @Story("Validator dashboard. View rewards data")
 class ValidatorDashboardViewRewardsData : BaseTest() {
 
+    private val amountEndorser = "1000"
 
     @TmsLink("ATMCH-4240")
     @Test
@@ -56,10 +57,10 @@ class ValidatorDashboardViewRewardsData : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "1000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountEndorser, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
-                    "1000",
+                    amountEndorser,
                     userBuyer,
                     mainWallet
                 )
@@ -126,18 +127,13 @@ class ValidatorDashboardViewRewardsData : BaseTest() {
         val userBuyer = Users.ATM_USER_VALIDATOR_2FA
         val mainWallet = userBuyer.walletList[0]
 
-        val itIssuer = Users.ATM_USER_FOR_ACCEPT_CCVTIT_TOKENS
-        val itWallet = itIssuer.walletList[0]
-
-        val user = Users.ATM_USER_FOR_ETC_TOKENS
-        val wallet = user.mainWallet
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "1000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountEndorser, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
-                    "1000",
+                    amountEndorser,
                     userBuyer,
                     mainWallet
                 )
@@ -222,18 +218,12 @@ class ValidatorDashboardViewRewardsData : BaseTest() {
         val userBuyer = Users.ATM_USER_VALIDATOR_WITHOUT_2FA
         val mainWallet = userBuyer.mainWallet
 
-        val itIssuer = Users.ATM_USER_FOR_ACCEPT_CCVTIT_TOKENS
-        val itWallet = itIssuer.walletList[0]
-
-        val user = Users.ATM_USER_FOR_ETC_TOKENS
-        val wallet = user.mainWallet
-
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "1000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountEndorser, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
-                    "1000",
+                    amountEndorser,
                     userBuyer,
                     mainWallet
                 )

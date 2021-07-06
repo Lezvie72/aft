@@ -33,6 +33,9 @@ import java.math.BigDecimal
 @Story("Validator")
 class SmokeValidatorE2E : BaseTest() {
 
+    private val amountOrderer = "10000"
+    private val amountEndorser = "1000"
+
     @ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION)
     @TmsLink("ATMCH-5227")
     @Test
@@ -50,13 +53,13 @@ class SmokeValidatorE2E : BaseTest() {
                 changeLimitAmount(
                     CC,
                     SELL,
-                    MAX, "10000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     VT,
                     SELL,
-                    MAX, "10000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -64,10 +67,10 @@ class SmokeValidatorE2E : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
-                    "10000",
+                    amountOrderer,
                     userBuyer,
                     mainWallet
                 )
@@ -172,7 +175,7 @@ class SmokeValidatorE2E : BaseTest() {
                 findActiveNode()
                 assert {
                     elementContainingTextPresented("SUBMISSION DATE")
-                    elementContainingTextPresented("PAID AMOUNT")
+                    elementContainingTextPresented("STAKED AMOUNT")
                     elementContainingTextPresented("CERTIFICATE ISSUED DATE")
                     elementContainingTextPresented("PAYMENT DATE")
                     elementContainingTextPresented("CERTIFICATE")
@@ -198,7 +201,7 @@ class SmokeValidatorE2E : BaseTest() {
         assertThat(
             "Expected base balance: $balanceAfter, was: $balanceBefore",
             balanceAfter,
-            Matchers.closeTo(balanceBefore - BigDecimal(1000), BigDecimal("0.01"))
+            Matchers.closeTo(balanceBefore - amountEndorser.toBigDecimal(), BigDecimal("0.01"))
         )
 
         AtmProfilePage(driver).logout()
@@ -208,13 +211,13 @@ class SmokeValidatorE2E : BaseTest() {
                 changeLimitAmount(
                     CC,
                     SELL,
-                    MAX, "1000", itIssuer, itWallet
+                    MAX, amountEndorser, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     VT,
                     SELL,
-                    MAX, "1000", itIssuer, itWallet
+                    MAX, amountEndorser, itIssuer, itWallet
                 )
             }
         }
@@ -237,13 +240,13 @@ class SmokeValidatorE2E : BaseTest() {
                 changeLimitAmount(
                     CC,
                     SELL,
-                    MAX, "10000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     VT,
                     SELL,
-                    MAX, "10000", itIssuer, itWallet
+                    MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -252,10 +255,10 @@ class SmokeValidatorE2E : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "10000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     VT,
-                    "10000",
+                    amountOrderer,
                     userBuyer,
                     mainWallet
                 )
@@ -361,7 +364,7 @@ class SmokeValidatorE2E : BaseTest() {
                 findActiveNode()
                 assert {
                     elementContainingTextPresented("SUBMISSION DATE")
-                    elementContainingTextPresented("PAID AMOUNT")
+                    elementContainingTextPresented("STAKED AMOUNT")
                     elementContainingTextPresented("CERTIFICATE ISSUED DATE")
                     elementContainingTextPresented("PAYMENT DATE")
                     elementContainingTextPresented("CERTIFICATE")
@@ -387,7 +390,7 @@ class SmokeValidatorE2E : BaseTest() {
         assertThat(
             "Expected base balance: $balanceAfter, was: $balanceBefore",
             balanceAfter,
-            Matchers.closeTo(balanceBefore - BigDecimal(10000), BigDecimal("0.01"))
+            Matchers.closeTo(balanceBefore - amountOrderer.toBigDecimal(), BigDecimal("0.01"))
         )
 
         AtmProfilePage(driver).logout()
@@ -397,13 +400,13 @@ class SmokeValidatorE2E : BaseTest() {
                 changeLimitAmount(
                     CC,
                     SELL,
-                    MAX, "1000", itIssuer, itWallet
+                    MAX, amountEndorser, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     VT,
                     SELL,
-                    MAX, "1000", itIssuer, itWallet
+                    MAX, amountEndorser, itIssuer, itWallet
                 )
             }
         }

@@ -15,7 +15,6 @@ import pages.htmlelements.elements.SdexTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.CheckBox
-import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
 
 @PageUrl("/companies")
@@ -250,6 +249,7 @@ class AtmAdminCompaniesPage(driver: WebDriver) : AtmAdminPage(driver) {
         e {
             sendKeys(search, shortName)
             pressEnter(search)
+            Thread.sleep(4000)
         }
         companiesTable.find {
             it[SHORT_NAME]?.text == shortName

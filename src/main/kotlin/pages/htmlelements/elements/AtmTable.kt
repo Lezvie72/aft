@@ -6,7 +6,6 @@ import kotlinx.coroutines.runBlocking
 import org.openqa.selenium.*
 import org.openqa.selenium.support.FindBy
 import pages.BasePage
-import pages.core.annotations.Action
 import pages.htmlelements.blocks.BaseBlock
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
@@ -52,9 +51,7 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
 
     private fun waitUntilListIsLoaded() = wait(loadTimeoutInSeconds) {
         until("Couldn't load list in $loadTimeoutInSeconds seconds", loadTimeoutInSeconds) {
-            check {
-                isElementGone(loader)
-            }
+            (content.isNotEmpty() || check { isElementGone(loader) })
         }
     }
 
@@ -127,11 +124,7 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
 
     @Step("Check: have previous page")
     fun hasPrevPage(): Boolean {
-        return check { isElementPresented(prevPageButton, 2L) && isElementEnabled(prevPageButton,  2L) }
-    }
-
-    fun setRowsPerPage(rowsPerPage: Int) {
-
+        return check { isElementPresented(prevPageButton, 2L) && isElementEnabled(prevPageButton, 2L) }
     }
 
     fun forEach(body: (T) -> Unit) {
@@ -177,25 +170,5 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
             }
         }
         return null
-    }
-
-    //sort order - ASC, DESC, OFF
-    @Step("User sorts of {column} by {sortOrder}")
-    @Action("sort by")
-    fun sortBy(column: String, sortOrder: String) {
-
-    }
-
-    @Step("User checks sort order in column {column} by {sortOrder}")
-    @Action("assert sort")
-    fun assertSort(column: String, sortOrder: String) {
-
-
-    }
-
-    @Action("check items per page")
-    @Step("User asserts pages count and items per page")
-    fun checkItemsPerPage(itemsInPage: Int) {
-
     }
 }

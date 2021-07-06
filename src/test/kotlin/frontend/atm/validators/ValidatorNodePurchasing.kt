@@ -9,17 +9,17 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import pages.atm.*
 import pages.atm.AtmAdminNodesManagementPage.NodeType
 import pages.atm.AtmValidatorPage.NodeType.ENDORSER
 import pages.atm.AtmValidatorPage.NodeType.ORDERER
+import ru.yandex.qatools.htmlelements.element.Button
 import utils.Constants
 import utils.TagNames
 import utils.gmail.GmailApi
-import utils.helpers.OAuth
-import utils.helpers.Users
-import utils.helpers.openPage
-import utils.helpers.step
+import utils.helpers.*
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -28,6 +28,9 @@ import java.time.ZoneOffset
 @Story("Validator node purchasing")
 @Feature("Validator")
 class ValidatorNodePurchasing : BaseTest() {
+
+    private val amountOrderer = "11000"
+    private val amountEndorser = "1000"
 
     @ResourceLock(Constants.ROLE_USER_VALIDATOR_WITHOUT_FUNDS)
     @TmsLink("ATMCH-4415")
@@ -41,7 +44,7 @@ class ValidatorNodePurchasing : BaseTest() {
             with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                 e {
                     click(addNode)
-                    select(nodeType, ENDORSER.toString())
+                    select(nodeType, ENDORSER.name)
                     click(submit)
                     select(stakingWallet, mainWallet.name)
                     click(submit)
@@ -55,7 +58,7 @@ class ValidatorNodePurchasing : BaseTest() {
 
                 e {
                     click(addNode)
-                    select(nodeType, ORDERER.toString())
+                    select(nodeType, ORDERER.name)
                     click(submit)
                     select(stakingWallet, mainWallet.name)
                     click(submit)
@@ -87,13 +90,13 @@ class ValidatorNodePurchasing : BaseTest() {
                 changeLimitAmount(
                     CoinType.CC,
                     AtmIssuancesPage.OperationType.SELL,
-                    AtmIssuancesPage.LimitType.MAX, "11000", itIssuer, itWallet
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     CoinType.VT,
                     AtmIssuancesPage.OperationType.SELL,
-                    AtmIssuancesPage.LimitType.MAX, "11000", itIssuer, itWallet
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -101,10 +104,10 @@ class ValidatorNodePurchasing : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "11000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     CoinType.VT,
-                    "11000",
+                    amountOrderer,
                     userBuyer,
                     mainWallet
                 )
@@ -117,7 +120,7 @@ class ValidatorNodePurchasing : BaseTest() {
             with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                 e {
                     click(addNode)
-                    select(nodeType, ENDORSER.toString())
+                    select(nodeType, ENDORSER.name)
                     click(submit)
                     select(stakingWallet, mainWallet.name)
                     click(submit)
@@ -157,7 +160,7 @@ class ValidatorNodePurchasing : BaseTest() {
                 with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                     e {
                         click(addNode)
-                        select(nodeType, ORDERER.toString())
+                        select(nodeType, ORDERER.name)
                         click(submit)
                         select(stakingWallet, mainWallet.name)
                         click(submit)
@@ -214,13 +217,13 @@ class ValidatorNodePurchasing : BaseTest() {
                 changeLimitAmount(
                     CoinType.CC,
                     AtmIssuancesPage.OperationType.SELL,
-                    AtmIssuancesPage.LimitType.MAX, "11000", itIssuer, itWallet
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     CoinType.VT,
                     AtmIssuancesPage.OperationType.SELL,
-                    AtmIssuancesPage.LimitType.MAX, "11000", itIssuer, itWallet
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -228,10 +231,10 @@ class ValidatorNodePurchasing : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "11000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     CoinType.VT,
-                    "11000",
+                    amountOrderer,
                     userBuyer,
                     mainWallet
                 )
@@ -243,7 +246,7 @@ class ValidatorNodePurchasing : BaseTest() {
             with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                 e {
                     click(addNode)
-                    select(nodeType, ENDORSER.toString())
+                    select(nodeType, ENDORSER.name)
                     click(submit)
                     select(stakingWallet, mainWallet.name)
                     click(submit)
@@ -273,7 +276,7 @@ class ValidatorNodePurchasing : BaseTest() {
                 with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
                     e {
                         click(addNode)
-                        select(nodeType, ORDERER.toString())
+                        select(nodeType, ORDERER.name)
                         click(submit)
                         select(stakingWallet, mainWallet.name)
                         click(submit)
@@ -311,7 +314,6 @@ class ValidatorNodePurchasing : BaseTest() {
         }
     }
 
-    @Issue("ATMCH-6001")
     @ResourceLock(Constants.ROLE_USER_VALIDATOR_WITHOUT_2FA)
     @TmsLink("ATMCH-4062")
     @Test
@@ -328,13 +330,13 @@ class ValidatorNodePurchasing : BaseTest() {
                 changeLimitAmount(
                     CoinType.CC,
                     AtmIssuancesPage.OperationType.SELL,
-                    AtmIssuancesPage.LimitType.MAX, "11000", itIssuer, itWallet
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
                 )
                 openPage<AtmIssuancesPage>(driver)
                 changeLimitAmount(
                     CoinType.VT,
                     AtmIssuancesPage.OperationType.SELL,
-                    AtmIssuancesPage.LimitType.MAX, "11000", itIssuer, itWallet
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
                 )
             }
         }
@@ -342,10 +344,10 @@ class ValidatorNodePurchasing : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "11000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountOrderer, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     CoinType.VT,
-                    "11000",
+                    amountOrderer,
                     userBuyer,
                     mainWallet
                 )
@@ -462,10 +464,10 @@ class ValidatorNodePurchasing : BaseTest() {
 
         step("User buy VT token") {
             prerequisite {
-                addCurrencyCoinToWallet(userBuyer, "1000", mainWallet)
-                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyTokenNew(
+                addCurrencyCoinToWallet(userBuyer, amountEndorser, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
                     CoinType.VT,
-                    "1000",
+                    amountEndorser,
                     userBuyer,
                     mainWallet
                 )
@@ -488,7 +490,7 @@ class ValidatorNodePurchasing : BaseTest() {
                     elementPresented(nodeType)
                 }
                 e {
-                    select(nodeType, ENDORSER.toString())
+                    select(nodeType, ENDORSER.name)
                     click(submit)
                 }
                 assert {
@@ -568,7 +570,7 @@ class ValidatorNodePurchasing : BaseTest() {
                 findActiveNode()
                 assert {
                     elementContainingTextPresented("SUBMISSION DATE")
-                    elementContainingTextPresented("PAID AMOUNT")
+                    elementContainingTextPresented("STAKE AMOUNT")
                     elementContainingTextPresented("CERTIFICATE ISSUED DATE")
                     elementContainingTextPresented("PAYMENT DATE")
                     elementContainingTextPresented("CERTIFICATE")
@@ -585,6 +587,99 @@ class ValidatorNodePurchasing : BaseTest() {
             }
 
         }
+    }
+
+    @ResourceLock(Constants.ROLE_USER_VALIDATOR_WITHOUT_2FA)
+    @TmsLink("ATMCH-4019")
+    @Test
+    @DisplayName("Validator. New node request - the cancel request ")
+    fun validatorNewNodeRequestTheCancelRequest() {
+
+        val userBuyer = Users.ATM_USER_VALIDATOR_WITHOUT_2FA
+        val mainWallet = userBuyer.mainWallet
+
+        val itIssuer = Users.ATM_USER_FOR_ACCEPT_CCVTIT_TOKENS
+        val itWallet = itIssuer.walletList[0]
+
+        step("User change limit for order") {
+            with(openPage<AtmIssuancesPage>(driver) { submit(itIssuer) }) {
+                changeLimitAmount(
+                    CoinType.CC,
+                    AtmIssuancesPage.OperationType.SELL,
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
+                )
+                openPage<AtmIssuancesPage>(driver)
+                changeLimitAmount(
+                    CoinType.VT,
+                    AtmIssuancesPage.OperationType.SELL,
+                    AtmIssuancesPage.LimitType.MAX, amountOrderer, itIssuer, itWallet
+                )
+            }
+        }
+        AtmProfilePage(driver).logout()
+
+        step("User buy VT token") {
+            prerequisite {
+                addCurrencyCoinToWallet(userBuyer, amountEndorser, mainWallet)
+                openPage<AtmMarketplacePage>(driver) { submit(userBuyer) }.buyOrReceiveToken(
+                    CoinType.VT,
+                    amountOrderer,
+                    userBuyer,
+                    mainWallet
+                )
+            }
+        }
+        openPage<AtmWalletPage>(driver)
+
+
+        step("User go to Validator buy Node and Cancel process") {
+            with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
+                e {
+                    click(addNode)
+                    select(nodeType, ENDORSER.name)
+                    click(submit)
+                    select(stakingWallet, mainWallet.name)
+                    click(submit)
+                    click(cancel)
+                }
+            }
+        }
+        step("User go to Validator page check element") {
+            with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
+                val cardWithStatus = wait {
+                    untilPresented<WebElement>(By.xpath(".//atm-validator-current-nodes//atm-validator-card//nz-tag[contains(@class,'ant-tag ant-tag-cyan')][contains(text(),'Awaiting')]//ancestor::atm-validator-card//a"))
+                }.to<Button>("Card in statusActive")
+
+                assert{
+                    elementPresented(cardWithStatus)
+                }
+            }
+        }
+
+        step("User go to Validator buy Node and Cancel process") {
+            with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
+                e {
+                    click(addNode)
+                    select(nodeType, ORDERER.name)
+                    click(submit)
+                    select(stakingWallet, mainWallet.name)
+                    click(submit)
+                    click(cancelSubmitPrivateKeyButton)
+                }
+            }
+        }
+        step("User go to Validator page check element") {
+            with(openPage<AtmValidatorPage>(driver) { submit(userBuyer) }) {
+                val cardWithStatus = wait {
+                    untilPresented<WebElement>(By.xpath(".//atm-validator-current-nodes//atm-validator-card//nz-tag[contains(@class,'ant-tag ant-tag-cyan')][contains(text(),'Awaiting')]//ancestor::atm-validator-card//a"))
+                }.to<Button>("Card in statusActive")
+
+                assert{
+                    elementPresented(cardWithStatus)
+                }
+            }
+        }
+
     }
 }
 

@@ -77,6 +77,10 @@ class AtmAdminInvitesPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(css = "sdex-invites > sdex-preloader")
     lateinit var preloader: Button
 
+    @Name("Tokens")
+    @FindBy(xpath = "//span[contains(text(),'Tokens')]")
+    lateinit var tokenTab: Button
+
     init {
         if (!check {
                 isElementPresented(sendInviteButton)

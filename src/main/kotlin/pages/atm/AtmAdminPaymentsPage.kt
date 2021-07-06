@@ -98,12 +98,11 @@ class AtmAdminPaymentsPage(driver: WebDriver) : AtmAdminPage(driver) {
         }
 
         step("WHEN User get fiat he want to trade coins") {
-            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyToken(
+            openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(
                 tokenSymbol,
-                wallet.publicKey,
                 amount,
                 user,
-                wallet.secretKey
+                wallet
             )
         }
     }

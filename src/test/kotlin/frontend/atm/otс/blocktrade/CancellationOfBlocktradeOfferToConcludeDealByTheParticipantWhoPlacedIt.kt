@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
+import pages.atm.AtmAdminBlocktradeSettingsPage
 import pages.atm.AtmP2PPage
 import pages.atm.AtmP2PPage.ExpireType.GOOD_TILL_CANCELLED
 import pages.atm.AtmP2PPage.ExpireType.TEMPORARY
@@ -68,7 +69,7 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheParticipantWhoPlacedIt : B
             openPage<AtmProfilePage>().logout()
 
             with(openPage<AtmP2PPage>(driver) { submit(user) }) {
-                createP2P(walletID, companyName, CC, amount.toString(), VT, amount.toString(), TEMPORARY, user)
+                createP2P(companyName, companyName, baseAsset, amount.toString(), quoteAsset, amount.toString(), TEMPORARY, user)
             }
         }
 

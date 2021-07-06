@@ -84,7 +84,7 @@ class ImplementKycLogFunctionalityInAdminPanel : BaseTest() {
 
     }
 
-    @TmsLink("ATMCH-1579")
+    @TmsLink("ATMCH-1577")
     @Test
     @DisplayName("Log. Adding a comment to entry in journal KYC")
     fun logAddingCommentToEntryInJournalKyc() {

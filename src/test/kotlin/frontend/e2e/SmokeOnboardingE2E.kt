@@ -6,11 +6,8 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.qameta.allure.TmsLink
 import org.apache.commons.lang.RandomStringUtils
-import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalToIgnoringCase
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
@@ -18,7 +15,10 @@ import org.junit.jupiter.api.Test
 import pages.atm.*
 import utils.TagNames
 import utils.gmail.GmailApi
-import utils.helpers.*
+import utils.helpers.OAuth
+import utils.helpers.Users
+import utils.helpers.openPage
+import utils.helpers.step
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -374,7 +374,10 @@ class SmokeOnboardingE2E : BaseTest() {
 
                 step("Check email body with 2FA changing message") {
                     assert {
-                        assertThat(changed2FAEmailBody, containsString("You have successfully changed 2nd factor authentication setting."))
+                        assertThat(
+                            changed2FAEmailBody,
+                            containsString("You have successfully changed 2nd factor authentication setting.")
+                        )
                     }
                 }
 
@@ -388,7 +391,6 @@ class SmokeOnboardingE2E : BaseTest() {
                         e {
                             sendKeys(atmUserEmail, user.email)
                             sendKeys(atmUserPassword, user.password)
-                            val since = LocalDateTime.now(ZoneOffset.UTC)
                             click(signInButton)
 
                             submitConfirmationCode(secretCode)

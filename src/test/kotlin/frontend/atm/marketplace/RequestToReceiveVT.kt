@@ -75,7 +75,7 @@ class RequestToReceiveVT : BaseTest() {
             openPage<AtmWalletPage>(driver) { submit(user) }.getBalanceFromWalletForToken(VT, wallet.name)
         preset(user, "100", wallet)
         with(openPage<AtmMarketplacePage>(driver) { submit(user) }) {
-            buyToken(VT, wallet.publicKey, "1", user, wallet.secretKey)
+            buyOrReceiveToken(VT, "1", user, wallet)
             assert {
                 elementWithTextPresented(" Order completed successfully ")
             }
@@ -102,7 +102,7 @@ class RequestToReceiveVT : BaseTest() {
     private fun preset(user: DefaultUser, amount: String, wallet: SimpleWallet) {
         val alias = openPage<AtmWalletPage>(driver) { submit(user) }.getAliasForWallet(wallet.name)
         openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }.addPayment(alias, amount)
-        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyTokenNew(CC, amount, user, wallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(CC, amount, user, wallet)
     }
 
     @Disabled("Пользователь для токенов не имеет прав")

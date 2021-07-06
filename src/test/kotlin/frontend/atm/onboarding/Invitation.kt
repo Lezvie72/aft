@@ -109,16 +109,20 @@ class Invitation : BaseTest() {
         val user = newUser()
         with(openPage<AtmAdminInvitesPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
-                assert { elementPresented(inviteTable) }
-                assert { elementPresented(sendInviteButton) }
+                assert {
+                    elementPresented(inviteTable)
+                    elementPresented(sendInviteButton)
+                }
                 click(sendInviteButton)
-                assert { elementPresented(emailForInvitation) }
-                assert { elementPresented(kycPassedCheckbox) }
+                assert {
+                    elementPresented(emailForInvitation)
+                    elementPresented(kycPassedCheckbox)
+                }
                 click(cancelButton)
                 sendInvitation(user.email, true)
             }
             val href = GmailApi.getHrefForNewUserATM(user.email)
-            with(openPage<AtmLoginPage>(driver) { submit(user) }){
+            with(openPage<AtmLoginPage>(driver) { submit(user) }) {
                 e {
                     driver.navigate().to(href)
                     fillRegForm()

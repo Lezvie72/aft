@@ -82,7 +82,7 @@ class FractionalTokenDisplayOnTheMarkeplace : BaseTest() {
 
         openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }.addTokenAmountExact(
             tokenSymbolName,
-            "Ticker symbol CC",
+            "Ticker symbol ${CC.tokenSymbol}",
             userWallet,
             user,
             amount
@@ -93,6 +93,11 @@ class FractionalTokenDisplayOnTheMarkeplace : BaseTest() {
             chooseWallet(userWallet.name)
             chooseToken(tokenSymbolName)
             e {
+                wait {
+                    until("Button 'Redeem' should be enabled") {
+                        redemption.getAttribute("disabled") == null
+                    }
+                }
                 click(redemption)
                 select(selectWallet, userWallet.publicKey)
                 sendKeys(tokenQuantity, amount)
@@ -118,7 +123,7 @@ class FractionalTokenDisplayOnTheMarkeplace : BaseTest() {
 
         openPage<AtmAdminPaymentsPage>(driver) { submit(Users.ATM_ADMIN) }.addTokenAmountExact(
             tokenSymbolName,
-            "Ticker symbol CC",
+            "Ticker symbol ${CC.tokenSymbol}",
             userWallet,
             user,
             amount

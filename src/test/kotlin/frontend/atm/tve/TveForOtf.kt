@@ -21,7 +21,7 @@ import utils.helpers.openPage
 import utils.helpers.to
 import java.math.BigDecimal
 
-@Tags(Tag(TagNames.Flow.OTC),Tag(TagNames.Flow.TVE))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Flow.TVE))
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Epic("Frontend")
 @Feature("TVE.Streaming")
@@ -31,12 +31,13 @@ class TveForOtf : BaseTest() {
     companion object {
         private var setupTve = mutableSetOf<String>()
     }
+
     // preconditions
     private val baseAsset = CoinType.VT
     private val baseAssetIT = CoinType.IT
     private val quoteAsset = CoinType.CC
     private val amountBuy = OtfAmounts.AMOUNT_10.amount
-    private val maturityDateInnerDate = "22 September 2020"
+    private val maturityDateInnerDate = baseAssetIT.date
     private val userOne = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02
     private val userTwo = Users.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04
 
@@ -57,7 +58,7 @@ class TveForOtf : BaseTest() {
         val quoteAssetRate = "1"
 
         // setting TVE
-        with(openPage<AtmAdminTvePage>(driver) { submit(Users.ATM_ADMIN) }) {
+        with(openPage<AtmAdminTveSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 // set corridors size
                 setupCorridors(greenCorridorSize, yellowCorridorSize)
@@ -95,8 +96,8 @@ class TveForOtf : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(userOne) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$baseAsset/$quoteAsset",
-                "$amountBuy $baseAsset",
+                "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                "$amountBuy ${baseAsset.tokenSymbol}",
                 unitPriceOffer.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 userOne
@@ -242,7 +243,7 @@ class TveForOtf : BaseTest() {
                 setFilterBuyToday(baseAsset, quoteAsset)
                 assertThat(
                     "Offer with amount $amount should not exist",
-                    !isOfferExist(amount, outgoingOffers)
+                    !isOfferExistOutgoing(amount)
                 )
             }
         }
@@ -265,7 +266,7 @@ class TveForOtf : BaseTest() {
         val quoteAssetRate = "1"
 
         // setting TVE
-        with(openPage<AtmAdminTvePage>(driver) { submit(Users.ATM_ADMIN) }) {
+        with(openPage<AtmAdminTveSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 // set corridors size
                 setupCorridors(greenCorridorSize, yellowCorridorSize)
@@ -304,8 +305,8 @@ class TveForOtf : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(userOne) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$baseAsset/$quoteAsset",
-                "$amountBuy $baseAsset",
+                "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                "$amountBuy ${baseAsset.tokenSymbol}",
                 unitPriceOffer.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 userOne
@@ -446,7 +447,7 @@ class TveForOtf : BaseTest() {
                 setFilterBuyToday(baseAsset, quoteAsset)
                 assertThat(
                     "Offer with amount $amount should not exist",
-                    !isOfferExist(amount, outgoingOffers)
+                    !isOfferExistOutgoing(amount)
                 )
             }
         }
@@ -470,7 +471,7 @@ class TveForOtf : BaseTest() {
 
 
         // setting TVE
-        with(openPage<AtmAdminTvePage>(driver) { submit(Users.ATM_ADMIN) }) {
+        with(openPage<AtmAdminTveSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 // set corridors size
                 setupCorridors(greenCorridorSize, yellowCorridorSize)
@@ -508,8 +509,8 @@ class TveForOtf : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(userOne) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$baseAsset/$quoteAsset",
-                "$amountBuy $baseAsset",
+                "${baseAsset.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                "$amountBuy ${baseAsset.tokenSymbol}",
                 unitPriceOffer.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 userOne
@@ -655,7 +656,7 @@ class TveForOtf : BaseTest() {
                 setFilterBuyToday(baseAsset, quoteAsset)
                 assertThat(
                     "Offer with amount $amount should not exist",
-                    !isOfferExist(amount, outgoingOffers)
+                    !isOfferExistOutgoing(amount)
                 )
             }
         }
@@ -679,7 +680,7 @@ class TveForOtf : BaseTest() {
 
 
         // setting TVE
-        with(openPage<AtmAdminTvePage>(driver) { submit(Users.ATM_ADMIN) }) {
+        with(openPage<AtmAdminTveSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 // set corridors size
                 setupCorridors(greenCorridorSize, yellowCorridorSize)
@@ -717,8 +718,8 @@ class TveForOtf : BaseTest() {
         with(openPage<AtmStreamingPage>(driver) { submit(userOne) }) {
             createStreaming(
                 AtmStreamingPage.OperationType.BUY,
-                "$baseAssetIT/$quoteAsset",
-                "$amountBuy $baseAssetIT",
+                "${baseAssetIT.tokenSymbol}/${quoteAsset.tokenSymbol}",
+                "$amountBuy ${baseAssetIT.tokenSymbol}",
                 unitPriceOffer.toString(),
                 AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED,
                 userOne, maturityDateInnerDate
@@ -858,7 +859,7 @@ class TveForOtf : BaseTest() {
                 click(viewRequest)
                 assertThat(
                     "Offer with amount $amount should not exist",
-                    !isOfferExist(amount, outgoingOffers)
+                    !isOfferExistOutgoing(amount)
                 )
             }
         }
@@ -875,7 +876,7 @@ class TveForOtf : BaseTest() {
         val yellowCorridorSize = "40"
 
         // setting TVE
-        with(openPage<AtmAdminTvePage>(driver) { submit(Users.ATM_ADMIN) }) {
+        with(openPage<AtmAdminTveSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 // set corridors size
                 setupCorridors(greenCorridorSize, yellowCorridorSize)

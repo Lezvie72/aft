@@ -34,7 +34,7 @@ import utils.helpers.to
 @Story("Administrator panel. View existing custodian fee")
 class ViewExistingCustodianFee : BaseTest() {
 
-    private val coin = CoinType.ETC
+    private val coin = CoinType.FT
 
     @TmsLink("ATMCH-5649")
     @Test
@@ -59,7 +59,7 @@ class ViewExistingCustodianFee : BaseTest() {
             }
         }
 
-        val tokenMainInfo = openPage<AtmAdminTokensPage>(driver).getTokenMainInformation(coin, coin.tokenName)
+        val tokenMainInfo = openPage<AtmAdminTokensPage>(driver).getTokenMainInformation(coin)
         openPage<AtmAdminCustodianFeePage>(driver).checkValuesOfColumns(
             tokenMainInfo.tokenName,
             tokenMainInfo.tokenDescription,

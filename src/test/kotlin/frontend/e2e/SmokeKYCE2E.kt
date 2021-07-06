@@ -144,7 +144,7 @@ class SmokeKYCE2E : BaseTest() {
                 val status = getKycStatusForUserByEmail(user.email)
                 assertThat("Wrong status", status, Matchers.equalTo("NOT STARTED"))
 
-                openKycApplicationByEmailAndSetNewStatus(user.email, PASSED,"PASSED")
+                openKycApplicationByEmailAndSetNewStatus(user.email, PASSED, "PASSED")
 
                 val newStatus = getKycStatusForUserByEmail(user.email)
                 assertThat("Wrong status", newStatus, Matchers.equalTo("GREEN AUTO"))
