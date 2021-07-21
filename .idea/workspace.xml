@@ -22,7 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="relBr" />
+    <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="relBr">
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -139,7 +143,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626856861540</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="обновление релиз бранч">
+      <created>1626856901667</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1626856901667</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -158,43 +169,5 @@
     <MESSAGE value="relBr" />
     <MESSAGE value="обновление релиз бранч" />
     <option name="LAST_COMMIT_MESSAGE" value="обновление релиз бранч" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1623748621876">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="151" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1623748621876" />
-    <state x="463" y="118" key="FileChooserDialogImpl" timestamp="1623055536571">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="463" y="118" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1623055536571" />
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.center" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.left" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state width="1323" height="172" key="GridCell.Tab.0.right" timestamp="1623749432240">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state width="1323" height="172" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1623749432240" />
-    <state x="184" y="8" key="SettingsEditor" timestamp="1622811212463">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="184" y="8" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1622811212463" />
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2" timestamp="1623151419594">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="275" y="92" key="Vcs.Push.Dialog.v2/0.0.1366.728/1366.-325.1920.1040@0.0.1366.728" timestamp="1623151419594" />
-    <state x="391" y="81" width="622" height="566" key="find.popup" timestamp="1623747887288">
-      <screen x="0" y="0" width="1366" height="728" />
-    </state>
-    <state x="391" y="81" width="622" height="566" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1623747887288" />
   </component>
 </project>

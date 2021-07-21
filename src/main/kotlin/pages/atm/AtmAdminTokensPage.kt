@@ -170,6 +170,10 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-form-field//input[@formcontrolname='coefficient']")
     lateinit var coefficient: AtmAdminSelect
 
+    @Name("Input for fixed")
+    @FindBy(xpath = "//input[@data-placeholder='USD equivalent']")
+    lateinit var inputForFixed: AtmInput
+
     @Name("Fixed")
     @FindBy(xpath = "//span[contains(text(), 'Fixed')]/ancestor::mat-radio-button")
     lateinit var fixed: AtmAdminRadio
@@ -248,9 +252,17 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//tr[.//*[contains(text(), 'USD')]][.//*[contains(text(), 'CC')]]")
     lateinit var uSDCCRow: AtmSelect
 
-    @Name("Window equivalent settings")
+    @Name("USD and IT row")
+    @FindBy(xpath = "//tr[.//*[contains(text(), 'USD')]][.//*[contains(text(), 'Industrial Token')]]")
+    lateinit var uSDIndustrialRow: AtmSelect
+
+    @Name("Window equivalent settings CC")
     @FindBy(xpath = "//h1[contains(text(), 'CC') and contains(text(), 'USD')]")
-    lateinit var windowEquivalentSettings: TextBlock
+    lateinit var windowEquivalentSettingsCC: TextBlock
+
+    @Name("Window equivalent settings IT")
+    @FindBy(xpath = "//h1[contains(text(), 'GF46ILN061A') and contains(text(), 'USD')]")
+    lateinit var windowEquivalentSettingsIT: TextBlock
 
     @Name("Financial value")
     @FindBy(xpath = "//mat-dialog-content//*[contains(text(),'/')]")
@@ -267,6 +279,10 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("New equivalent value")
     @FindBy(xpath = "//tr[.//*[contains(text(), 'USD')]][.//*[contains(text(), 'CC')]]//*[contains(text(), ',')]")
     lateinit var newEquivalentValueInt: TextBlock
+
+    @Name("New equivalent value sub 1,000")
+    @FindBy(xpath = "//tr[.//*[contains(text(), 'USD')]][.//*[contains(text(), 'CC')]]")
+    lateinit var newEquivalentValueIntMin: TextBlock
 
 //    endregion
 
@@ -618,7 +634,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
             click(uSDCCRow)
             click(usdEquivalentSettings)
         }
-        check { assertTrue(isElementPresented(windowEquivalentSettings)) }
+        check { assertTrue(isElementPresented(windowEquivalentSettingsCC)) }
         e { click(fromMarket)}
         wait { fromMarket.getAttribute("mat-radio-checked") }
         e {
@@ -632,8 +648,52 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
         assert { assertEquals(result, equivalentResult) }
         e { click(confirm) }
         Thread.sleep(2000)
-        assert { elementNotPresentedWithCustomTimeout(windowEquivalentSettings, 1) }
+        assert { elementNotPresentedWithCustomTimeout(windowEquivalentSettingsCC, 1) }
         check { assertTrue(isElementPresented(tokensTable)) }
         assert { assertEquals(newEquivalentValueInt.text.substringBefore(".").replace(",", "").toInt(), equivalentResult) }
+    }
+
+    @Step("User works with USD equivalent settings window for IT token")
+    fun userWorksWithUSDEquivalentSettingsWindowForITToken(coefficientValue: String) {
+        e{
+            click(uSDIndustrialRow)
+            click(usdEquivalentSettings)
+        }
+        check { assertTrue(isElementPresented(windowEquivalentSettingsIT)) }
+        e { click(fromMarket)}
+        wait { fromMarket.getAttribute("mat-radio-checked") }
+        e {
+            click(financialId)
+            pressEnter(financialButton)
+            sendKeys(coefficient, coefficientValue )
+        }
+        val financialIdInt = financialValueInt.text.substringBefore(" ")
+        val result = financialIdInt.toInt() * coefficientValue.toInt()
+        val equivalentResult = equivalentValueInt.text.toInt()
+        assert { assertEquals(result, equivalentResult) }
+        e { click(confirm) }
+        Thread.sleep(2000)
+        assert { elementNotPresentedWithCustomTimeout(windowEquivalentSettingsIT, 1) }
+        check { assertTrue(isElementPresented(tokensTable)) }
+        assert { assertEquals(newEquivalentValueInt.text.substringBefore(".").replace(",", "").toInt(), equivalentResult) }
+    }
+
+    @Step("User works with USD equivalent settings window for token. Fixed")
+    fun userWorksWithUSDEquivalentSettingsWindowForTokenFixed(coefficientValue: String) {
+        e{
+            click(uSDCCRow)
+            click(usdEquivalentSettings)
+        }
+        check { assertTrue(isElementPresented(windowEquivalentSettingsCC)) }
+        e { click(fixed) }
+        wait { fixed.getAttribute("mat-radio-checked") }
+        e { sendKeys(inputForFixed, coefficientValue ) }
+        e { click(confirm) }
+        Thread.sleep(2000)
+        assert { elementNotPresentedWithCustomTimeout(windowEquivalentSettingsCC, 1) }
+        check { assertTrue(isElementPresented(tokensTable)) }
+        val result = newEquivalentValueIntMin.text.substringBefore(".").toInt()
+        assert { assertEquals(result, coefficientValue) }
+        println("Это не быдлокод, значения $coefficientValue и $result равны")
     }
 }

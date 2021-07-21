@@ -32,4 +32,26 @@ class ImplementTokenReferencePriceManagementWindow : BaseTest() {
             }
         }
     }
+
+    @TmsLink("ATMCH-4767")
+    @Test
+    @DisplayName("Platform. USD equivalent for tokens. Add equivalent for IT token")
+    fun platformUSDEquivalentForTokensAddEquivalentForITToken() {
+        with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_USER_FINANCIAL_MANAGER) }) {
+            step("User works with USD equivalent settings window for IT token") {
+                userWorksWithUSDEquivalentSettingsWindowForITToken(coefficientValue)
+            }
+        }
+    }
+
+    @TmsLink("ATMCH-4765")
+    @Test
+    @DisplayName("Platform. USD equivalent for tokens. Add equivalent for token. Fixed")
+    fun platformUSDEquivalentForTokensAddEquivalentForTokenToken() {
+        with(openPage<AtmAdminTokensPage>(driver) { submit(Users.ATM_USER_FINANCIAL_MANAGER) }) {
+            step("User works with USD equivalent settings window for token. Fixed") {
+                userWorksWithUSDEquivalentSettingsWindowForTokenFixed(coefficientValue)
+            }
+        }
+    }
 }
