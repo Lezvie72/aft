@@ -23,7 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1bbda69-36d7-4bbe-94d1-ecaac4588a7a" name="Default Changelist" comment="relBr">
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/validators/ValidationCheckForAmountFields.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/frontend/atm/validators/ValidationCheckForAmountFields.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +58,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="ATMCH2510" />
+        <entry key="$PROJECT_DIR$" value="ATMCH-4091(Alexander)" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

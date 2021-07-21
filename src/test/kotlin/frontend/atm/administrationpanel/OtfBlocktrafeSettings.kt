@@ -15,8 +15,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.openqa.selenium.By
 import pages.atm.AtmAdminBlocktradeSettingsPage
-import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.FIXED
-import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.VOLUME
+import pages.atm.AtmAdminStreamingSettingsPage.FeeModeState.*
 import pages.atm.AtmP2PPage
 import pages.atm.AtmP2PPage.ExpireType.TEMPORARY
 import pages.atm.AtmProfilePage
@@ -39,8 +38,9 @@ class OtfBlocktrafeSettings : BaseTest() {
     private val baseToken = CC
     private val quoteToken = VT
     private val tokenFT = FT
-    private val tokenFIAT = FIAT
+    private val tokenFiat = FIAT
 
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4087")
     @Test
     @DisplayName("Admin panel. OTF. Blocktrade settings. Validation.")
@@ -70,6 +70,7 @@ class OtfBlocktrafeSettings : BaseTest() {
         }
     }
 
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4181")
     @Test
     @DisplayName("Admin panel. OTF. Blocktrade/P2P settings. Add incorrect token.")
@@ -92,7 +93,7 @@ class OtfBlocktrafeSettings : BaseTest() {
             e {
                 sendKeys(tokenInput, "qwerty")
             }
-            assert{
+            assert {
                 elementDisabled(confirmDialog)
             }
             wait {
@@ -110,6 +111,7 @@ class OtfBlocktrafeSettings : BaseTest() {
         }
     }
 
+    @Issue("ATMCH-6103")
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4167")
     @Test
@@ -134,6 +136,19 @@ class OtfBlocktrafeSettings : BaseTest() {
                 elementPresented(confirmDialog)
                 elementPresented(cancelDialog)
             }
+            e {
+                chooseToken(tokenInput, tokenFiat.tokenSymbol)
+                click(confirmDialog)
+            }
+            assert { elementWithTextPresented("Impossible to use fiat token \"${tokenFiat.tokenSymbol}\" in secondary market") }
+            e {
+                click(tokenClearButton)
+                chooseToken(tokenInput, baseToken.tokenSymbol)
+                chooseToken(feePlacingAsset, tokenFiat.tokenSymbol)
+                chooseToken(feeAcceptingAsset, tokenFiat.tokenSymbol)
+                click(confirmDialog)
+            }
+            assert { elementWithTextPresented("Impossible to use fiat token \"${tokenFiat.tokenSymbol}\" in secondary market") }
             e {
                 click(cancelDialog)
             }
@@ -175,10 +190,10 @@ class OtfBlocktrafeSettings : BaseTest() {
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             val row = blocktradeSettingsTable.find {
-                it[AtmAdminBlocktradeSettingsPage.TOKEN]?.text == tokenFIAT.tokenSymbol
+                it[AtmAdminBlocktradeSettingsPage.TOKEN]?.text == baseToken.tokenSymbol
             }?.get(AtmAdminBlocktradeSettingsPage.TOKEN)
             if (row != null) {
-                deleteToken(tokenFIAT.tokenSymbol)
+                deleteToken(baseToken.tokenSymbol)
             }
         }
         with(openPage<AtmP2PPage>(driver) { submit(Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET) }) {
@@ -187,22 +202,22 @@ class OtfBlocktrafeSettings : BaseTest() {
                 click(assetToSend)
             }
             assert {
-                elementContainingTextNotPresented(tokenFIAT.tokenSymbol)
+                elementContainingTextNotPresented(baseToken.tokenSymbol)
             }
         }
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addNewToken(
-                tokenFIAT.tokenSymbol,
+                baseToken.tokenSymbol,
                 true,
                 "10",
-                tokenFIAT.tokenSymbol,
+                baseToken.tokenSymbol,
                 FIXED.state,
-                tokenFIAT.tokenSymbol,
+                baseToken.tokenSymbol,
                 "10",
                 FIXED.state
             )
             assert {
-                elementContainingTextPresented(tokenFIAT.tokenSymbol)
+                elementContainingTextPresented(baseToken.tokenSymbol)
             }
         }
     }
@@ -273,8 +288,8 @@ class OtfBlocktrafeSettings : BaseTest() {
     @DisplayName("Admin panel. OTF. Blocktrade settings. Change default fee placing/accepting offer.")
     fun blocktradeSettingsChangeFee() {
         val amount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-        val user1 = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET
-        val user2 = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
+        val user1 = Users.ATM_USER_2FA_OTF_OPERATION_SIXTH
+        val user2 = Users.ATM_USER_2FA_OTF_OPERATION_FIFTH
 
         val defaultFeePlacingOfferInputMakerValueNew = "0.${RandomStringUtils.randomNumeric(7) + 1}"
         val defaultFeePlacingOfferInputTakerValueNew = "0.${RandomStringUtils.randomNumeric(7) + 1}"
@@ -282,8 +297,21 @@ class OtfBlocktrafeSettings : BaseTest() {
         val companyName = openPage<AtmProfilePage>(driver) { submit(user2) }.getCompanyName()
         val walletID = openPage<AtmWalletPage>(driver) { submit(user2) }.takeWalletID()
 
-
         openPage<AtmWalletPage>(driver).logout()
+
+        with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            chooseToken(baseToken.tokenSymbol)
+            e {
+                click(edit)
+            }
+            e {
+                setCheckbox(available, true)
+                select(feePlacingMode, MODE_UNDEFINED.state)
+                Thread.sleep(2000)
+                select(feeAcceptingMode, MODE_UNDEFINED.state)
+                click(confirmDialog)
+            }
+        }
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             assert {
@@ -304,21 +332,21 @@ class OtfBlocktrafeSettings : BaseTest() {
                 click(clearButton)
                 sendKeys(defaultAsset, baseToken.tokenSymbol)
                 chooseToken(defaultAsset, baseToken.tokenSymbol)
-                if (check { isElementPresented(save) }) {
-                    click(save)
+                if (check { isElementPresented(assetSave) }) {
+                    click(assetSave)
                 }
                 defaultFeePlacingOfferMaker.delete()
                 sendKeys(defaultFeePlacingOfferMaker, defaultFeePlacingOfferInputMakerValueNew)
                 assert {
-                    elementPresented(save)
+                    elementPresented(placeSave)
                 }
-                click(save)
+                click(placeSave)
                 defaultFeeAcceptingOfferTaker.delete()
                 sendKeys(defaultFeeAcceptingOfferTaker, defaultFeePlacingOfferInputTakerValueNew)
                 assert {
-                    elementPresented(save)
+                    elementPresented(acceptSave)
                 }
-                click(save)
+                click(acceptSave)
                 val row = blocktradeSettingsTable.find {
                     it[AtmAdminBlocktradeSettingsPage.TOKEN]?.text == baseToken.tokenSymbol
                 }?.get(AtmAdminBlocktradeSettingsPage.TOKEN)
@@ -327,27 +355,7 @@ class OtfBlocktrafeSettings : BaseTest() {
                 }
             }
         }
-        with(openPage<AtmP2PPage>(driver) { submit(user1) }) {
-            e {
-                click(createBlockTrade)
-                waitSpinnerAlertDisappeared()
-                sendKeys(toWallet, walletID)
-                wait {
-                    untilPresented<Button>(By.xpath("//nz-auto-option//div[contains(text(),'$companyName')]"))
-                }.clickJS()
-                click(amountToSend)
-                select(assetToReceive, quoteToken.tokenSymbol)
-                select(assetToSend, baseToken.tokenSymbol)
-                sendKeys(amountToSend, amount.toString())
-                sendKeys(amountToReceive, amount.toString())
-            }
-            assertThat(
-                "TRANSACTION FEE value equals the Default fee placing offer (maker)",
-                offerFee.amount,
-                Matchers.hasToString(defaultFeePlacingOfferInputMakerValueNew)
-            )
-        }
-        with(openPage<AtmP2PPage>(driver) { submit(user1) }) {
+        val fee = with(openPage<AtmP2PPage>(driver) { submit(user1) }) {
             createP2P(
                 walletID, companyName,
                 baseToken, amount.toString(),
@@ -362,12 +370,32 @@ class OtfBlocktrafeSettings : BaseTest() {
             }
             assertThat(
                 "TRANSACTION FEE value equals the Default fee placing offer (maker)",
+                fee,
+                Matchers.hasToString(defaultFeePlacingOfferInputMakerValueNew)
+            )
+
+            assertThat(
+                "TRANSACTION FEE value equals the Default fee placing offer (maker)",
                 newOfferFee.amount,
                 Matchers.hasToString(defaultFeePlacingOfferInputTakerValueNew)
             )
         }
+        with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            chooseToken(baseToken.tokenSymbol)
+            e {
+                click(edit)
+            }
+            e {
+                setCheckbox(available, true)
+                select(feePlacingMode, FIXED.state)
+                Thread.sleep(2000)
+                select(feeAcceptingMode, FIXED.state)
+                click(confirmDialog)
+            }
+        }
     }
 
+    @Issue("ATMCH-6103")
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-5930")
     @Test
@@ -384,6 +412,20 @@ class OtfBlocktrafeSettings : BaseTest() {
         val walletID = openPage<AtmWalletPage>(driver) { submit(user2) }.takeWalletID()
 
         openPage<AtmWalletPage>(driver).logout()
+
+        with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            chooseToken(baseToken.tokenSymbol)
+            e {
+                click(edit)
+            }
+            e {
+                setCheckbox(available, true)
+                select(feePlacingMode, MODE_UNDEFINED.state)
+                Thread.sleep(2000)
+                select(feeAcceptingMode, MODE_UNDEFINED.state)
+                click(confirmDialog)
+            }
+        }
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addNewDefaultTokenIfNotPresented(baseToken.tokenSymbol)
@@ -404,17 +446,24 @@ class OtfBlocktrafeSettings : BaseTest() {
             }
             e {
                 click(clearButton)
+                sendKeys(defaultAsset, tokenFiat.tokenSymbol)
+            }
+            assert {
+                elementContainingTextPresented("Token is not found")
+            }
+            e {
+                click(clearButton)
                 sendKeys(defaultAsset, baseToken.tokenSymbol)
                 chooseToken(defaultAsset, baseToken.tokenSymbol)
-                if (check { isElementPresented(save) }) {
-                    click(save)
+                if (check { isElementPresented(assetSave) }) {
+                    click(assetSave)
                 }
                 defaultFeePlacingOfferMaker.delete()
                 sendKeys(defaultFeePlacingOfferMaker, defaultFeePlacingOfferInputMakerValueNew)
-                click(save)
+                click(placeSave)
                 defaultFeeAcceptingOfferTaker.delete()
                 sendKeys(defaultFeeAcceptingOfferTaker, defaultFeePlacingOfferInputTakerValueNew)
-                click(save)
+                click(acceptSave)
                 driver.navigate().refresh()
                 wait {
                     until("wait for loading page after refresh", 15) {
@@ -485,6 +534,19 @@ class OtfBlocktrafeSettings : BaseTest() {
                 newOfferFee.amount,
                 Matchers.hasToString(defaultFeePlacingOfferInputTakerValueNew)
             )
+        }
+        with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            chooseToken(baseToken.tokenSymbol)
+            e {
+                click(edit)
+            }
+            e {
+                setCheckbox(available, true)
+                select(feePlacingMode, FIXED.state)
+                Thread.sleep(2000)
+                select(feeAcceptingMode, FIXED.state)
+                click(confirmDialog)
+            }
         }
     }
 
@@ -753,17 +815,17 @@ class OtfBlocktrafeSettings : BaseTest() {
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             addTokenIfNotPresented(
-                tokenFIAT.tokenSymbol,
+                baseToken.tokenSymbol,
                 false,
                 "10",
-                tokenFIAT.tokenSymbol,
+                baseToken.tokenSymbol,
                 FIXED.state,
-                tokenFIAT.tokenSymbol,
+                baseToken.tokenSymbol,
                 "10",
                 FIXED.state
             )
             e {
-                chooseToken(tokenFIAT.tokenSymbol)
+                chooseToken(baseToken.tokenSymbol)
                 click(edit)
                 setCheckbox(available, false)
                 click(confirmDialog)
@@ -775,7 +837,7 @@ class OtfBlocktrafeSettings : BaseTest() {
                 click(assetToSend)
             }
             assert {
-                elementContainingTextNotPresented(tokenFIAT.tokenSymbol)
+                elementContainingTextNotPresented(baseToken.tokenSymbol)
             }
         }
     }

@@ -93,7 +93,7 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset,quoteAsset
+                baseAsset
             )
         }
 
@@ -148,7 +148,7 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
         val user2 = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            changeFeeSettingsForTokenBlocktrade(CC, VT)
+            changeFeeSettingsForTokenBlocktrade(CC)
         }
 
         val companyName = openPage<AtmProfilePage>(driver) { submit(user2) }.getCompanyName()
@@ -229,7 +229,7 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
         val user2 = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            changeFeeSettingsForTokenBlocktrade(CC, VT)
+            changeFeeSettingsForTokenBlocktrade(CC)
         }
 
         val walletID =
@@ -316,7 +316,7 @@ class PlacingNewOfferToConcludeDeal : BaseTest() {
         val user3 = Users.ATM_USER_WITH_BLOCK_WALLET
 
         with(openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            changeFeeSettingsForTokenBlocktrade(CC, VT)
+            changeFeeSettingsForTokenBlocktrade(CC)
         }
 
         val companyName = openPage<AtmProfilePage>(driver) { submit(user2) }.getCompanyName()

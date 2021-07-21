@@ -33,6 +33,13 @@ import java.math.BigDecimal
 @Story("RFQ. Placement of a new offer by the participant to a request of another participant")
 class ViewOfDealAndOfferHistoryInRFQ : BaseTest() {
 
+    private val amount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
+    private val dealAmount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
+    private val baseAsset = CC
+    private val quoteAsset = VT
+    private val user1 = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
+    private val user2 = Users.ATM_USER_2FA_OTF_OPERATION_SECOND
+
     //TODO фильтры
     @ResourceLocks(
         ResourceLock(Constants.ROLE_USER_MANUAL_SIG_OTF_WALLET_FOR_OTF),
@@ -42,12 +49,7 @@ class ViewOfDealAndOfferHistoryInRFQ : BaseTest() {
     @Test
     @DisplayName("RFQ. View offer history")
     fun rfqViewOfferHistory() {
-        val amount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-        val dealAmount = BigDecimal("1.${RandomStringUtils.randomNumeric(8)}")
-        val baseAsset = CC
-        val quoteAsset = VT
-        val user1 = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
-        val user2 = Users.ATM_USER_2FA_OTF_OPERATION_SECOND
+
 
         prerequisite {
             prerequisitesRfq(

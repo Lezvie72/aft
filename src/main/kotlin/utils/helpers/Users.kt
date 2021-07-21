@@ -37,6 +37,71 @@ class Users {
             UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+change_password@gmail.com")
         }
 
+        val ATM_USER_2FA_WITH_WALLET_MTEST06 = when (Environment.stand) {
+            DEVELOP -> UserWithMainWalletAndOtf2FA(
+                "",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+//            RELEASE -> UserWithMainWalletAndOtf(
+            RELEASE -> UserWithMainWalletAndOtf2FA(
+                "aft.uat.sdex+mtest06@gmail.com",
+                "Q4KAWKBYCQT2ETEG",
+                otfWallet = OtfWallet(
+                    publicKey = "36ab7f62169f11de1d2cd9824ac41eadde3f4d23569d04fae8f50dffdffcc559",
+                    secretKey = "9a016cee06d31242f1dfad7c7e25593f5dd41aaa476e583592dd5853702638ab36ab7f62169f11de1d2cd9824ac41eadde3f4d23569d04fae8f50dffdffcc559"
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "c4815bc7d92721fd31eacb059202b12fa2ea43718efd157d07fc847ec892deab",
+                    secretKey = "fb0d82090c18e64114f38563a4e754e99b6b066e24e3863a0f7cc22266b34846c4815bc7d92721fd31eacb059202b12fa2ea43718efd157d07fc847ec892deab"
+                ),
+                castodian = ""
+            )
+            PREPROD -> UserWithMainWalletAndOtf2FA(
+                "",
+                "",
+                otfWallet = OtfWallet(
+                    publicKey = "",
+                    secretKey = ""
+                ),
+                mainWallet = MainWallet(
+                    name = "Main 1",
+                    publicKey = "",
+                    secretKey = ""
+                )
+            )
+            PROD -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            SHARED -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
+                oAuthSecret = "",
+                otfWallet = OtfWallet(),
+                mainWallet = MainWallet()
+            )
+        }
+
         val ATM_USER_WITH_BLOCK_WALLET = when (Environment.stand) {
             DEVELOP -> UserWithMainWallet2FA(
                 mainWallet = MainWallet(),
@@ -176,6 +241,46 @@ class Users {
             UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+0_aftuser@gmail.com")
         }
 
+        val ATM_USER_SUPER_ADMIN_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+superadminuser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+superadminuser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+superadminuser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+superadminuser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+superadminuser888@gmail.com")
+        }
+
+        val ATM_USER_OTF_TVE_MANAGER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+otfTveManagerUser888@gmail.com")
+        }
+
+        val ATM_USER_GENERIC_PARTICIPANT_MANAGER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+usergenericparticipantmanager888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+usergenericparticipantmanager888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+usergenericparticipantmanager888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+usergenericparticipantmanager888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+usergenericparticipantmanager888@gmail.com")
+        }
+
+        val ATM_USER_GENERIC_PARTICIPANT_ADMIN_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+usergenericparticipantadmin888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+usergenericparticipantadmin888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+usergenericparticipantadmin888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+usergenericparticipantadmin888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+usergenericparticipantadmin888@gmail.com")
+        }
+
         val ATM_USER_FINANCE_MANAGER_ROLE = when (Environment.stand) {
             DEVELOP -> DefaultUser()
             RELEASE -> DefaultUser("aft.uat.sdex+financeManagerUser888@gmail.com")
@@ -194,6 +299,36 @@ class Users {
             SHARED -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
             TOKEN_TRUST -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
             UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+viewerUser888@gmail.com")
+        }
+
+        val ATM_USER_PLATFORM_ADMINISTRATOR_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+platformAdministratorUser888@gmail.com")
+        }
+
+        val ATM_USER_ISSUER_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+issueruser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+issueruser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+issueruser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+issueruser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+issueruser888@gmail.com")
+        }
+
+        val ATM_USER_VALIDATOR_ROLE = when (Environment.stand) {
+            DEVELOP -> DefaultUser()
+            RELEASE -> DefaultUser("aft.uat.sdex+validatoruser888@gmail.com")
+            PREPROD -> DefaultUser("aft.uat.sdex+validatoruser888@gmail.com")
+            PROD -> DefaultUser()
+            SHARED -> DefaultUser("aft.uat.sdex+validatoruser888@gmail.com")
+            TOKEN_TRUST -> DefaultUser("aft.uat.sdex+validatoruser888@gmail.com")
+            UAT_TOKEN_TRUST -> DefaultUser("aft.uat.sdex+validatoruser888@gmail.com")
         }
 
         val AML_KYC_MANAGER_ROLE = when (Environment.stand) {
@@ -3358,71 +3493,6 @@ class Users {
             )
         }
 
-        val ATM_USER_2FA_WITH_WALLET_MTEST06 = when (Environment.stand) {
-            DEVELOP -> UserWithMainWalletAndOtf2FA(
-                "",
-                "",
-                otfWallet = OtfWallet(
-                    publicKey = "",
-                    secretKey = ""
-
-                ),
-                mainWallet = MainWallet(
-                    name = "Main 1",
-                    publicKey = "",
-                    secretKey = ""
-                )
-            )
-//            RELEASE -> UserWithMainWalletAndOtf(
-            RELEASE -> UserWithMainWalletAndOtf2FA(
-                "aft.uat.sdex+mtest06@gmail.com",
-                "Q4KAWKBYCQT2ETEG",
-                otfWallet = OtfWallet(
-                    publicKey = "36ab7f62169f11de1d2cd9824ac41eadde3f4d23569d04fae8f50dffdffcc559",
-                    secretKey = "9a016cee06d31242f1dfad7c7e25593f5dd41aaa476e583592dd5853702638ab36ab7f62169f11de1d2cd9824ac41eadde3f4d23569d04fae8f50dffdffcc559"
-                ),
-                mainWallet = MainWallet(
-                    name = "Main 1",
-                    publicKey = "c4815bc7d92721fd31eacb059202b12fa2ea43718efd157d07fc847ec892deab",
-                    secretKey = "fb0d82090c18e64114f38563a4e754e99b6b066e24e3863a0f7cc22266b34846c4815bc7d92721fd31eacb059202b12fa2ea43718efd157d07fc847ec892deab"
-                ),
-                castodian = ""
-            )
-            PREPROD -> UserWithMainWalletAndOtf2FA(
-                "",
-                "",
-                otfWallet = OtfWallet(
-                    publicKey = "",
-                    secretKey = ""
-                ),
-                mainWallet = MainWallet(
-                    name = "Main 1",
-                    publicKey = "",
-                    secretKey = ""
-                )
-            )
-            PROD -> UserWithMainWalletAndOtf2FA(
-                oAuthSecret = "",
-                otfWallet = OtfWallet(),
-                mainWallet = MainWallet()
-            )
-            SHARED -> UserWithMainWalletAndOtf2FA(
-                oAuthSecret = "",
-                otfWallet = OtfWallet(),
-                mainWallet = MainWallet()
-            )
-            TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
-                oAuthSecret = "",
-                otfWallet = OtfWallet(),
-                mainWallet = MainWallet()
-            )
-            UAT_TOKEN_TRUST -> UserWithMainWalletAndOtf2FA(
-                oAuthSecret = "",
-                otfWallet = OtfWallet(),
-                mainWallet = MainWallet()
-            )
-        }
-
         val ATM_USER_2FA_WITHOUT_WALLET_MTEST02 = when (Environment.stand) {
             DEVELOP -> UserWithMainWalletAndOtf2FA(
                 "aft.uat.sdex+mtest02@gmail.com",
@@ -3487,7 +3557,6 @@ class Users {
                 )
             )
         }
-
 
         val ATM_ADMIN = when (Environment.stand) {
             DEVELOP -> DefaultUserWithCustomPassword(

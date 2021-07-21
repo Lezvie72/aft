@@ -1260,6 +1260,17 @@ class AtmWalletPage(driver: WebDriver) : AtmPage(driver) {
         return newState
     }
 
+    @Step("Expand maturnity dates of token {tokenName}")
+    fun expandMaturnityDatesOfToken(tokenName: String) {
+        val collapsePanel = wait {
+            untilPresented<WebElement>(By.xpath("//a[contains(text(), '${tokenName}')]/ancestor::atm-token-item//nz-collapse"))
+        }.to<Button>("Maturnity dates of '$tokenName'")
+        e {
+            click(collapsePanel)
+        }
+
+    }
+
 
     @Step("Find employee card for wallet")
     @Action("Find employee card for wallet")

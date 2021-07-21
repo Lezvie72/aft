@@ -15,7 +15,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.*
-import pages.atm.AtmIssuancesPage.StatusType.*
+import pages.atm.AtmIssuancesPage.StatusType.APPROVE
+import pages.atm.AtmIssuancesPage.StatusType.DECLINE
 import pages.atm.AtmWalletPage.RedemptionTypeETC.AUTO
 import pages.atm.AtmWalletPage.RedemptionTypeETC.MANUAL
 import utils.Constants
@@ -811,6 +812,5 @@ class SmokeETCE2E : BaseTest() {
             }
         }
     }
-
 }
 

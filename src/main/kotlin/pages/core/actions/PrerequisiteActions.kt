@@ -28,6 +28,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         amount: String,
         amountCC: String,
         amountVT: String,
+        amountIT: String,
         amountMoveCC: String,
         wallet: MainWallet
     ) {
@@ -36,12 +37,14 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
 
         openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(CC, amountCC, user, wallet)
         openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(VT, amountVT, user, wallet)
+        openPage<AtmMarketplacePage>(driver) { submit(user) }.buyOrReceiveToken(IT, amountIT, user, wallet)
 
         openPage<AtmWalletPage>(driver) { submit(user) }.moveToOTFWalletNew(
             amountMoveCC,
             CC, user, wallet
         )
         openPage<AtmWalletPage>(driver) { submit(user) }.moveToOTFWalletNew(amountVT, VT, user, wallet)
+        openPage<AtmWalletPage>(driver) { submit(user) }.moveToOTFWalletNew(amountIT, IT, user, wallet)
     }
 
     //add balances to users list
@@ -50,6 +53,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         val amount = "3000"
         val amountCC = "200"
         val amountVT = "100"
+        val amountIT = "100"
         val amountMoveCC = "100"
 
         val users: List<UserWithMainWalletAndOtf> = listOf(
@@ -75,7 +79,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         users.forEach { user ->
             try {
                 val wallet = user.mainWallet
-                presetForOTF(user, amount, amountCC, amountVT, amountMoveCC, wallet)
+                presetForOTF(user, amount, amountCC, amountVT, amountIT, amountMoveCC, wallet)
             } catch (e: Exception) {
             } finally {
                 openPage<AtmProfilePage>(driver).logout()
@@ -83,11 +87,19 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         }
     }
 
-    fun prerequisitesRfq(tokenName: CoinType, secondTokenName: CoinType) {
+    fun prerequisitesRfq(
+        tokenName: CoinType,
+        secondTokenName: CoinType,
+        valueMaker: String = "1",
+        valueTaker: String = "1"
+    ) {
         openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.addTokenIfNotPresented(tokenName)
         openPage<AtmAdminRfqSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeSettingsForToken(
             tokenName,
-            secondTokenName
+            secondTokenName,
+            valueMaker,
+            valueTaker,
+            AtmAdminRfqSettingsPage.FeeModeState.FIXED
         )
     }
 
@@ -120,7 +132,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
         feeAcceptingAssetValue: String,
         feeAcceptingAmountValue: String,
         feeAcceptingModeValue: String,
-        baseToken: CoinType, quoteToken: CoinType
+        baseToken: CoinType
     ) {
         openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.addTokenIfNotPresented(
             tokenName,
@@ -133,7 +145,7 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
             feeAcceptingModeValue
         )
         openPage<AtmAdminBlocktradeSettingsPage>(driver) { submit(Users.ATM_ADMIN) }.changeFeeSettingsForTokenBlocktrade(
-            baseToken, quoteToken
+            baseToken
         )
     }
 
@@ -179,21 +191,25 @@ class PrerequisiteActions<T : WebDriver>(page: BasePage, driver: T) : BaseAction
     fun bankAccountsListShouldBeEmpty(user: User) {
         step("Precondition. Delete all bank account list if it's not empty") {
             with(openPage<AtmBankAccountsPage>(driver) { submit(user) }) {
-                if (usdPanel.getAttribute("aria-expanded") == "false") {
-                    e {
-                        click(usdPanel)
+                e { setStateForCollapsePanel(usdPanel, true) }
+                var baSize = bankAccountsList.size
+                while (baSize > 0) {
+                    e { setStateForCollapsePanel(usdPanel, true) }
+                    val ba = bankAccountsList[0]
+                    wait(20) {
+                        until(
+                            "Couldn't load list of bank accounts seconds"
+                        ) { (bankAccountsList.isNotEmpty()) }
                     }
-                    if (bankAccountsList.isNotEmpty()) {
-                        bankAccountsList.forEach { ba ->
-                            ba.select()
-                            ba.deleteWithConfirm()
-                        }
-                    }
+                    ba.select()
+                    ba.deleteWithConfirm()
+                    baSize--
+                    driver.navigate().refresh()
                 }
-
             }
         }
     }
+
 
     //set controller for wallet
     fun setControllerStateForWallet(walletName: String, admin: User, employee: User, state: Boolean) {

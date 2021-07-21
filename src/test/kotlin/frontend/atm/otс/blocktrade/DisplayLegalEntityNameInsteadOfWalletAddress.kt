@@ -55,7 +55,7 @@ class DisplayLegalEntityNameInsteadOfWalletAddress : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 

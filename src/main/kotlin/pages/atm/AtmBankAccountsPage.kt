@@ -4,6 +4,7 @@ import io.qameta.allure.Step
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
 import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
@@ -11,8 +12,8 @@ import pages.htmlelements.blocks.atm.bankaccount.BankAccountItem
 import pages.htmlelements.elements.AtmSelect
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
+import ru.yandex.qatools.htmlelements.element.CheckBox
 import ru.yandex.qatools.htmlelements.element.TextInput
-import utils.helpers.step
 
 @PageUrl("/profile/bank-accounts")
 class AtmBankAccountsPage(driver: WebDriver) : AtmPage(driver) {
@@ -96,7 +97,7 @@ class AtmBankAccountsPage(driver: WebDriver) : AtmPage(driver) {
     lateinit var usdPanel: Button
 
     @Name("Bank accounts list")
-    @FindBy(css = ".bank-card")
+    @FindBy(css = "atm-bank-card")
     lateinit var bankAccountsList: List<BankAccountItem>
     //</editor-fold>
 
@@ -195,8 +196,10 @@ class AtmBankAccountsPage(driver: WebDriver) : AtmPage(driver) {
 
     @Step("Choose bank account {bankName}")
     fun chooseBankAccountDetails(bankName: String) {
-        e {
-            click(usdPanel)
+        if (check {
+                isElementPresented(usdPanel)
+            }) {
+            e { setStateForCollapsePanel(usdPanel, true) }
         }
         val card = bankAccountsList.find { it.bankName.contains(bankName) } ?: error("Bank account $bankName not found")
         e {
@@ -272,6 +275,16 @@ class AtmBankAccountsPage(driver: WebDriver) : AtmPage(driver) {
         }
     }
 
+    @Step("set state for collapse panel")
+    fun setStateForCollapsePanel(e: WebElement, state: Boolean) {
+        if (e.getAttribute("aria-expanded") != state.toString()) {
+            e {
+                until("Couldn't set $e to $state") {
+                    click(e)
+                }
+            }
+        }
+    }
     //</editor-fold>
 
 }

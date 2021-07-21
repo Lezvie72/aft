@@ -158,6 +158,10 @@ enum class CoinType {
         override val tokenSymbol: String = "GF29ILN037D"
 
     },
+    GF46ILN061A() {
+        override var tokenName: String = "GF46ILN061A"
+        override val tokenSymbol: String = "GF46ILN061A"
+    },
 
     // none isn't contained in list
     NONE() {
@@ -173,6 +177,21 @@ enum class CoinType {
                 Stand.DEVELOP -> "22 September 2020"
                 Stand.RELEASE -> "22 September 2020"
                 Stand.PREPROD -> "22 September 2020"
+                Stand.PROD -> ""
+                Stand.SHARED -> ""
+                Stand.TOKEN_TRUST -> ""
+                Stand.UAT_TOKEN_TRUST -> ""
+            }
+
+            else -> error("Token ${this.tokenSymbol} has not maturity date")
+        }
+
+    val tokenNameInAdminPanel: String
+        get() = when (this) {
+            IT -> when (Environment.stand) {
+                Stand.DEVELOP -> ""
+                Stand.RELEASE -> "${this.tokenSymbol}_202009"
+                Stand.PREPROD -> ""
                 Stand.PROD -> ""
                 Stand.SHARED -> ""
                 Stand.TOKEN_TRUST -> ""

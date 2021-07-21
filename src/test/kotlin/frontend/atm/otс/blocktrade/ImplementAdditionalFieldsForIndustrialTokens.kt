@@ -22,6 +22,7 @@ import pages.atm.AtmWalletPage
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
+import utils.helpers.openPage
 import utils.helpers.step
 import java.math.BigDecimal
 
@@ -47,19 +48,19 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
     @TmsLink("ATMCH-4392")
     @Test
     @DisplayName("Blocktade.Maturity date - IT as token to send")
-    fun selectionIndustrialTokensOnlyByParticipantsHavingIndustrialMarkInAdminPanel() {
+    fun maturityDateItAsTokenToSend() {
         val amount = BigDecimal("10.0000${RandomStringUtils.randomNumeric(4)}")
         val checkedValue = "Maturity date"
 
         val (walletID, companyName) = step("GIVEN $userTwo walletID is known") {
-            val companyName = utils.helpers.openPage<AtmProfilePage>(driver) { submit(userTwo) }.getCompanyName()
-            val walletID = utils.helpers.openPage<AtmWalletPage>(driver).takeWalletID()
+            val companyName = openPage<AtmProfilePage>(driver) { submit(userTwo) }.getCompanyName()
+            val walletID = openPage<AtmWalletPage>(driver).takeWalletID()
             walletID to companyName
         }
 
-        utils.helpers.openPage<AtmProfilePage>(driver).logout()
+        openPage<AtmProfilePage>(driver).logout()
         step("Step 1-3. Maturity date field doesn't appear and appear") {
-            with(utils.helpers.openPage<AtmP2PPage>(driver) { submit(userOne) }) {
+            with(openPage<AtmP2PPage>(driver) { submit(userOne) }) {
                 e {
                     softAssert { elementContainingTextPresented("MY BLOCKTRADES") }
 
@@ -93,7 +94,7 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
 
 
         step("Step 4-5. Create IT offer") {
-            with(utils.helpers.openPage<AtmP2PPage>(driver)) {
+            with(openPage<AtmP2PPage>(driver)) {
                 e {
                     createP2P(
                         walletID,
@@ -118,11 +119,11 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
                     )
                 }
             }
-            utils.helpers.openPage<AtmProfilePage>(driver).logout()
+            openPage<AtmProfilePage>(driver).logout()
         }
 
         step("Step 6-7. Check Maturity date field") {
-            with(utils.helpers.openPage<AtmP2PPage>(driver) { submit(userTwo) }) {
+            with(openPage<AtmP2PPage>(driver) { submit(userTwo) }) {
                 {
                     e {
                         setFilterToday()
@@ -141,7 +142,7 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
         }
 
         step("Step 8. Accept offer") {
-            with(utils.helpers.openPage<AtmP2PPage>(driver)) {
+            with(openPage<AtmP2PPage>(driver)) {
                 acceptP2P(userTwo, amount)
 
                 assertThat(
@@ -152,7 +153,7 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
         }
 
         step("Step 10-11. Go to Trade history $userTwo section and check the card of accepted offer") {
-            with(utils.helpers.openPage<AtmP2PPage>(driver)) {
+            with(openPage<AtmP2PPage>(driver)) {
                 e {
                     click(viewHistoryP2P)
                     setFilterToday()
@@ -170,11 +171,11 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
                     }
                 }
             }
-            utils.helpers.openPage<AtmProfilePage>(driver).logout()
+            openPage<AtmProfilePage>(driver).logout()
         }
 
         step("Step 12-13. Go to Trade history $userOne section and check the card of accepted offer") {
-            with(utils.helpers.openPage<AtmP2PPage>(driver) { submit(userOne) }) {
+            with(openPage<AtmP2PPage>(driver) { submit(userOne) }) {
                 e {
                     click(viewHistoryP2P)
                     assert {
@@ -183,6 +184,160 @@ class ImplementAdditionalFieldsForIndustrialTokens : BaseTest() {
 
                     val row = tradeHistory.find {
                         it.amountToSendHistory == amount
+                    } ?: error("Can't find offer with unit price '$amount'")
+                    click(row)
+
+                    assert {
+                        elementContainingTextPresented(checkedValue)
+                    }
+                }
+            }
+        }
+    }
+
+    @ResourceLocks(
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE02),
+        ResourceLock(Constants.ATM_USER_WITHOUT2FA_WITH_WALLET_UNIVERSE04)
+    )
+    @TmsLink("ATMCH-6181")
+    @Test
+    @DisplayName("Blocktade.Maturity date - IT as token to receive")
+    fun maturityDateItAsTokenToReceive() {
+        val amount = BigDecimal("10.0000${RandomStringUtils.randomNumeric(4)}")
+        val checkedValue = "Maturity date"
+
+        val (walletID, companyName) = step("GIVEN $userTwo walletID is known") {
+            val companyName = openPage<AtmProfilePage>(driver) { submit(userTwo) }.getCompanyName()
+            val walletID = openPage<AtmWalletPage>(driver).takeWalletID()
+            walletID to companyName
+        }
+
+        openPage<AtmProfilePage>(driver).logout()
+        step("Step 1-3. Maturity date field doesn't appear and appear") {
+            with(openPage<AtmP2PPage>(driver) { submit(userOne) }) {
+                e {
+                    softAssert { elementContainingTextPresented("MY BLOCKTRADES") }
+
+                    click(createBlockTrade)
+                    click(goodTillCancelled)
+
+                    if (check { isElementContainsText(assetToReceive, baseAsset.tokenSymbol) }) {
+                        select(assetToSend, quoteAsset.tokenSymbol)
+                    } else {
+                        select(assetToSend, baseAsset.tokenSymbol)
+                        select(assetToReceive, quoteAsset.tokenSymbol)
+                    }
+
+                    assert {
+                        elementWithTextNotPresented(checkedValue)
+                    }
+
+                    step("Step 3. Select any Industrial token as Token to receive") {
+                        if (!check { isElementPresented(offerMaturityDate) }) select(
+                            assetToReceive,
+                            industrialToken.tokenSymbol
+                        )
+
+                        assert {
+                            elementPresented(offerMaturityDate)
+                        }
+                    }
+                }
+            }
+        }
+
+
+        step("Step 4-5. Create IT offer") {
+            with(openPage<AtmP2PPage>(driver)) {
+                e {
+                    createP2P(
+                        walletID,
+                        companyName,
+                        baseAsset,
+                        amount.toString(),
+                        industrialToken,
+                        amount.toString(),
+                        AtmP2PPage.ExpireType.GOOD_TILL_CANCELLED,
+                        userOne, maturityDateInnerDate
+                    )
+                    alert { checkErrorAlert(5L) }
+                    signAndSubmitMessage(userOne, userOne.otfWallet.secretKey)
+
+                    assert {
+                        elementShouldBeDisappeared(createDeal, 10L)
+                    }
+
+                    assertThat(
+                        "Offer $amount for user ${userTwo.email} should be exist",
+                        isOfferExist(amount, outgoingOffers)
+                    )
+                }
+            }
+            openPage<AtmProfilePage>(driver).logout()
+        }
+
+        step("Step 6-7. Check Maturity date field") {
+            with(openPage<AtmP2PPage>(driver) { submit(userTwo) }) {
+                {
+                    e {
+                        setFilterToday()
+                        assert {
+                            elementContainingTextPresented(checkedValue)
+                        }
+
+                        findIncomingP2P(amount)
+
+                        assert {
+                            elementPresented(offerMaturityDate)
+                        }
+                    }
+                }
+            }
+        }
+
+        step("Step 8. Accept offer") {
+            with(openPage<AtmP2PPage>(driver)) {
+                acceptP2P(userTwo, amount)
+
+                assertThat(
+                    "Offer $amount for user ${userTwo.email} should be not exist",
+                    !isOfferExist(amount, incomingOffers)
+                )
+            }
+        }
+
+        step("Step 10-11. Go to Trade history $userTwo section and check the card of accepted offer") {
+            with(openPage<AtmP2PPage>(driver)) {
+                e {
+                    click(viewHistoryP2P)
+                    setFilterToday()
+                    assert {
+                        elementContainingTextPresented(checkedValue)
+                    }
+
+                    val row = tradeHistory.find {
+                        it.amountToSendHistory == amount || it.receivedAmount == amount
+                    } ?: error("Can't find offer with unit price '$amount'")
+                    click(row)
+
+                    assert {
+                        elementContainingTextPresented(checkedValue)
+                    }
+                }
+            }
+            openPage<AtmProfilePage>(driver).logout()
+        }
+
+        step("Step 12-13. Go to Trade history $userOne section and check the card of accepted offer") {
+            with(openPage<AtmP2PPage>(driver) { submit(userOne) }) {
+                e {
+                    click(viewHistoryP2P)
+                    assert {
+                        elementContainingTextPresented(checkedValue)
+                    }
+
+                    val row = tradeHistory.find {
+                        it.amountToSendHistory == amount || it.receivedAmount == amount
                     } ?: error("Can't find offer with unit price '$amount'")
                     click(row)
 

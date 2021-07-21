@@ -123,7 +123,7 @@ class SmokeBlocktradeE2E : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 

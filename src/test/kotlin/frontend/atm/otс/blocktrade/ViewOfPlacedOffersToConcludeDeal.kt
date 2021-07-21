@@ -49,7 +49,6 @@ class ViewOfPlacedOffersToConcludeDeal : BaseTest() {
         val user2 = Users.ATM_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET
 
         val baseAsset = CC
-        val quoteAsset = VT
 
         prerequisite {
             prerequisitesBlocktrade(
@@ -61,7 +60,7 @@ class ViewOfPlacedOffersToConcludeDeal : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 
@@ -155,7 +154,7 @@ class ViewOfPlacedOffersToConcludeDeal : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 

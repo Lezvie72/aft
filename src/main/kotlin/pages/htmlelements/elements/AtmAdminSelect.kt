@@ -7,11 +7,28 @@ import pages.BasePage
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TypifiedElement
 import utils.helpers.containsIgnoreCaseXpath
+import utils.helpers.to
 
 class AtmAdminSelect(wrappedElement: WebElement) : TypifiedElement(wrappedElement) {
 
     private val menuSelector = By.xpath("//mat-option//span[@class='mat-option-text']")
     private val inputValue = By.ByXPath(".//input")
+
+//    fun selectBy(locator: By, page: BasePage) {
+//        page.e {
+//            page.wait {
+//               val menu = untilPresented<WebElement>(menuSelector, "Drop list")
+//
+//                until("Drop list should contain element with locator By: $locator", page.getTimeoutInSeconds()) {
+//                    page.check {
+//                        isElementPresented(findElement(locator).to<Button>("row from drop list"), 1L)
+//                    }
+//                }
+//
+//                click(findElement(locator).to<Button>("row from drop list"))
+//            }
+//        }
+//    }
 
     fun selectBy(locator: By, page: BasePage, elementToDropFocus: WebElement? = null) {
         page.e {
@@ -34,15 +51,6 @@ class AtmAdminSelect(wrappedElement: WebElement) : TypifiedElement(wrappedElemen
         selectBy(By.xpath("//mat-option//span[text() = '${text}']|//mat-option//span[text() = ' $text ']"), page)
     }
 
-    @Step("User selects '{text}' from context menu '{this.name}'")
-    fun safeSelectByText(text: String, page: BasePage, elementToDropFocus: WebElement) {
-        selectBy(
-            By.xpath("//mat-option//span[text() = '${text}']|//mat-option//span[text() = ' $text ']"),
-            page,
-            elementToDropFocus
-        )
-    }
-
     @Step("User selects ~'{text}' from context menu '{this.name}'")
     fun selectByPartialText(text: String, page: BasePage) {
         selectBy(containsIgnoreCaseXpath("*", "text()", text), page)
@@ -50,8 +58,12 @@ class AtmAdminSelect(wrappedElement: WebElement) : TypifiedElement(wrappedElemen
 
     @Step("User sends and select ~'{text}' from context menu '{this.name}'")
     fun sendAndSelect(value: String, fullValueName: String, page: BasePage) {
-        this.sendKeys(value)
-        selectByText(fullValueName, page)
+        with(this) {
+            if (text != "$value" || text != " $value " || text != "$fullValueName" || text != " $fullValueName ") {
+                sendKeys(value)
+                selectByText(fullValueName, page)
+            }
+        }
     }
 
     @Step("User sends and select ~'{text}' from context menu '{this.name}'")

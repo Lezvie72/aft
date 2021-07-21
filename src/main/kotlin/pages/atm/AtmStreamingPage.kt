@@ -2,7 +2,7 @@ package pages.atm
 
 import io.qameta.allure.Step
 import models.CoinType
-import models.CoinType.*
+import models.CoinType.IT
 import models.user.interfaces.HasOtfWallet
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers

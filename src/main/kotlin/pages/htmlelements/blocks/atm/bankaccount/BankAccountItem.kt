@@ -1,5 +1,7 @@
 package pages.htmlelements.blocks.atm.bankaccount
 
+import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.FindBy
 import pages.atm.AtmBankAccountsPage
@@ -9,7 +11,9 @@ import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextBlock
 import pages.core.actions.ElementActions
+import pages.htmlelements.elements.AtmAmount
 import utils.helpers.scrollIntoView
+import utils.helpers.to
 
 @Name("Bank Account Item")
 @FindBy(css = "atm-bank-card")
@@ -17,7 +21,7 @@ class BankAccountItem : BaseBlock<AtmBankAccountsPage>() {
 
     //region ELEMENTS
     @Name("Bic code")
-    @FindBy(css = "div:nth-child(1)")
+    @FindBy(css = "atm-bank-card div")
     private lateinit var bicCodeLocator: TextBlock
 
     @Name("Bank name")
@@ -62,8 +66,12 @@ class BankAccountItem : BaseBlock<AtmBankAccountsPage>() {
     }
 
     fun deleteWithConfirm() {
+        val balance = wait {
+            untilPresented<WebElement>(By.cssSelector("atm-bank-card:first-child atm-button-svg.bank-card__btn-delete button"))
+        }.to<AtmAmount>("Token ' is not presented")
         e {
-            click(deleteButtonLocator)
+            deleteButtonLocator.click()
+//            click(deleteButtonLocator)
             click(confirmDeleteButtonLocator)
         }
     }
@@ -81,7 +89,7 @@ class BankAccountItem : BaseBlock<AtmBankAccountsPage>() {
                 bicCodeLocator.scrollIntoView(page.driver)
                 val action = Actions(page.driver)
                 action.moveToElement(bicCodeLocator.wrappedElement).perform()
-                check {isElementPresented(deleteButtonLocator, 1L)}
+                check {isElementPresented(deleteButtonLocator, 5L)}
             }
         }
     }

@@ -50,6 +50,10 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//a[@href='/trading/rfq/incoming']")
     lateinit var viewRequest: Button
 
+    @Name("View history")
+    @FindBy(xpath = "//a[@href='/trading/rfq/history']")
+    lateinit var viewHistory: Button
+
     @Name("My request")
     @FindBy(xpath = "//a[@href='/trading/rfq/requests']")
     lateinit var myRequest: Button
@@ -77,6 +81,10 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Total offer amount")
     @FindBy(xpath = "//nz-switch[@formcontrolname='hasOffers']")
     lateinit var switch: Button
+
+    @Name("Limited time offer selector")
+    @FindBy(xpath = "//atm-custom-select[contains(@class,'custom-select expires-control')]//nz-select")
+    lateinit var limitedTimeOfferSelector: AtmSelectLazy
 
     @Name("Asset to send")
     @FindBy(xpath = "//atm-custom-select[@formcontrolname='baseToken']//nz-select")
@@ -189,6 +197,22 @@ class AtmRFQPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Trade history")
     @FindBy(css = "atm-p2p-history")
     lateinit var dealHistory: AtmTable<RFQOutgoingItem>
+
+    @Name("Amount to receive")
+    @FindBy(xpath = "//span[contains(text(),'AMOUNT TO RECEIVE')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountToReceiveInForm: AtmAmount
+
+    @Name("Amount to send in form")
+    @FindBy(xpath = "//span[contains(text(),'AMOUNT TO SEND')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountToSendInForm: AtmAmount
+
+    @Name("Amount to send second value")
+    @FindBy(xpath = "//span[contains(text(),'AMOUNT TO SEND')]/ancestor::atm-property-value//atm-amount[2]")
+    lateinit var amountToSendSecondValueInForm: AtmAmount
+
+    @Name("Amount requested")
+    @FindBy(xpath = "//span[contains(text(),'REQUESTED')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountRequested: AtmAmount
 
     @Name("RFQ offer fee")
     @FindBy(xpath = "//*[text() = ' Transaction fee ']/ancestor::atm-property-value//atm-amount")

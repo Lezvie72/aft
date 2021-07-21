@@ -231,9 +231,13 @@ class AddingBankAccountsDetailsByUser : BaseTest() {
                 "USD",
                 "Vavilova"
             )
-            e { click(usdPanel) }
+            if (check {
+                    isElementPresented(usdPanel)
+                }) {
+                e { setStateForCollapsePanel(usdPanel, true) }
+            }
             assertIsDefault(bankName1)
-            e { click(usdPanel) }
+            e { setStateForCollapsePanel(usdPanel, true) }
             chooseBankAccountDetails(bankName1)
             assert {
                 elementWithTextPresented("Russian BIC")
@@ -299,7 +303,11 @@ class AddingBankAccountsDetailsByUser : BaseTest() {
                 "USD",
                 "Vavilova"
             )
-            e { click(usdPanel) }
+            if (check {
+                    isElementPresented(usdPanel)
+                }) {
+                e { setStateForCollapsePanel(usdPanel, true) }
+            }
             clickAsDefault(bankName2)
             assertIsDefault(bankName2)
             checkIsNotDefault(bankName1)
@@ -332,7 +340,7 @@ class AddingBankAccountsDetailsByUser : BaseTest() {
                 if (check {
                         isElementPresented(usdPanel)
                     }) {
-                    e { click(usdPanel) }
+                    e { setStateForCollapsePanel(usdPanel, true) }
                 }
                 if (!checkIsDefault(defaultBankName)) {
                     clickAsDefault(defaultBankName)
@@ -350,7 +358,11 @@ class AddingBankAccountsDetailsByUser : BaseTest() {
                 "USD",
                 "Vavilova"
             )
-            e { click(usdPanel) }
+            if (check {
+                    isElementPresented(usdPanel)
+                }) {
+                e { setStateForCollapsePanel(usdPanel, true) }
+            }
             assertIsDefault(defaultBankName)
             checkIsNotDefault(bankName)
             postActionDeleteBankAccount(bankName)

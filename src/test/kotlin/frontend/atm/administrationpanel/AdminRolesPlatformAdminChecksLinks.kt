@@ -13,12 +13,13 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.AtmAdminGeneralSettingsPage
+import pages.atm.AtmPlatformAdminPage
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
 import utils.helpers.openPage
 
-@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN), Tag(TagNames.Flow.DEBUG))
+@Tags(Tag(TagNames.Epic.ADMINPANEL.NUMBER), Tag(TagNames.Flow.MAIN))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("Administration panel")
@@ -28,14 +29,22 @@ class AdminRolesPlatformAdminChecksLinks: BaseTest() {
     val user1 = Users.PLATFORM_ADMIN_ROLE
     @ResourceLock(Constants.PLATFORM_ADMIN_ROLE)
     @TmsLink("ATMCH-5505")
-
     @Test
     @DisplayName("User with PLATFORM ADMIN ROLE checks all links")
     fun userWithPlatformAdminRoleChecksTheLinks () {
-        with(openPage<AtmAdminGeneralSettingsPage>(driver) {submit(user1)} ) {
-            allTabsAreDisplayedAndOpensInEditModeForAmlKycManager()
-            changeToggleStatus("RFQ")
-            checkingTogglesStatusAndSwitchingToCorrect()
+        with(openPage<AtmPlatformAdminPage>(driver) {submit(user1)} ) {
+            allTabsAreDisplayedAndOpensInEditModeForPlatformAdmin()
         }
     }
+//TODO fix the bug with OTF management section
+
+//    @ResourceLock(Constants.PLATFORM_ADMIN_ROLE)
+//    @TmsLink("ATMCH-5505")
+//    @Test
+//    @DisplayName("User with PLATFORM ADMIN ROLE checks for other sections are not displayed")
+//    fun userWithPlatformAdminRoleChecksTheLinksForOtherSectionsAreNotDisplayed () {
+//        with(openPage<AtmPlatformAdminPage>(driver) {submit(user1)} ) {
+//            platformAdminChecksThatTheLinksForOtherSectionsAreNotDisplayed()
+//        }
+//    }
 }

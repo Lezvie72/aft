@@ -90,7 +90,7 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
     lateinit var allTokensButton: Button
 
     @Name("Select maturity date")
-    @FindBy(xpath = "//atm-custom-select[contains(@formcontrolname, 'maturity')]/nz-select | //form/nz-form-item[2]//nz-select")
+    @FindBy(xpath = "//atm-custom-select[contains(@formcontrolname, 'maturity')]/nz-select")
     lateinit var selectMaturityDate: AtmSelect
 
     @Name("Comment")
@@ -139,6 +139,37 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//div[@class='market__list']")
     lateinit var tokensCards: AtmTable<AtmMarketplaceIndustrialCard>
 
+    @Name("Supply amount")
+    @FindBy(xpath = ".//span[contains(text(), 'SUPPLY AMOUNT')]/ancestor::atm-property-value//atm-amount")
+    lateinit var supply: AtmAmount
+
+    @Step("Add currency coin")
+    fun buyCurrencyCoin(user: User, amount: String, wallet: SimpleWallet) {
+        e {
+            chooseToken(CC)
+            click(newOrderButton)
+
+            select(selectWallet, wallet.publicKey)
+            deleteData(tokenQuantity)
+            sendKeys(tokenQuantity, amount)
+            click(submitButton)
+            signAndSubmitMessage(user, wallet.secretKey)
+        }
+    }
+
+    @Action("User buy token {coinType.tokenName}")
+    @Step("buy token")
+    fun buyToken(coinType: CoinType, walletNum: String, amount: String, user: DefaultUser, secretKey: String?) {
+        e {
+            chooseToken(coinType)
+            click(newOrderButton)
+            select(selectWallet, walletNum)
+            deleteData(tokenQuantity)
+            sendKeys(tokenQuantity, amount)
+            click(submitButton)
+        }
+        signAndSubmitMessage(user, secretKey)
+    }
 
     @Action("User buy token {coinType.tokenName}")
     @Step("buy token")
@@ -169,7 +200,6 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
             click(submitButton)
         }
         signAndSubmitMessage(user, wallet.secretKey)
-        if (check { isElementContainingTextPresented("Order failed", 10L) }) error("Found message Order failed")
     }
 
     @Step("User choose token {coinType.tokenName}")
@@ -241,6 +271,25 @@ class AtmMarketplacePage(driver: WebDriver) : AtmPage(driver) {
             }
         } catch (e: TimeoutException) {
             error("Couldn't find token with name ${coinType.tokenName}. Expected token name to be equal to name in Admin Token Panel")
+        }
+    }
+
+    @Step("Choose maturnity date")
+    fun chooseMaturnityDate(date: String){
+        val maturnityDateLocator = containsIgnoreCaseXpath(
+            "atm-ind-issue-list//label//span",
+            "text()",
+            date
+        )
+        val maturnityDateButton = try {
+            wait {
+                untilPresented<Button>(maturnityDateLocator, "${date} button")
+            }
+        } catch (e: TimeoutException) {
+            error("Couldn't find maturnity daye ${date}.")
+        }
+        e {
+            click(maturnityDateButton)
         }
     }
 }

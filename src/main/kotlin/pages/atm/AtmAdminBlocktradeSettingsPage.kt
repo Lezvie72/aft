@@ -7,6 +7,8 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
+import pages.atm.AtmAdminStreamingSettingsPage.*
+import pages.atm.AtmAdminStreamingSettingsPage.FeeModeState.*
 import pages.core.annotations.Action
 import pages.core.annotations.PageUrl
 import pages.htmlelements.elements.AtmAdminSelect
@@ -29,10 +31,6 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("Blocktrade settings table")
     @FindBy(css = "sdex-p2p-tokens")
     lateinit var blocktradeSettingsTable: SdexTable
-
-    @Name("Default fee accepting offer (Taker)")
-    @FindBy(xpath = "//input[@data-placeholder='Set default accepting fee']/ancestor::mat-form-field")
-    lateinit var defaultFeeAcceptingOfferTaker: AtmInput
 
     @Name("Default asset input")
     @FindBy(xpath = "//input[@data-placeholder='Set default asset']/ancestor::mat-form-field")
@@ -70,9 +68,22 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//input[@data-placeholder='Set default placing fee']/ancestor::mat-form-field")
     lateinit var defaultFeePlacingOfferMaker: AtmInput
 
+    @Name("Default fee accepting offer (Taker)")
+    @FindBy(xpath = "//input[@data-placeholder='Set default accepting fee']/ancestor::mat-form-field")
+    lateinit var defaultFeeAcceptingOfferTaker: AtmInput
+
     @Name("Save button")
-    @FindBy(xpath = "//mat-icon[contains(text(),'save')]")
-    lateinit var save: Button
+    @FindBy(xpath = "//input[@data-placeholder='Set default accepting fee']/ancestor::mat-form-field//mat-icon[contains(text(),'save')]")
+    lateinit var acceptSave: Button
+
+    @Name("Save button")
+    @FindBy(xpath = "//input[@data-placeholder='Set default placing fee']/ancestor::mat-form-field//mat-icon[contains(text(),'save')]")
+    lateinit var placeSave: Button
+
+    @Name("Save button")
+    @FindBy(xpath = "//input[@data-placeholder='Set default asset']/ancestor::mat-form-field//mat-icon[contains(text(),'save')]")
+    lateinit var assetSave: Button
+
 
     @Name("Token IT_202010 ")
     @FindBy(xpath = "//td[contains(text(),'IT_202010')]")
@@ -106,7 +117,7 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Name("Fee placing mode")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='createFee.feeMode']//div//mat-select")
-    lateinit var feePlacingMode: AtmSelect
+    lateinit var feePlacingMode: AtmAdminSelect
 
     @Name("Fee accepting asset input")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']")
@@ -118,7 +129,7 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Name("Fee accepting mode")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeMode']//div//mat-select")
-    lateinit var feeAcceptingMode: AtmSelect
+    lateinit var feeAcceptingMode: AtmAdminSelect
 
     @Name("Fee placing asset select")
     @FindBy(xpath = "(//sdex-token-selector[@formcontrolname='feeAsset']//input)[1]")
@@ -143,6 +154,14 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("Token clear button")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='token']//mat-icon[text()='clear']")
     lateinit var tokenClearButton: Button
+
+    @Name("Clear button fee accept")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']//mat-icon[text()='clear']")
+    lateinit var feeAcceptClearButton: Button
+
+    @Name("Clear button fee place")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='createFee.feeAsset']//mat-icon[text()='clear']")
+    lateinit var feePlaceClearButton: Button
 
     @Name("Token clear button")
     @FindBy(xpath = ".//mat-option//span[@class='mat-option-text']")
@@ -296,34 +315,44 @@ class AtmAdminBlocktradeSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("Admin change fee for token in blocktrade")
     @Action("change fee for token in blocktrade")
-    fun changeFeeSettingsForTokenBlocktrade(baseToken: CoinType, quoteToken: CoinType) {
+    fun changeFeeSettingsForTokenBlocktrade(
+        baseToken: CoinType,
+        makerState: String =
+            FIXED.state,
+        feeMakerSize: String = "1",
+        takerState: String =
+            FIXED.state,
+        feeTakerSize: String = "1.0001",
+        feeToken: CoinType = CoinType.CC
+    ) {
         chooseToken(baseToken.tokenSymbol)
         e {
             click(edit)
 
             feeAcceptingAsset.delete()
+            if (check { isElementPresented(feeAcceptClearButton, 5L) }) click(feeAcceptClearButton)
+
             feeAcceptingAssetSelect.sendAndSelect(
-                baseToken.tokenSymbol,
-                baseToken.tokenSymbol,
+                feeToken.tokenSymbol,
+                feeToken.tokenSymbol,
                 this@AtmAdminBlocktradeSettingsPage
             )
             feePlacingAsset.delete()
+            if (check { isElementPresented(feePlaceClearButton, 5L) }) click(feePlaceClearButton)
             feePlacingAssetSelect.sendAndSelect(
-                baseToken.tokenSymbol,
-                baseToken.tokenSymbol,
+                feeToken.tokenSymbol,
+                feeToken.tokenSymbol,
                 this@AtmAdminBlocktradeSettingsPage
             )
             feePlacingAmount.delete()
-            sendKeys(feePlacingAmount, "1")
+            sendKeys(feePlacingAmount, feeMakerSize)
             feeAcceptingAmount.delete()
-            sendKeys(feeAcceptingAmount, "1.0001")
+            sendKeys(feeAcceptingAmount, feeTakerSize)
 
-            select(feeAcceptingMode, "FIXED")
-            select(feePlacingMode, "FIXED")
+            select(feeAcceptingMode, takerState)
+            select(feePlacingMode, makerState)
 
             click(confirmDialog)
         }
-
     }
-
 }

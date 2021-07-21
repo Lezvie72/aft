@@ -27,7 +27,7 @@ import utils.helpers.step
 import java.math.BigDecimal
 
 
-@Tags(Tag(TagNames.Flow.DEBUG),Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.STREAMING.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("STREAMING")

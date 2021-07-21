@@ -58,7 +58,7 @@ class ViewOfReceivedOffers : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
         val companyName = openPage<AtmProfilePage>(driver) { submit(user2) }.getCompanyName()
@@ -151,7 +151,7 @@ class ViewOfReceivedOffers : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 

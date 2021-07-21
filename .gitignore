@@ -35,4 +35,5 @@ hs_err_pid*
 build/
 .gradle/
 chromedriver.exe
+StoredCredential
 *.iml

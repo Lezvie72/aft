@@ -51,7 +51,7 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
 
     private fun waitUntilListIsLoaded() = wait(loadTimeoutInSeconds) {
         until("Couldn't load list in $loadTimeoutInSeconds seconds", loadTimeoutInSeconds) {
-            (content.isNotEmpty() || check { isElementGone(loader) })
+            (check { isElementGone(loader) } || content.isNotEmpty())
         }
     }
 
@@ -147,6 +147,7 @@ class AtmTable<T : WebElement> : BaseBlock<BasePage>() {
             if (result != null) return result
             if (hasNextPage()) {
                 nextPage()
+                Thread.sleep(2000)
                 waitUntilReady()
             } else {
                 return null

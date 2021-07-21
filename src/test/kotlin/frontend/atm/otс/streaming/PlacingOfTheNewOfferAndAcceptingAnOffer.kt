@@ -64,33 +64,33 @@ class PlacingOfTheNewOfferAndAcceptingAnOffer : BaseTest() {
 
     private val atmch5841 = AtmAdminStreamingSettingsPage.FeePreset(
         feeCoinVT, feeCoinVT,
-        feeSize, feeSize, AtmAdminStreamingSettingsPage.feeModeState.FIXED,
-        AtmAdminStreamingSettingsPage.feeModeState.FIXED
+        feeSize, feeSize, AtmAdminStreamingSettingsPage.FeeModeState.FIXED,
+        AtmAdminStreamingSettingsPage.FeeModeState.FIXED
     )
     private val atmch5843 = AtmAdminStreamingSettingsPage.FeePreset(
         feeCoinCC, feeCoinCC,
-        feeSize, feeSize, AtmAdminStreamingSettingsPage.feeModeState.FIXED,
-        AtmAdminStreamingSettingsPage.feeModeState.FIXED
+        feeSize, feeSize, AtmAdminStreamingSettingsPage.FeeModeState.FIXED,
+        AtmAdminStreamingSettingsPage.FeeModeState.FIXED
     )
     private val atmch5845 = AtmAdminStreamingSettingsPage.FeePreset(
         feeCoinFT, feeCoinFT,
-        feeSize, feeSize, AtmAdminStreamingSettingsPage.feeModeState.FIXED,
-        AtmAdminStreamingSettingsPage.feeModeState.FIXED
+        feeSize, feeSize, AtmAdminStreamingSettingsPage.FeeModeState.FIXED,
+        AtmAdminStreamingSettingsPage.FeeModeState.FIXED
     )
     private val atmch5847 = AtmAdminStreamingSettingsPage.FeePreset(
         feeCoinVT, feeCoinVT,
-        feeSize, feeSize, AtmAdminStreamingSettingsPage.feeModeState.VOLUME,
-        AtmAdminStreamingSettingsPage.feeModeState.VOLUME
+        feeSize, feeSize, AtmAdminStreamingSettingsPage.FeeModeState.VOLUME,
+        AtmAdminStreamingSettingsPage.FeeModeState.VOLUME
     )
     private val atmch5848 = AtmAdminStreamingSettingsPage.FeePreset(
         feeCoinCC, feeCoinCC,
-        feeSize, feeSize, AtmAdminStreamingSettingsPage.feeModeState.VOLUME,
-        AtmAdminStreamingSettingsPage.feeModeState.VOLUME
+        feeSize, feeSize, AtmAdminStreamingSettingsPage.FeeModeState.VOLUME,
+        AtmAdminStreamingSettingsPage.FeeModeState.VOLUME
     )
     private val atmch5849 = AtmAdminStreamingSettingsPage.FeePreset(
         feeCoinFT, feeCoinFT,
-        feeSize, feeSize, AtmAdminStreamingSettingsPage.feeModeState.VOLUME,
-        AtmAdminStreamingSettingsPage.feeModeState.VOLUME
+        feeSize, feeSize, AtmAdminStreamingSettingsPage.FeeModeState.VOLUME,
+        AtmAdminStreamingSettingsPage.FeeModeState.VOLUME
     )
 
     @Test

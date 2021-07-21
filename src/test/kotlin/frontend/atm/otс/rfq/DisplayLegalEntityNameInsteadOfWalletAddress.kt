@@ -30,7 +30,7 @@ import utils.helpers.to
 import java.math.BigDecimal
 
 
-@Tags(Tag(TagNames.Flow.DEBUG), Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.RFQ.NUMBER))
+@Tags(Tag(TagNames.Flow.OTC), Tag(TagNames.Epic.RFQ.NUMBER))
 @Execution(ExecutionMode.CONCURRENT)
 @Epic("Frontend")
 @Feature("RFQ")

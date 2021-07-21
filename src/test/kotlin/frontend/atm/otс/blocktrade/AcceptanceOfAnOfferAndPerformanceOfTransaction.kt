@@ -1,7 +1,10 @@
 package frontend.atm.otс.blocktrade
 
 import frontend.BaseTest
-import io.qameta.allure.*
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
 import models.CoinType
 import models.CoinType.CC
 import models.CoinType.VT
@@ -64,7 +67,7 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 
@@ -185,7 +188,7 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 
@@ -240,7 +243,7 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 
@@ -343,7 +346,7 @@ class AcceptanceOfAnOfferAndPerformanceOfTransaction : BaseTest() {
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset, quoteAsset
+                baseAsset
             )
         }
 

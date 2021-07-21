@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
-import pages.atm.AtmAdminBlocktradeSettingsPage
 import pages.atm.AtmP2PPage
 import pages.atm.AtmP2PPage.ExpireType.GOOD_TILL_CANCELLED
 import pages.atm.AtmP2PPage.ExpireType.TEMPORARY
@@ -58,15 +57,12 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheParticipantWhoPlacedIt : B
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset,quoteAsset
+                baseAsset
             )
         }
 
         step("GIVEN user has outgoing p2p offer") {
             val companyName = openPage<AtmProfilePage>(driver) { submit(user2) }.getCompanyName()
-            val walletID =
-                openPage<AtmWalletPage>(driver) { submit(user2) }.takeWalletID()
-            openPage<AtmProfilePage>().logout()
 
             with(openPage<AtmP2PPage>(driver) { submit(user) }) {
                 createP2P(companyName, companyName, baseAsset, amount.toString(), quoteAsset, amount.toString(), TEMPORARY, user)
@@ -105,7 +101,6 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheParticipantWhoPlacedIt : B
         val user1 = Users.ATM_USER_2FA_OTF_OPERATION_SECOND
         val user2 = Users.ATM_USER_2FA_MANUAL_SIG_OTF_WALLET_FOR_OTF
         val baseAsset = CC
-        val quoteAsset = VT
 
         prerequisite {
             prerequisitesBlocktrade(
@@ -117,7 +112,7 @@ class CancellationOfBlocktradeOfferToConcludeDealByTheParticipantWhoPlacedIt : B
                 baseAsset.tokenSymbol,
                 "1",
                 "FIXED",
-                baseAsset,quoteAsset
+                baseAsset
             )
         }
 

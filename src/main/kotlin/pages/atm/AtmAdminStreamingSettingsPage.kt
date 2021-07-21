@@ -26,14 +26,14 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         val feeAcceptToken: CoinType,
         val feePlaceAmountValue: String,
         val feeAcceptAmountValue: String,
-        val feePlaceStateValue: feeModeState,
-        val feeAcceptStateValue: feeModeState
+        val feePlaceStateValue: FeeModeState,
+        val feeAcceptStateValue: FeeModeState
     )
 
-    enum class feeModeState(val state: String) {
-        MODE_UNDEFINED(" FEE MODE_UNDEFINED "),
-        FIXED(" FIXED "),
-        VOLUME(" VOLUME "),
+    enum class FeeModeState(val state: String) {
+        MODE_UNDEFINED("FEE MODE_UNDEFINED"),
+        FIXED("FIXED"),
+        VOLUME("VOLUME"),
     }
 
     companion object Headers {
@@ -95,6 +95,22 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-icon[text()='clear']")
     lateinit var clearButton: Button
 
+    @Name("Clear Base input")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='base']//mat-icon[text()='clear']")
+    lateinit var clearBaseInput: Button
+
+    @Name("Clear Quote input")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='quote']//mat-icon[text()='clear']")
+    lateinit var clearQuoteInput: Button
+
+    @Name("Fee place asset input")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='createFee.feeAsset']//mat-icon[text()='clear']")
+    lateinit var clearFeePlaceAsset: Button
+
+    @Name("Fee accept asset input")
+    @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']//mat-icon[text()='clear']")
+    lateinit var clearFeeAcceptAsset: Button
+
     @Name("Default fee placing offer (Maker) input")
     @FindBy(xpath = "//input[@placeholder='Set default placing fee']/ancestor::mat-form-field")
     lateinit var defaultFeePlacingOfferInputMaker: AtmInput
@@ -137,20 +153,20 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var quoteInputSelect: AtmAdminSelect
 
     @Name("Maturity date base")
-    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='base']//mat-select//div)[3]")
-    lateinit var maturityDateBaseValue: Button
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='base']//span)[4]")
+    lateinit var maturityDateBaseValue: AtmAdminSelect
 
     @Name("Maturity date quote")
-    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='quote']//mat-select//div)[3]")
-    lateinit var maturityDateQuoteValue: Button
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='quote']//span)[4]")
+    lateinit var maturityDateQuoteValue: AtmAdminSelect
 
     @Name("Maturity date place asset")
-    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='createFee.feeAsset']//mat-select//div)[3]")
-    lateinit var maturityDatePlaceAsset: Button
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='createFee.feeAsset']//span)[4]")
+    lateinit var maturityDatePlaceAsset: AtmAdminSelect
 
     @Name("Maturity date accept asset")
-    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']//mat-select//div)[3]")
-    lateinit var maturityDateAcceptAsset: Button
+    @FindBy(xpath = "(//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']//span)[4]")
+    lateinit var maturityDateAcceptAsset: AtmAdminSelect
 
     @Name("Pair available checkbox")
     @FindBy(xpath = "//mat-checkbox[@formcontrolname='available']//label")
@@ -240,7 +256,7 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                         .replace("_", "")
                 )
 
-                chooseMaturityDate(maturityDateBaseValue, maturityDate)
+                select(maturityDateBaseValue, maturityDate)
 
                 chooseToken(
                     feePlaceAsset, baseInputValue
@@ -248,7 +264,7 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                         .replace("_", "")
                 )
 
-                chooseMaturityDate(maturityDatePlaceAsset, maturityDate)
+                select(maturityDatePlaceAsset, maturityDate)
             } else {
                 chooseToken(baseInput, baseInputValue)
                 chooseToken(feePlaceAsset, baseInputValue)
@@ -261,14 +277,14 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
                         .replaceAfter("_", "")
                         .replace("_", "")
                 )
-                chooseMaturityDate(maturityDateQuoteValue, maturityDate)
+                select(maturityDateQuoteValue, maturityDate)
 
                 chooseToken(
                     feeAcceptAsset, quoteValue
                         .replaceAfter("_", "")
                         .replace("_", "")
                 )
-                chooseMaturityDate(maturityDateAcceptAsset, maturityDate)
+                select(maturityDateAcceptAsset, maturityDate)
 
             } else {
                 chooseToken(quoteInput, quoteValue)
@@ -277,11 +293,10 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             }
 
             sendKeys(availableAmounts, availableAmountValue)
-
+            select(feePlaceMode, feePlaceModeValue)
             sendKeys(feePlaceAmount, feePlaceAmountValue)
 
             sendKeys(feeAcceptAmount, feeAcceptAmountValue)
-            select(feePlaceMode, feePlaceModeValue)
 
             select(feeAcceptMode, feeAcceptModeValue)
             setCheckbox(pairAvailable, available)
@@ -379,12 +394,12 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Action("clear the fee setting in edit form")
     fun cleanFeeInEditForm() {
         e {
-            select(feePlaceMode, feeModeState.MODE_UNDEFINED.state)
+            select(feePlaceMode, FeeModeState.MODE_UNDEFINED.state)
             sendKeys(feePlaceAmount, "")
             sendKeys(feeAcceptAmount, "")
             sendKeys(feePlaceAsset, "")
             sendKeys(feeAcceptAsset, "")
-            select(feeAcceptMode, feeModeState.MODE_UNDEFINED.state)
+            select(feeAcceptMode, FeeModeState.MODE_UNDEFINED.state)
         }
     }
 
@@ -420,11 +435,11 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Action("setup fee in edit form")
     fun setupFee(feePreset: FeePreset) {
         e {
-            if (feePreset.feePlaceStateValue != feeModeState.MODE_UNDEFINED) feePlaceAssetSelect.sendKeys(
+            if (feePreset.feePlaceStateValue != FeeModeState.MODE_UNDEFINED) feePlaceAssetSelect.sendKeys(
                 feePreset.feePlaceToken.tokenSymbol,
                 page
             )
-            if (feePreset.feeAcceptStateValue != feeModeState.MODE_UNDEFINED) feeAcceptAssetSelect.sendKeys(
+            if (feePreset.feeAcceptStateValue != FeeModeState.MODE_UNDEFINED) feeAcceptAssetSelect.sendKeys(
                 feePreset.feeAcceptToken.tokenSymbol,
                 page
             )
@@ -462,11 +477,11 @@ class AtmAdminStreamingSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
             deleteData(feePlaceAmount)
             sendKeys(feePlaceAmount, feePlaceAmountValue)
-            select(feePlaceMode, feeModeState.FIXED.state)
+            select(feePlaceMode, FeeModeState.FIXED.state)
 
             deleteData(feeAcceptAmount)
             sendKeys(feeAcceptAmount, feeAcceptAmountValue)
-            select(feeAcceptMode, feeModeState.FIXED.state)
+            select(feeAcceptMode, FeeModeState.FIXED.state)
 
             click(confirmDialog)
         }

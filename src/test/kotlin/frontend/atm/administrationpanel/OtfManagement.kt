@@ -1,8 +1,11 @@
 package frontend.atm.administrationpanel
 
 import frontend.BaseTest
-import io.qameta.allure.*
-import models.CoinType
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
+import models.CoinType.*
 import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
@@ -12,7 +15,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
 import pages.atm.*
-import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.FIXED
+import pages.atm.AtmAdminStreamingSettingsPage.FeeModeState.FIXED
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
@@ -26,12 +29,12 @@ import utils.isChecked
 @Story("OTF management")
 class OtfManagement : BaseTest() {
 
-    private val token1 = CoinType.ETC1
-    private val token2 = CoinType.GF46ILN046B
-    private val baseToken = CoinType.CC
-    private val quoteToken = CoinType.VT
-    private val tokenFT = CoinType.FT
-    private val tokenIT = CoinType.IT
+    private val token1 = ETC1
+    private val token2 = GF46ILN046B
+    private val baseToken = CC
+    private val quoteToken = VT
+    private val tokenFT = FT
+    private val tokenIT = IT
 
     private val maturityDate = "202011"
 
@@ -227,10 +230,11 @@ class OtfManagement : BaseTest() {
         }
     }
 
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-5394")
     @Test
-    @DisplayName("Administration panel. OTF management. Cancelation scenarios")
-    fun otfManagementCancelation() {
+    @DisplayName("Administration panel. OTF management. Cancellation scenarios")
+    fun otfManagementCancellation() {
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             assert {
@@ -528,7 +532,7 @@ class OtfManagement : BaseTest() {
         }
     }
 
-    @Issue("https://sdexnt.atlassian.net/browse/ATMCH-6611")
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4978")
     @Test
     @DisplayName("Administration panel. OTF management. General settings")
@@ -541,8 +545,23 @@ class OtfManagement : BaseTest() {
                 elementPresented(rfqToggle)
                 elementPresented(streamingToggle)
                 elementPresented(blocktradeToggle)
+            }
+            e{
+                setCheckbox(rfqToggle, true)
+            }
+            assert{
                 elementPresented(rfqLink)
+            }
+            e{
+                setCheckbox(streamingToggle, true)
+            }
+            assert{
                 elementPresented(streamingLink)
+            }
+            e{
+                setCheckbox(blocktradeToggle, true)
+            }
+            assert{
                 elementPresented(blocktradeLink)
             }
             e {
@@ -620,7 +639,7 @@ class OtfManagement : BaseTest() {
                 FIXED.state,
                 FIXED.state, true
             )
-            chooseTradingPair(baseToken.tokenSymbol, tokenIT.tokenSymbol+"_${maturityDate}")
+            chooseTradingPair(baseToken.tokenSymbol, tokenIT.tokenSymbol + "_${maturityDate}")
             e {
                 click(delete)
                 click(yes)
@@ -637,6 +656,7 @@ class OtfManagement : BaseTest() {
     }
 
     @Disabled("Переключатели кликаются через раз")
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4112")
     @Test
     @DisplayName("[OTF manage] Disable and Enable trading sections")
@@ -648,7 +668,7 @@ class OtfManagement : BaseTest() {
                 setCheckbox(streamingToggle, false)
             }
         }
-        with(openPage<AtmProfilePage>(driver) { submit(Users.ATM_USER_2FA_MANUAL_SIG_OTF2_WALLET) }) {
+        with(openPage<AtmMarketplacePage>(driver) { submit(Users.ATM_USER_2FA_MANUAL_SIG_OTF2_WALLET) }) {
             assert {
                 elementContainingTextNotPresented("RFQ")
                 elementContainingTextNotPresented("Streaming")

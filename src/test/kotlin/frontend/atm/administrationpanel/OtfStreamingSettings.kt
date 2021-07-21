@@ -1,26 +1,27 @@
 package frontend.atm.administrationpanel
 
 import frontend.BaseTest
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Story
-import io.qameta.allure.TmsLink
+import io.qameta.allure.*
 import models.CoinType.*
 import models.OtfAmounts
+import org.apache.commons.lang.RandomStringUtils.randomNumeric
 import org.apache.commons.lang3.RandomStringUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.junit.jupiter.api.parallel.ResourceLocks
 import pages.atm.AtmAdminStreamingSettingsPage
-import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.FIXED
-import pages.atm.AtmAdminStreamingSettingsPage.feeModeState.MODE_UNDEFINED
+import pages.atm.AtmAdminStreamingSettingsPage.FeeModeState.FIXED
+import pages.atm.AtmAdminStreamingSettingsPage.FeeModeState.MODE_UNDEFINED
 import pages.atm.AtmProfilePage
 import pages.atm.AtmStreamingPage
 import pages.atm.AtmStreamingPage.ExpireType.GOOD_TILL_CANCELLED
+import pages.atm.AtmStreamingPage.OperationType.SELL
 import utils.Constants
 import utils.TagNames
 import utils.helpers.Users
@@ -39,6 +40,8 @@ class OtfStreamingSettings : BaseTest() {
     private val quoteToken = VT
     private val tokenFT = FT
     private val tokenIT = IT
+    private val fiatToken = FIAT
+
 
     private val maturityDate = "202011"
 
@@ -99,6 +102,17 @@ class OtfStreamingSettings : BaseTest() {
         val number = RandomStringUtils.random(2, false, true)
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            val row = streamingSettingsTable.find {
+                it[AtmAdminStreamingSettingsPage.BASE]?.text == baseToken.tokenSymbol
+                        && it[AtmAdminStreamingSettingsPage.QUOTE]?.text == tokenIT.tokenSymbol + "_${maturityDate}"
+            }
+            if (row != null) {
+                deleteTradingPair(baseToken.tokenSymbol, tokenIT.tokenSymbol + "_${maturityDate}")
+
+            }
+        }
+
+        with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 click(add)
             }
@@ -121,8 +135,7 @@ class OtfStreamingSettings : BaseTest() {
                 baseInputSelect.sendAndSelect(baseToken.tokenSymbol, baseToken.tokenSymbol, this@with)
                 quoteInputSelect.sendAndSelect(tokenIT.tokenSymbol, tokenIT.tokenSymbol, this@with)
 
-                chooseMaturityDate(maturityDateQuoteValue, maturityDate)
-
+                select(maturityDateQuoteValue, maturityDate)
                 sendKeys(availableAmounts, availableAmountValue)
 
                 feeAcceptAsset.delete()
@@ -139,9 +152,11 @@ class OtfStreamingSettings : BaseTest() {
                     this@with
                 )
                 sendKeys(feePlaceAmount, number)
-                sendKeys(feeAcceptAmount, number)
                 select(feePlaceMode, FIXED.state)
+
+                sendKeys(feeAcceptAmount, number)
                 select(feeAcceptMode, FIXED.state)
+
                 click(confirmDialog)
                 wait {
                     until("dialog add trading pair is gone", 15) {
@@ -158,34 +173,32 @@ class OtfStreamingSettings : BaseTest() {
         }
     }
 
-    @Disabled("Поле fee option отсутствует, не возможно сделать проверку в последнем шаге")
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4117")
     @Test
     @DisplayName("Admin panel. OTF. Streaming settings. Edit trading pair.")
     fun streamingSettingsEditTradingPair() {
 
-        val number = RandomStringUtils.random(2, false, true)
-        val baseInputValue1 = RandomStringUtils.random(6, true, false)
-        val quoteValue1 = RandomStringUtils.random(6, true, false)
-        val availableAmountValue1 = RandomStringUtils.random(2, false, true)
-        val number1 = RandomStringUtils.random(2, false, true)
+        val unitPriceAmount = BigDecimal("1.${randomNumeric(8)}") //1.97179569
+        val amount = OtfAmounts.AMOUNT_1.amount
+
+        val user1 = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
+
+        val feeValue = BigDecimal("1.${randomNumeric(8)}")
 
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            addTradingPair(
-                baseToken.tokenSymbol, tokenIT.tokenSymbol, "", number, number,
-                number, FIXED.state, FIXED.state, true
+            addTradingPairIfNotPresented(
+                baseToken.tokenSymbol, quoteToken.tokenSymbol, "",
+                "1.000000000", "", "",
+                FIXED.state, FIXED.state, true
             )
-            chooseTradingPair(baseToken.tokenSymbol, tokenIT.tokenSymbol)
+            chooseTradingPair(baseToken.tokenSymbol, quoteToken.tokenSymbol)
             e {
                 click(edit)
-                sendKeys(baseInput, baseInputValue1)
-                sendKeys(quoteInput, quoteValue1)
-                sendKeys(availableAmounts, availableAmountValue1)
-                sendKeys(feePlaceAsset, number1)
-                sendKeys(feePlaceAmount, number1)
-                sendKeys(feeAcceptAsset, number1)
-                sendKeys(feeAcceptAmount, number1)
+                sendKeys(feePlaceAmount, feeValue.toString())
+                select(feePlaceMode, FIXED.state)
+                sendKeys(feeAcceptAmount, feeValue.toString())
+                select(feeAcceptMode, FIXED.state)
                 click(confirmDialog)
                 wait {
                     until("dialog add trading pair is gone", 15) {
@@ -195,20 +208,56 @@ class OtfStreamingSettings : BaseTest() {
                     }
                 }
             }
-            chooseTradingPair(baseInputValue1, quoteValue1)
+        }
+
+        val fee = with(openPage<AtmStreamingPage>(driver) { submit(user1) }) {
             e {
-                click(edit)
-            }
-            assert {
-                elementWithTextPresented(baseInputValue1)
-                elementWithTextPresented(quoteValue1)
-                elementWithTextPresented(availableAmountValue1)
-                elementWithTextPresented(number1)
+                click(createOffer)
+                click(iWantToBuyAsset)
+
+                select(selectAssetPair, "$baseToken/$quoteToken")
+                selectAmount(amount)
+                clear(unitPrice)
+                sendKeys(unitPrice, unitPriceAmount.toString())
+                click(goodTillCancelled)
+
+                wait(15L) {
+                    until("Couldn't load fee") {
+                        offerFee.text.isNotEmpty()
+                    }
+                }
+                offerFee.amount
             }
         }
 
+        with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            chooseTradingPair(baseToken.tokenSymbol, quoteToken.tokenSymbol)
+            e {
+                click(edit)
+
+                sendKeys(feePlaceAmount, "1")
+
+                sendKeys(feeAcceptAmount, "1")
+                click(confirmDialog)
+                wait {
+                    until("dialog add trading pair is gone", 15) {
+                        check {
+                            isElementGone(confirmDialog)
+                        }
+                    }
+                }
+            }
+
+        }
+        assertThat(
+            "Offer with amount $amount should have been be cancelled",
+            fee,
+            Matchers.closeTo(feeValue, BigDecimal("0.01"))
+        )
     }
 
+
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4084")
     @Test
     @DisplayName("Admin panel. OTF. Streaming settings. Validation.")
@@ -240,6 +289,7 @@ class OtfStreamingSettings : BaseTest() {
         }
     }
 
+    @Issue("ATMCH-6103")
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-5384")
     @Test
@@ -272,8 +322,16 @@ class OtfStreamingSettings : BaseTest() {
             val defaultFeePlacingOfferInputTakerValue = defaultFeePlacingOfferInputTaker.value
 
             e {
+                click(clearButton)
+                sendKeys(defaultAsset, fiatToken.tokenSymbol)
+            }
+            assert {
+                elementContainingTextPresented("Token is not found")
+            }
+
+            e {
                 defaultAsset.delete()
-                defaultAssetSelect.sendAndSelect("CC", "CC", this@with)
+                defaultAssetSelect.sendAndSelect(baseToken.tokenSymbol, baseToken.tokenSymbol, this@with)
 //                click(defaultAssetSave)
                 defaultFeePlacingOfferInputMaker.delete()
                 sendKeys(defaultFeePlacingOfferInputMaker, defaultFeePlacingOfferInputMakerValueNew)
@@ -407,15 +465,25 @@ class OtfStreamingSettings : BaseTest() {
         }
     }
 
+    @Issue("ATMCH-6103")
     @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4979")
     @Test
     @DisplayName("Administration panel. OTF management. Streaming. Add trading pair")
     fun streamingAddTradingPair() {
 
-        val availableAmountValue = RandomStringUtils.random(2, false, true)
+        val availableAmountValue = randomNumeric(2)
         val number = RandomStringUtils.random(2, false, true)
 
+        with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            val row = streamingSettingsTable.find {
+                it[AtmAdminStreamingSettingsPage.BASE]?.text == tokenFT.tokenSymbol
+                        && it[AtmAdminStreamingSettingsPage.QUOTE]?.text == tokenIT.tokenSymbol + "_${maturityDate}"
+            }
+            if (row != null) {
+                deleteTradingPair(tokenFT.tokenSymbol, tokenIT.tokenSymbol + "_${maturityDate}")
+            }
+        }
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
             e {
                 click(add)
@@ -436,19 +504,55 @@ class OtfStreamingSettings : BaseTest() {
                 elementPresented(cancelDialog)
             }
             e {
-                chooseToken(baseInput, tokenFT.tokenSymbol)
-                chooseToken(quoteInput, tokenIT.tokenSymbol)
-                chooseMaturityDate(maturityDateQuoteValue, maturityDate)
+                chooseToken(baseInput, fiatToken.tokenSymbol)
+                chooseToken(quoteInput, baseToken.tokenSymbol)
+                click(confirmDialog)
+            }
+            assert {
+                elementWithTextPresented("Impossible to use fiat token \"${fiatToken.tokenSymbol}\" in secondary market")
+            }
 
+            e {
+                click(clearBaseInput)
+                click(clearQuoteInput)
+                chooseToken(baseInput, baseToken.tokenSymbol)
+                chooseToken(quoteInput, fiatToken.tokenSymbol)
+                click(confirmDialog)
+            }
+            assert {
+                elementWithTextPresented("Impossible to use fiat token \"${fiatToken.tokenSymbol}\" in secondary market")
+            }
+            e {
+                click(clearBaseInput)
+                chooseToken(baseInput, tokenFT.tokenSymbol)
+                click(clearQuoteInput)
+                chooseToken(quoteInput, baseToken.tokenSymbol)
+                chooseToken(feePlaceAsset, fiatToken.tokenSymbol)
+                chooseToken(feeAcceptAsset, fiatToken.tokenSymbol)
+                click(confirmDialog)
+            }
+            assert {
+                elementWithTextPresented("Impossible to use fiat token \"${fiatToken.tokenSymbol}\" in secondary market")
+            }
+
+            e {
+                click(clearBaseInput)
+                chooseToken(baseInput, tokenFT.tokenSymbol)
+                click(clearQuoteInput)
+                chooseToken(quoteInput, tokenIT.tokenSymbol)
+                select(maturityDateQuoteValue, maturityDate)
+
+                click(clearFeeAcceptAsset)
+                click(clearFeePlaceAsset)
                 sendKeys(availableAmounts, availableAmountValue)
                 chooseToken(feePlaceAsset, tokenFT.tokenSymbol)
                 sendKeys(feePlaceAmount, number)
+                select(feePlaceMode, FIXED.state)
 
                 chooseToken(feeAcceptAsset, tokenIT.tokenSymbol)
-                chooseMaturityDate(maturityDateAcceptAsset, maturityDate)
+                select(maturityDateAcceptAsset, maturityDate)
 
                 sendKeys(feeAcceptAmount, number)
-                select(feePlaceMode, FIXED.state)
                 select(feeAcceptMode, FIXED.state)
                 setCheckbox(pairAvailable, true)
                 click(confirmDialog)
@@ -477,19 +581,16 @@ class OtfStreamingSettings : BaseTest() {
             }
         }
         with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-            deleteTradingPair(tokenFT.tokenSymbol, tokenIT.tokenSymbol+"_${maturityDate}")
+            deleteTradingPair(tokenFT.tokenSymbol, tokenIT.tokenSymbol + "_${maturityDate}")
         }
     }
 
-    @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
-    )
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-4096")
     @Test
     @DisplayName("Admin panel. OTF. Streaming settings. Change fee placing/accepting offer.")
     fun streamingSettingsChangeFeePlacingAcceptingOffer() {
-        val unitPrice = BigDecimal("1.${org.apache.commons.lang.RandomStringUtils.randomNumeric(8)}") //1.97179569
+        val unitPrice = BigDecimal("1.${randomNumeric(8)}") //1.97179569
 
         val amount = OtfAmounts.AMOUNT_1.amount
 
@@ -503,14 +604,14 @@ class OtfStreamingSettings : BaseTest() {
             addTradingPairIfNotPresented(
                 baseToken.tokenSymbol, quoteToken.tokenSymbol, "",
                 "1.000000000", "", "",
-                MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
+                FIXED.state, FIXED.state, true
             )
 
             chooseTradingPair(baseToken.tokenSymbol, quoteToken.tokenSymbol)
             e {
                 click(edit)
                 select(feePlaceMode, MODE_UNDEFINED.state)
-
+                Thread.sleep(2000)
                 select(feeAcceptMode, MODE_UNDEFINED.state)
 
                 click(confirmDialog)
@@ -525,7 +626,7 @@ class OtfStreamingSettings : BaseTest() {
 
         val placingFee = step("${user1.email} create Streaming offer and placing fee in overview") {
             openPage<AtmStreamingPage>(driver) { submit(user1) }.createStreaming(
-                AtmStreamingPage.OperationType.SELL,
+                SELL,
                 "${baseToken.tokenSymbol}/${quoteToken.tokenSymbol}",
                 "$amount ${baseToken.tokenSymbol}",
                 unitPrice.toString(),
@@ -604,7 +705,7 @@ class OtfStreamingSettings : BaseTest() {
                     elementPresented(confirmDialog)
                     elementPresented(cancelDialog)
                 }
-                val value1 = "1.${org.apache.commons.lang.RandomStringUtils.randomNumeric(8)}" //1.97179569
+                val value1 = "1.${randomNumeric(8)}" //1.97179569
 
                 e {
                     deleteData(feePlaceAmount)
@@ -631,7 +732,7 @@ class OtfStreamingSettings : BaseTest() {
         }
 
         step("Admin change value fee in trading pair not save action and check values") {
-            val value = "1.${org.apache.commons.lang.RandomStringUtils.randomNumeric(8)}"
+            val value = "1.${randomNumeric(8)}"
             with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
 
                 chooseTradingPair(baseToken.tokenSymbol, tokenFT.tokenSymbol)
@@ -673,6 +774,16 @@ class OtfStreamingSettings : BaseTest() {
 
         val fieldValue = "0.${RandomStringUtils.randomNumeric(3) + 1}"
 
+        with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
+            val row = streamingSettingsTable.find {
+                it[AtmAdminStreamingSettingsPage.BASE]?.text == tokenFT.tokenSymbol
+                        && it[AtmAdminStreamingSettingsPage.QUOTE]?.text == tokenIT.tokenSymbol + "_${maturityDate}"
+            }
+            if (row != null) {
+                deleteTradingPair(tokenFT.tokenSymbol, tokenIT.tokenSymbol + "_${maturityDate}")
+            }
+        }
+
         step("Admin add and delete pair ${tokenFT.tokenSymbol}/${tokenIT.tokenSymbol} in Streaming offer") {
             with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
                 addTradingPairIfNotPresented(
@@ -684,7 +795,7 @@ class OtfStreamingSettings : BaseTest() {
                     FIXED.state,
                     FIXED.state, true
                 )
-                chooseTradingPair(tokenFT.tokenSymbol, tokenIT.tokenSymbol+"_${maturityDate}")
+                chooseTradingPair(tokenFT.tokenSymbol, tokenIT.tokenSymbol + "_${maturityDate}")
                 e {
                     click(delete)
                     click(yes)
@@ -714,16 +825,13 @@ class OtfStreamingSettings : BaseTest() {
         }
     }
 
-    @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
-    )
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-5303")
     @Test
     @DisplayName("Admin panel. Streaming settings. Accepting deleted trading pair")
     fun acceptingDeletedTradingPair() {
 
-        val unitPrice = BigDecimal("1.${org.apache.commons.lang.RandomStringUtils.randomNumeric(8)}") //1.97179569
+        val unitPrice = BigDecimal("1.${randomNumeric(8)}") //1.97179569
         val amount = OtfAmounts.AMOUNT_1.amount
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
@@ -733,22 +841,9 @@ class OtfStreamingSettings : BaseTest() {
             addTradingPairIfNotPresented(
                 quoteToken.tokenSymbol, baseToken.tokenSymbol, "",
                 "1.000000000", "", "",
-                MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
+                FIXED.state, FIXED.state, true
             )
         }
-
-        step("${user1.email} create Streaming offer") {
-            openPage<AtmStreamingPage>(driver) { submit(user1) }.createStreaming(
-                AtmStreamingPage.OperationType.SELL,
-                "$quoteToken/$baseToken",
-                "$amount $quoteToken",
-                unitPrice.toString(),
-                GOOD_TILL_CANCELLED,
-                user1
-            )
-        }
-
-        AtmProfilePage(driver).logout()
 
         step("Admin delete Trading pair $quoteToken/$baseToken") {
             with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
@@ -760,6 +855,7 @@ class OtfStreamingSettings : BaseTest() {
             val offerWithoutPair = with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
                 e {
                     click(overview)
+                    click(showSellOnly)
                 }
                 val offerWithoutPair = overviewOffersList.find {
                     it.unitPriceAmount == unitPrice
@@ -783,16 +879,13 @@ class OtfStreamingSettings : BaseTest() {
         }
     }
 
-    @ResourceLocks(
-        ResourceLock(Constants.ROLE_USER_2FA_OTF_OPERATION_WITHOUT2FA),
-        ResourceLock(Constants.ROLE_USER_WITHOUT2FA_MANUAL_SIG_OTF_WALLET)
-    )
+    @ResourceLock(Constants.USER_FOR_BANK_ACC)
     @TmsLink("ATMCH-5512")
     @Test
     @DisplayName("Admin panel. Streaming settings. Accepting disable trading pair")
     fun acceptingDisabledTradingPair() {
 
-        val unitPrice = BigDecimal("1.${org.apache.commons.lang.RandomStringUtils.randomNumeric(8)}") //1.97179569
+        val unitPrice = BigDecimal("1.${randomNumeric(8)}") //1.97179569
         val amount = OtfAmounts.AMOUNT_1.amount
 
         val user = Users.ATM_USER_2FA_OTF_OPERATION_WITHOUT2FA
@@ -802,13 +895,13 @@ class OtfStreamingSettings : BaseTest() {
             addTradingPairIfNotPresented(
                 quoteToken.tokenSymbol, baseToken.tokenSymbol, "",
                 "1.000000000", "", "",
-                MODE_UNDEFINED.state, MODE_UNDEFINED.state, true
+                FIXED.state, FIXED.state, true
             )
         }
 
         step("${user1.email} create Streaming offer") {
             openPage<AtmStreamingPage>(driver) { submit(user1) }.createStreaming(
-                AtmStreamingPage.OperationType.SELL,
+                SELL,
                 "${quoteToken.tokenSymbol}/${baseToken.tokenSymbol}",
                 "$amount ${quoteToken.tokenSymbol}",
                 unitPrice.toString(),
@@ -817,34 +910,23 @@ class OtfStreamingSettings : BaseTest() {
             )
         }
 
-        AtmProfilePage(driver).logout()
-
-        step("Admin set value available pair to false") {
-            with(openPage<AtmAdminStreamingSettingsPage>(driver) { submit(Users.ATM_ADMIN) }) {
-                chooseTradingPair(quoteToken.tokenSymbol, baseToken.tokenSymbol)
-                e {
-                    click(edit)
-                    setCheckbox(pairAvailable, false)
-                    click(confirmDialog)
-                }
-            }
-        }
-
         step("${user.email} check offer from Overview") {
-            val offerWithoutPair = with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
+            with(openPage<AtmStreamingPage>(driver) { submit(user) }) {
                 e {
                     click(overview)
+                    click(showSellOnly)
                 }
                 val offerWithoutPair = overviewOffersList.find {
-                    it.unitPriceAmount == unitPrice
+                    it.quoteAmount == unitPrice
                 }
-                offerWithoutPair
+
+                assertThat(
+                    "Offer with amount $amount shouldn't exists",
+                    offerWithoutPair,
+                    Matchers.nullValue()
+                )
             }
-            assertThat(
-                "Offer with amount $amount shouldn't exists",
-                offerWithoutPair,
-                Matchers.nullValue()
-            )
+
         }
 
         step("Admin back value available pair to true") {

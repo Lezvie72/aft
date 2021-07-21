@@ -36,6 +36,22 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         GOOD_TILL_CANCELLED, TEMPORARY;
     }
 
+    @Name("Amount to receive")
+    @FindBy(xpath = "//span[contains(text(),'AMOUNT TO RECEIVE')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountToReceiveInIncomingForm: AtmAmount
+
+    @Name("Amount to send in incoming form")
+    @FindBy(xpath = "//span[contains(text(),'AMOUNT TO SEND')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountToSendInIncomingForm: AtmAmount
+
+    @Name("Amount to receive in accept form")
+    @FindBy(xpath = "//div[contains(@class, 'ant-modal-body')]//span[contains(text(),'AMOUNT TO RECEIVE')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountToReceiveInAcceptForm: AtmAmount
+
+    @Name("Amount to send in accept form")
+    @FindBy(xpath = "//div[contains(@class, 'ant-modal-body')]//span[contains(text(),'AMOUNT TO SEND')]/ancestor::atm-property-value//atm-amount")
+    lateinit var amountToSendInAcceptForm: AtmAmount
+
     //<editor-fold desc="ELEMENTS">
     @Name("Atomyze Zzz Spinner waiting alert")
     @FindBy(xpath = "//i[@nztype='atomyzeZzzSpinner']")
@@ -129,6 +145,11 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
 //    @FindBy(xpath = "//input[@formcontrolname='recipient']")
     @FindBy(xpath = "//nz-form-item[1]//input")
     lateinit var toWallet: TextInput
+
+    @Name("Error To counterparty wallet")
+//    @FindBy(xpath = "//input[@formcontrolname='recipient']")
+    @FindBy(xpath = ".//nz-form-item[1]//input//ancestor::div//div[contains(text(),'Field is required')]")
+    lateinit var errorToWallet: TextInput
 
     @Name("To counterparty")
 //    @FindBy(xpath = "//input[@formcontrolname='recipient']")
@@ -319,13 +340,12 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
         return e {
             click(createBlockTrade)
 //            select(toWallet, toCounterparty)
+            waitSpinnerAlertDisappeared()
             click(toWallet)
-//            sendKeys(toWallet, walletID)
-
+            sendKeys(toWallet, walletID)
             val button = wait {
                 untilPresented<Button>(By.xpath("//nz-auto-option//div[contains(text(),'$toCounterparty')]"))
             }.to<Button>("toCounterparty")
-
             click(button)
 
             if (check { isElementContainsText(assetToReceive, tokenToSend.tokenSymbol) }) {
@@ -349,6 +369,14 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
             when (expiryType) {
                 ExpireType.GOOD_TILL_CANCELLED -> click(goodTillCancelled)
                 ExpireType.TEMPORARY -> limitedTimeOffer()
+            }
+            if(check { isElementPresented(errorToWallet) }){
+                click(toWallet)
+
+                val button = wait {
+                    untilPresented<Button>(By.xpath("//nz-auto-option//div[contains(text(),'$toCounterparty')]"))
+                }.to<Button>("toCounterparty")
+                click(button)
             }
             wait {
                 until("") {
@@ -402,7 +430,7 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
             click(viewIncomingP2P)
         }
         val myOffer = incomingOffers.find {
-            it.amountToReceive == amount
+            it.amountToReceive == amount || it.amountToSend == amount
         } ?: error("Can't find offer with unit price '$amount'")
         myOffer.open()
         return AtmStreamingPage(driver)
@@ -506,7 +534,7 @@ class AtmP2PPage(driver: WebDriver) : AtmPage(driver) {
 
     @Step("Overview. Find offer with amount to receive {amountReceive}")
     fun isOfferExist(amountReceive: BigDecimal, table: AtmTable<P2PItem>): Boolean {
-        table.find { it.amountToSend == amountReceive } ?: return false
+        table.find { it.amountToSend == amountReceive || it.amountToReceive == amountReceive } ?: return false
         return true
     }
 

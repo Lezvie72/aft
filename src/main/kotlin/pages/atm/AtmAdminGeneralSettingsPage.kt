@@ -15,9 +15,17 @@ import ru.yandex.qatools.htmlelements.element.TextBlock
 @PageName("Admin general settings page")
 class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
+    @Name("Cancel add token")
+    @FindBy(xpath = "//mat-dialog-actions//span[contains(text(),'CANCEL')]")
+    lateinit var cancelDialog: Button
+
     @Name("Rfq toggle")
     @FindBy(xpath = "//mat-panel-title[contains(text(),'RFQ')]/ancestor::div//mat-slide-toggle/label")
     lateinit var rfqToggle: CheckBox
+
+    @Name("Rfq toggle")
+    @FindBy(xpath = "//div[*[contains(text(), 'RFQ')]] //label")
+    lateinit var rfqToggleAlt: CheckBox
 
     @Name("Rfq string")
     @FindBy(xpath = "//div/mat-panel-title[contains(text(), 'RFQ')]")
@@ -43,6 +51,10 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//div[*[contains(text(), 'Streaming settings')]]")
     lateinit var streamingSettingsTab: TextBlock
 
+    @Name("Rfq toggle status")
+    @FindBy(xpath = "//div[*[contains(text(), 'RFQ')]] //label/span")
+    lateinit var rfqToggleStatusAlt: TextBlock
+
     @Name("Streaming toggle")
     @FindBy(xpath = "//mat-panel-title[contains(text(),'Streaming')]/ancestor::div//mat-slide-toggle/label")
     lateinit var streamingToggle: CheckBox
@@ -51,6 +63,10 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//div[*[contains(text(), 'Streaming')]] //label")
     lateinit var streamingToggleAlt: CheckBox
 
+    @Name("Streaming toggle status")
+    @FindBy(xpath = "//div[*[contains(text(), 'Streaming')]] //label/span")
+    lateinit var streamingToggleStatus: TextBlock
+
     @Name("Blocktrade toggle")
     @FindBy(xpath = "//mat-panel-title[contains(text(),'Blocktrade')]/ancestor::div//mat-slide-toggle/label")
     lateinit var blocktradeToggle: CheckBox
@@ -58,6 +74,10 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("Blocktrade toggle")
     @FindBy(xpath = "//div[*[contains(text(), 'Blocktrade')]] //label")
     lateinit var blocktradeToggleAlt: CheckBox
+
+    @Name("Blocktrade toggle status")
+    @FindBy(xpath = "//div[*[contains(text(), 'Blocktrade')]] //label/span")
+    lateinit var blocktradeToggleStatus: TextBlock
 
     @Name("Rfq link")
     @FindBy(xpath = "(//a[@href='/rfq-settings'])[2]")
@@ -91,17 +111,15 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//mat-dialog-container[contains(@class,'mat-dialog-container')]")
     lateinit var addWindow: TextBlock
 
-    @Name("Rfq toggle")
-    @FindBy(xpath = "//div[*[contains(text(), 'RFQ')]] //label")
-    lateinit var rfqToggleAlt: CheckBox
-
-    @Step("Checking the displaying title on page")
-    fun pageIsDisplayed() {
+    @Step("OTF management section and General settings tab is available")
+    fun generalSettingsTabIsDisplayed() {
         assert {
             elementContainingTextPresented("OTF general settings")
-            elementPresented(rfqToggleAlt)
-            elementPresented(streamingToggleAlt)
-            elementPresented(blocktradeToggleAlt)
+            elementPresented(generalSettingsTab)
+            e {
+                click(streamingSettingsTab)
+                click(generalSettingsTab)
+            }
         }
     }
 
@@ -120,18 +138,25 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         }
     }
 
-    @Step("Checking toggle's status and switching to correct")
-    fun checkingTogglesStatusAndSwitchingToCorrect() {
+    @Step("Checking every links works and opens in edit mode")
+    fun checkingEveryLinksWorksAndOpensInEditMode() {
         val settings = mapOf(
-            "RFQ" to arrayOf(rfqVisibleLink, rfqStringAlt),
-            "Streaming" to arrayOf(streamingVisibleLink, streamingToggleAlt),
-            "Blocktrade" to arrayOf(blocktradeVisibleLink, blocktradeToggleAlt)
+            "RFQ" to arrayOf(rfqLink, addBtn, addWindow),
+            "Streaming" to arrayOf(streamingLink, addBtn, addWindow),
+            "Blocktrade" to arrayOf(blocktradeLink, addBtn, addWindow)
         )
         for ((key, value) in settings) {
+            e {
+                click(value[0] as WebElement)
+                click(value[1] as WebElement)
+            }
             check {
-                if(!isElementPresented(value[0] as WebElement)) {
-                    e { click(value[1] as WebElement) }
+                isElementPresented(value[2] as WebElement)
                 }
+            driver.navigate().refresh()
+            Thread.sleep(2000)
+            e {
+                click(generalSettingsTab)
             }
         }
     }
@@ -160,6 +185,56 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
         }
     }
 
+    @Step("Checking the displaying title on page")
+    fun pageIsDisplayed() {
+        assert {
+            elementContainingTextPresented("OTF general settings")
+            elementPresented(rfqToggleAlt)
+            elementPresented(streamingToggleAlt)
+            elementPresented(blocktradeToggleAlt)
+        }
+    }
+
+    @Step("Checking toggle's status and corresponding links")
+    fun checkingTogglesStatusAndCorrespondingLinks(
+        rfqToggleStatusText: String,
+        streamingToggleStatusText: String,
+        blocktradeToggleStatusText: String
+    ) {
+        val settings = mapOf(
+            "RFQ" to arrayOf(rfqToggleStatusText, rfqToggleStatusAlt, rfqVisibleLink),
+            "Streaming" to arrayOf(streamingToggleStatusText, streamingToggleStatus, streamingVisibleLink),
+            "Blocktrade" to arrayOf(blocktradeToggleStatusText, blocktradeToggleStatus, blocktradeVisibleLink)
+        )
+        Thread.sleep(2000)
+        for ((key, value) in settings) {
+            assert {
+                elementPresented(value[1] as WebElement)
+                elementContainsText(value[1] as WebElement, value[0] as String)
+                when (value[0]) {
+                    "enable" -> elementPresentedWithCustomTimeout(value[2] as WebElement, 1)
+                    "disable" -> elementNotPresentedWithCustomTimeout(value[2] as WebElement, 1)
+                }
+            }
+        }
+    }
+
+    @Step("Checking toggle's status and switching to correct")
+    fun checkingTogglesStatusAndSwitchingToCorrect() {
+        val settings = mapOf(
+            "RFQ" to arrayOf(rfqVisibleLink, rfqStringAlt),
+            "Streaming" to arrayOf(streamingVisibleLink, streamingToggleAlt),
+            "Blocktrade" to arrayOf(blocktradeVisibleLink, blocktradeToggleAlt)
+        )
+        for ((key, value) in settings) {
+            check {
+                if (!isElementPresented(value[0] as WebElement)) {
+                    e { click(value[1] as WebElement) }
+                }
+            }
+        }
+    }
+
     @Step("Checking every links works and opens in edit mode")
     fun allTabsAreDisplayedAndOpensInEditModeForAmlKycManager() {
         val settings = mapOf(
@@ -183,5 +258,4 @@ class AtmAdminGeneralSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             }
         }
     }
-
 }

@@ -91,6 +91,10 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = "//input[@data-placeholder='Token']/ancestor::mat-form-field")
     lateinit var tokenInput: AtmInput
 
+    @Name("Clear Token input")
+    @FindBy(xpath = "//input[@data-placeholder='Token']/ancestor::mat-form-field//mat-icon[text()='clear']")
+    lateinit var clearTokenInput: AtmInput
+
     @Name("Token input")
     @FindBy(xpath = "//sdex-token-selector[@formcontrolname='token']//input")
     lateinit var tokenInputSelect: AtmAdminSelect
@@ -113,7 +117,7 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Name("Fee placing mode")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='createFee.feeMode']//mat-select[@formcontrolname='feeMode']")
-    lateinit var feePlacingMode: AtmSelect
+    lateinit var feePlacingMode: AtmAdminSelect
 
     @Name("Fee accepting asset input")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeAsset']")
@@ -125,7 +129,7 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Name("Fee accepting mode")
     @FindBy(xpath = "//mat-form-field[@sdexerrorcontrol='acceptFee.feeMode']//mat-select[@formcontrolname='feeMode']")
-    lateinit var feeAcceptingMode: AtmSelect
+    lateinit var feeAcceptingMode: AtmAdminSelect
 
     @Name("Fee placing asset select")
     @FindBy(xpath = "(//sdex-token-selector[@formcontrolname='feeAsset']//input)[1]")
@@ -159,6 +163,11 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
     @FindBy(xpath = ".//mat-option//span[@class='mat-option-text']")
     lateinit var popUpWindow: TextInput
 
+    enum class FeeModeState(val state: String) {
+        MODE_UNDEFINED(" FEE MODE_UNDEFINED "),
+        FIXED(" FIXED "),
+        VOLUME(" VOLUME "),
+    }
 //endregion
 
     @Action("add token")
@@ -279,12 +288,13 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
 
     @Step("Admin change fee for token in rfq")
     @Action("change fee for token in rfq")
-    fun changeFeeSettingsForToken(firstToken: CoinType, secondToken: CoinType) {
+    fun changeFeeSettingsForToken(firstToken: CoinType, secondToken: CoinType, valueMaker: String, valueTaker: String,  state: FeeModeState) {
         chooseToken(firstToken.tokenSymbol)
         e {
             click(edit)
 
             feeAcceptingAsset.delete()
+            if (check { isElementPresented(feeAcceptClearButton, 5L) }) click(feeAcceptClearButton)
             feeAcceptingAssetSelect.sendAndSelect(
                 secondToken.tokenSymbol,
                 secondToken.tokenSymbol,
@@ -292,6 +302,7 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             )
 
             feePlacingAsset.delete()
+            if (check { isElementPresented(feePlaceClearButton, 5L) }) click(feePlaceClearButton)
             feePlacingAssetSelect.sendAndSelect(
                 secondToken.tokenSymbol,
                 secondToken.tokenSymbol,
@@ -299,12 +310,12 @@ class AtmAdminRfqSettingsPage(driver: WebDriver) : AtmAdminPage(driver) {
             )
 
             feeAcceptingAmount.delete()
-            sendKeys(feeAcceptingAmount, "1")
+            sendKeys(feeAcceptingAmount, valueTaker)
             feePlacingAmount.delete()
-            sendKeys(feePlacingAmount, "1")
+            sendKeys(feePlacingAmount, valueMaker)
 
-            select(feeAcceptingMode, "FIXED")
-            select(feePlacingMode, "FIXED")
+            select(feeAcceptingMode, state.state)
+            select(feePlacingMode, state.state)
 
             click(confirmDialog)
         }

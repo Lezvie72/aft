@@ -1,10 +1,14 @@
 package pages.atm
 
 import io.qameta.allure.Step
+import junit.framework.Assert
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertTrue
 import models.CoinType
 import models.user.interfaces.User
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasToString
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.FindBy
 import pages.atm.AtmAdminTokensPage.EquivalentType.FIXED
@@ -16,6 +20,7 @@ import pages.htmlelements.elements.*
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.CheckBox
+import ru.yandex.qatools.htmlelements.element.TextBlock
 import ru.yandex.qatools.htmlelements.element.TextInput
 import utils.helpers.to
 import utils.isChecked
@@ -170,7 +175,7 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     lateinit var fixed: AtmAdminRadio
 
     @Name("From market")
-    @FindBy(xpath = "//div[contains(text(), 'From market data')]/ancestor::mat-radio-button")
+    @FindBy(xpath = "//*[contains(text(), 'From market data')]/ancestor::mat-radio-button")
     lateinit var fromMarket: AtmAdminRadio
 
     @Name("Usd equivalent settings")
@@ -238,6 +243,30 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
     @Name("Clear button")
     @FindBy(xpath = "//mat-icon[text()='clear']")
     lateinit var clearButton: Button
+
+    @Name("USD and CC row")
+    @FindBy(xpath = "//tr[.//*[contains(text(), 'USD')]][.//*[contains(text(), 'CC')]]")
+    lateinit var uSDCCRow: AtmSelect
+
+    @Name("Window equivalent settings")
+    @FindBy(xpath = "//h1[contains(text(), 'CC') and contains(text(), 'USD')]")
+    lateinit var windowEquivalentSettings: TextBlock
+
+    @Name("Financial value")
+    @FindBy(xpath = "//mat-dialog-content//*[contains(text(),'/')]")
+    lateinit var financialValueInt: TextBlock
+
+    @Name("Equivalent value")
+    @FindBy(xpath = "//*[contains(@class,'auto-row')]//*[contains(text(),'equivalent')]/following::div[1]")
+    lateinit var equivalentValueInt: TextBlock
+
+    @Name("Financial button")
+    @FindBy(xpath = "//div[@role='listbox']")
+    lateinit var financialButton: AtmSelect
+
+    @Name("New equivalent value")
+    @FindBy(xpath = "//tr[.//*[contains(text(), 'USD')]][.//*[contains(text(), 'CC')]]//*[contains(text(), ',')]")
+    lateinit var newEquivalentValueInt: TextBlock
 
 //    endregion
 
@@ -583,4 +612,28 @@ class AtmAdminTokensPage(driver: WebDriver) : AtmAdminPage(driver) {
         return AtmAdminTokensPage(driver)
     }
 
+    @Step("User works with USD equivalent settings window")
+    fun userWorksWithUSDEquivalentSettingsWindow(coefficientValue: String) {
+        e{
+            click(uSDCCRow)
+            click(usdEquivalentSettings)
+        }
+        check { assertTrue(isElementPresented(windowEquivalentSettings)) }
+        e { click(fromMarket)}
+        wait { fromMarket.getAttribute("mat-radio-checked") }
+        e {
+            click(financialId)
+            pressEnter(financialButton)
+            sendKeys(coefficient, coefficientValue )
+        }
+        val financialIdInt = financialValueInt.text.substringBefore(" ")
+        val result = financialIdInt.toInt() * coefficientValue.toInt()
+        val equivalentResult = equivalentValueInt.text.toInt()
+        assert { assertEquals(result, equivalentResult) }
+        e { click(confirm) }
+        Thread.sleep(2000)
+        assert { elementNotPresentedWithCustomTimeout(windowEquivalentSettings, 1) }
+        check { assertTrue(isElementPresented(tokensTable)) }
+        assert { assertEquals(newEquivalentValueInt.text.substringBefore(".").replace(",", "").toInt(), equivalentResult) }
+    }
 }

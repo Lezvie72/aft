@@ -1,5 +1,5 @@
 stand: release
-orgForRegistration: 23Autotest
+orgForRegistration: 26Autotest
 front:
   sdex:
     url: webfront-release.dev.n-t.io

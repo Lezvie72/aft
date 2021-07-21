@@ -21,10 +21,12 @@ import pages.core.annotations.PageName
 import pages.core.annotations.PageUrl
 import pages.htmlelements.blocks.atm.issuances.*
 import pages.htmlelements.elements.AtmAmount
+import pages.htmlelements.elements.AtmSelect
 import pages.htmlelements.elements.AtmTable
 import ru.yandex.qatools.htmlelements.annotations.Name
 import ru.yandex.qatools.htmlelements.element.Button
 import ru.yandex.qatools.htmlelements.element.TextInput
+import utils.helpers.containsIgnoreCaseXpath
 import utils.helpers.to
 import java.io.File
 import java.math.BigDecimal
@@ -218,6 +220,10 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = ".//span[contains(text(), 'TOTAL SUPPLY')]/ancestor::atm-property-value//atm-amount")
     lateinit var totalSupply: AtmAmount
 
+    @Name("Supply amount")
+    @FindBy(xpath = ".//span[contains(text(), 'SUPPLY AMOUNT')]/ancestor::atm-property-value//atm-amount")
+    lateinit var supply: AtmAmount
+
     @Name("On sale")
     @FindBy(xpath = ".//span[contains(text(), 'ON SALE')]/ancestor::atm-property-value//atm-amount")
     lateinit var onSale: AtmAmount
@@ -295,6 +301,10 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
     @Name("Attachments list")
     @FindBy(xpath = ".//a[contains(@class,'attachments')]")
     lateinit var attachmentsList: Button
+
+    @Name("Filter by status")
+    @FindBy(xpath = "//atm-custom-select[@formcontrolname='status']//nz-select")
+    lateinit var filterByStatus: AtmSelect
 
     fun <T> retry(repeatCount: Int, body: () -> T): T {
         repeat(repeatCount) {
@@ -712,6 +722,25 @@ class AtmIssuancesPage(driver: WebDriver) : AtmPage(driver) {
         e {
             sendKeys(newParamName.last(), name)
             sendKeys(newParamName.last(), name)
+        }
+    }
+
+    @Step("Choose maturnity date")
+    fun chooseMaturnityDate(date: String){
+        val maturnityDateLocator = containsIgnoreCaseXpath(
+            "atm-ind-issue-list//label//span",
+            "text()",
+            date
+        )
+        val maturnityDateButton = try {
+            wait {
+                untilPresented<Button>(maturnityDateLocator, "${date} button")
+            }
+        } catch (e: TimeoutException) {
+            error("Couldn't find maturnity daye ${date}.")
+        }
+        e {
+            click(maturnityDateButton)
         }
     }
 

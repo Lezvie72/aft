@@ -1,10 +1,14 @@
 package pages.atm
 
 import io.qameta.allure.Allure
+import io.qameta.allure.Step
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert
 import models.user.classes.DefaultUser
 import models.user.classes.DefaultUserWith2FA
 import models.user.interfaces.auth.HasTwoFA
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.FindBy
 import pages.core.annotations.PageUrl
 import ru.yandex.qatools.htmlelements.annotations.Name
@@ -144,6 +148,46 @@ class AtmProfilePage(driver: WebDriver) : AtmPage(driver) {
     @FindBy(xpath = "//atm-property-value//span[contains(text(),'PARTICIPANT ROLE')]//ancestor::div[3]//atm-span")
     lateinit var participantRole: TextBlock
 
+    @Name("Add node")
+    @FindBy(css = "a[href='/validator/add']")
+    lateinit var addNode: Button
+
+    @Name("Arrow button")
+    @FindBy(xpath = "//*[contains(@class,'ant-select-arrow')]")
+    lateinit var arrowBtn: TextBlock
+
+    @Name("Endorser type")
+    @FindBy(xpath = "//nz-option-item[contains(@title, 'ENDORSER')]")
+    lateinit var endorserType: TextBlock
+
+    @Name("Submit button")
+    @FindBy(xpath = "//span[contains(text(), 'Submit')]")
+    lateinit var submitBtn: Button
+
+    @Name("New node request")
+    @FindBy(xpath = "//h2[contains(text(), 'New node request')]")
+    lateinit var newNodeRequest: TextBlock
+
+    @Name("No tokens added yet")
+    @FindBy(xpath = "//p[contains(text(), 'No tokens added yet')]")
+    lateinit var noTokensAddedYet: TextBlock
+
+    @Name("Any token added")
+    @FindBy(xpath = "//atm-separated-card[contains(@class,'card content-block ng-star-inserted')]")
+    lateinit var anyTokenAdded: TextBlock
+
+    @Name("Employee role")
+    @FindBy(xpath = "//atm-property-value//span[contains(text(),'EMPLOYEE ROLE')]//ancestor::div[3]//atm-span")
+    lateinit var employeeRole: TextBlock
+
+    @Name("No bank accounts added yet")
+    @FindBy(xpath = "//h2[contains(text(), 'No bank accounts added yet')]")
+    lateinit var noBankAccountAddedYet: TextBlock
+
+    @Name("ADD EMPLOYEE button")
+    @FindBy(xpath = "//span[contains(text(), 'ADD EMPLOYEE')]")
+    lateinit var addEmployeeBtn: Button
+
     // TODO: Проверить работу
     fun switchToGoogleAuth(user: DefaultUser): HasTwoFA {
         val since = LocalDateTime.now(ZoneOffset.UTC)
@@ -184,5 +228,129 @@ class AtmProfilePage(driver: WebDriver) : AtmPage(driver) {
         return participantRole.text
     }
 
+    @Step("User Issuer checks available sections on the platform")
+    fun issuerChecksAvailableSectionsOnThePlatform() {
+        val settings = mapOf(
+            "Trading" to (trading),
+            "Orders" to (orders),
+            "Wallets" to (wallets),
+            "Validator" to (validator),
+            "Explorer" to (explorer),
+            "Issuances" to (issuances)
+        )
+        for ((key, value) in settings) {
+            when (key) {
+                "Validator" -> assert { elementNotPresentedWithCustomTimeout(value as WebElement, 1) }
+                else -> check { isElementPresented(value as WebElement) }
+            }
+        }
+    }
+
+    @Step("User Issuer goes to issuance page and checks that no any tokens")
+    fun goesToIssuerGoesToIssuancePageAndChecksThatPageIsOpen() {
+        e{
+            click(issuances)
+        }
+        assert {
+            elementPresented(noTokensAddedYet)
+        }
+    }
+
+    @Step("User Issuer goes to issuance page and see linked tokens")
+    fun goesToIssuerGoesToIssuancePageAndSeeLinkedTokens() {
+        e{
+            click(issuances)
+        }
+        assert {
+            elementPresented(anyTokenAdded)
+        }
+    }
+    fun checksInformationSection(): String {
+        return participantRole.text
+    }
+
+    @Step("User checks his company participant role")
+    fun checksInformationSection(usersParticipantRole: String) {
+        assert {
+            elementPresented(participantRole)
+            assertEquals(participantRole.text, usersParticipantRole)
+        }
+    }
+    @Step("User Validator checks available sections on the platform")
+    fun checksAvailableSectionsOnThePlatform() {
+        val settings = mapOf(
+            "Trading" to (trading),
+            "Orders" to (orders),
+            "Wallets" to (wallets),
+            "Validator" to (validator),
+            "Explorer" to (explorer),
+            "Issuances" to (issuances)
+        )
+        for ((key, value) in settings) {
+            when (key) {
+                "Issuances" -> assert { elementNotPresentedWithCustomTimeout(value as WebElement, 1) }
+                else -> check { isElementPresented(value as WebElement) }
+            }
+        }
+    }
+
+    @Step("User Validator goes to validators page and adds node")
+    fun goesToValidatorsPageAndAddsNode() {
+        e{
+            click(validator)
+            click(addNode)
+            click(arrowBtn)
+            click(endorserType)
+            click(submitBtn)
+        }
+        assert{
+            elementPresented(newNodeRequest)
+        }
+    }
+
+    @Step("User Generic Participant Manager checks available sections on the platform")
+    fun genericParticipantUserChecksAvailableSectionsOnThePlatform() {
+        val settings = mapOf(
+            "Trading" to (trading),
+            "Orders" to (orders),
+            "Wallets" to (wallets),
+            "Explorer" to (explorer)
+        )
+        for ((key, value) in settings) {
+            when (key) {
+                "Validator" -> assert { elementNotPresentedWithCustomTimeout(value as WebElement, 1) }
+                "Issuances" -> assert { elementNotPresentedWithCustomTimeout(value as WebElement, 1) }
+                else -> check { isElementPresented(value as WebElement) }
+            }
+        }
+    }
+
+    @Step("User Generic Participant Manager checks available sections him")
+    fun checksAvailableSectionsForGenericParticipantManager() {
+        assert { elementNotPresentedWithCustomTimeout(employees, 1) }
+        e{
+            click(bankAccount)
+        }
+        assert {
+            elementPresented(noBankAccountAddedYet)
+        }
+    }
+
+    @Step("User checks his employee role")
+    fun checksUserInformationSection(usersEmployeeRole: String) {
+        assert {
+            elementPresented(employeeRole)
+            assertEquals(employeeRole.text, usersEmployeeRole)
+        }
+    }
+
+    @Step("User Generic Participant Admin checks available sections him")
+    fun checksAvailableSectionsForGenericParticipantAdmin() {
+        e{ click(bankAccount) }
+        assert { elementPresented(noBankAccountAddedYet) }
+        driver.navigate().back()
+        e{ click(employees) }
+        assert { elementPresented(addEmployeeBtn) }
+    }
 
 }
